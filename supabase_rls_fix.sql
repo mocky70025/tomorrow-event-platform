@@ -5,6 +5,9 @@
 DROP POLICY IF EXISTS "Users can view their own data" ON exhibitors;
 DROP POLICY IF EXISTS "Users can insert their own data" ON exhibitors;
 DROP POLICY IF EXISTS "Users can update their own data" ON exhibitors;
+DROP POLICY IF EXISTS "Allow public insert on exhibitors" ON exhibitors;
+DROP POLICY IF EXISTS "Allow public select on exhibitors" ON exhibitors;
+DROP POLICY IF EXISTS "Allow public update on exhibitors" ON exhibitors;
 
 -- 2. 新しいRLSポリシーを作成
 CREATE POLICY "Allow public insert on exhibitors" ON exhibitors
@@ -20,6 +23,9 @@ CREATE POLICY "Allow public update on exhibitors" ON exhibitors
 DROP POLICY IF EXISTS "Users can view their own data" ON organizers;
 DROP POLICY IF EXISTS "Users can insert their own data" ON organizers;
 DROP POLICY IF EXISTS "Users can update their own data" ON organizers;
+DROP POLICY IF EXISTS "Allow public insert on organizers" ON organizers;
+DROP POLICY IF EXISTS "Allow public select on organizers" ON organizers;
+DROP POLICY IF EXISTS "Allow public update on organizers" ON organizers;
 
 -- 4. 新しいRLSポリシーを作成
 CREATE POLICY "Allow public insert on organizers" ON organizers
@@ -52,6 +58,9 @@ CREATE POLICY "Allow public delete on events" ON events
 
 -- 6. event_applicationsテーブルのRLSポリシーを削除して再作成
 DROP POLICY IF EXISTS "Users can view their own applications" ON event_applications;
+DROP POLICY IF EXISTS "Allow public select on event_applications" ON event_applications;
+DROP POLICY IF EXISTS "Allow public insert on event_applications" ON event_applications;
+DROP POLICY IF EXISTS "Allow public update on event_applications" ON event_applications;
 
 CREATE POLICY "Allow public select on event_applications" ON event_applications
     FOR SELECT USING (true);
