@@ -48,6 +48,35 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
   })
 
   const [loading, setLoading] = useState(false)
+  const [addressLoading, setAddressLoading] = useState(false)
+
+  // 郵便番号から住所を取得する関数
+  const fetchAddressFromPostalCode = async (postalCode: string) => {
+    if (!postalCode || postalCode.length !== 7) return
+
+    setAddressLoading(true)
+    try {
+      const response = await fetch(`https://zipcloud.ibsnet.co.jp/api/search?zipcode=${postalCode}`)
+      const data = await response.json()
+      
+      if (data.status === 200 && data.results && data.results.length > 0) {
+        const result = data.results[0]
+        setFormData(prev => ({
+          ...prev,
+          venue_city: result.address1, // 都道府県
+          venue_town: result.address2, // 市区町村
+          venue_address: result.address3, // 町名
+        }))
+      } else {
+        alert('郵便番号が見つかりませんでした。')
+      }
+    } catch (error) {
+      console.error('Address fetch error:', error)
+      alert('住所の取得に失敗しました。')
+    } finally {
+      setAddressLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -177,20 +206,21 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   イベント開催期間 *
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="flex items-center gap-2">
                   <input
                     type="date"
                     required
                     value={formData.event_start_date}
                     onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
-                    className="border border-gray-300 rounded-md px-3 py-2"
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2"
                   />
+                  <span className="text-gray-500 font-bold">〜</span>
                   <input
                     type="date"
                     required
                     value={formData.event_end_date}
                     onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
-                    className="border border-gray-300 rounded-md px-3 py-2"
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2"
                   />
                 </div>
               </div>
@@ -282,12 +312,24 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   郵便番号
                 </label>
-                <input
-                  type="text"
-                  value={formData.venue_postal_code}
-                  onChange={(e) => setFormData({ ...formData, venue_postal_code: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={formData.venue_postal_code}
+                    onChange={(e) => setFormData({ ...formData, venue_postal_code: e.target.value })}
+                    className="flex-1 border border-gray-300 rounded-md px-3 py-2"
+                    placeholder="1234567"
+                    maxLength={7}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fetchAddressFromPostalCode(formData.venue_postal_code)}
+                    disabled={addressLoading || formData.venue_postal_code.length !== 7}
+                    className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-md transition-colors whitespace-nowrap"
+                  >
+                    {addressLoading ? '取得中...' : '住所取得'}
+                  </button>
+                </div>
               </div>
 
               <div>
