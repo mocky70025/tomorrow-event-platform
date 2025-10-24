@@ -136,6 +136,21 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
         venue_longitude: formData.venue_longitude ? parseFloat(formData.venue_longitude) : null,
       })
 
+      // Supabase接続テスト
+      console.log('Testing Supabase connection...')
+      const { data: testData, error: testError } = await supabase
+        .from('organizers')
+        .select('id')
+        .eq('id', organizer.id)
+        .single()
+      
+      if (testError) {
+        console.error('Supabase connection test failed:', testError)
+        throw new Error(`Supabase接続エラー: ${testError.message}`)
+      }
+      
+      console.log('Supabase connection test successful:', testData)
+
       const { data, error } = await supabase
         .from('events')
         .insert({
@@ -149,14 +164,33 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
 
       if (error) {
         console.error('Supabase error:', error)
-        throw error
+        console.error('Supabase error details:', JSON.stringify(error, null, 2))
+        throw new Error(`Supabase error: ${error.message || JSON.stringify(error)}`)
       }
 
+      console.log('Event created successfully:', data)
       onEventCreated(data)
     } catch (error) {
       console.error('Event creation failed:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
-      const errorMessage = error instanceof Error ? error.message : '不明なエラー'
+      
+      let errorMessage = '不明なエラー'
+      
+      if (error instanceof Error) {
+        errorMessage = error.message
+      } else if (typeof error === 'object' && error !== null) {
+        // Supabase error objectの場合
+        if ('message' in error) {
+          errorMessage = String(error.message)
+        } else if ('details' in error) {
+          errorMessage = String(error.details)
+        } else if ('hint' in error) {
+          errorMessage = String(error.hint)
+        } else {
+          errorMessage = JSON.stringify(error)
+        }
+      }
+      
       alert(`イベントの作成に失敗しました。エラー: ${errorMessage}`)
     } finally {
       setLoading(false)
