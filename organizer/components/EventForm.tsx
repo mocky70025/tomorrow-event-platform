@@ -130,7 +130,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
       }
 
       // 送信データの最終チェック
-      const submitData = {
+      const submitData: any = {
         ...formData,
         organizer_id: organizer.id,
         venue_latitude: formData.venue_latitude ? parseFloat(formData.venue_latitude) : null,
