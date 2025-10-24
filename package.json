@@ -1,0 +1,22 @@
+{
+  "name": "tomorrow-event-platform",
+  "version": "1.0.0",
+  "description": "イベント出店者・主催者向けプラットフォーム",
+  "private": true,
+  "workspaces": [
+    "store",
+    "organizer"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:store\" \"npm run dev:organizer\"",
+    "dev:store": "cd store && npm run dev",
+    "dev:organizer": "cd organizer && npm run dev",
+    "build": "npm run build:store && npm run build:organizer",
+    "build:store": "cd store && npm run build",
+    "build:organizer": "cd organizer && npm run build",
+    "install:all": "npm install && cd store && npm install && cd ../organizer && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

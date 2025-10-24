@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "store/package.json",
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    },
+    {
+      "src": "organizer/package.json", 
+      "use": "@vercel/next",
+      "config": {
+        "distDir": ".next"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/store/(.*)",
+      "dest": "/store/$1"
+    },
+    {
+      "src": "/organizer/(.*)",
+      "dest": "/organizer/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/store"
+    }
+  ]
+}
