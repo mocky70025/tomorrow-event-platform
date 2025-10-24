@@ -96,11 +96,11 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
         alert('ジャンルを選択してください。')
         return
       }
-      if (!formData.event_start_date) {
+      if (!formData.event_start_date || formData.event_start_date.trim() === '') {
         alert('イベント開催開始日を入力してください。')
         return
       }
-      if (!formData.event_end_date) {
+      if (!formData.event_end_date || formData.event_end_date.trim() === '') {
         alert('イベント開催終了日を入力してください。')
         return
       }
@@ -129,12 +129,22 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
         return
       }
 
-      console.log('Submitting event data:', {
+      // 送信データの最終チェック
+      const submitData = {
         ...formData,
         organizer_id: organizer.id,
         venue_latitude: formData.venue_latitude ? parseFloat(formData.venue_latitude) : null,
         venue_longitude: formData.venue_longitude ? parseFloat(formData.venue_longitude) : null,
+      }
+
+      // 空文字列をnullに変換
+      Object.keys(submitData).forEach(key => {
+        if (submitData[key] === '') {
+          submitData[key] = null
+        }
       })
+
+      console.log('Submitting event data:', submitData)
 
       // Supabase接続テスト
       console.log('Testing Supabase connection...')
@@ -153,12 +163,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
 
       const { data, error } = await supabase
         .from('events')
-        .insert({
-          ...formData,
-          organizer_id: organizer.id,
-          venue_latitude: formData.venue_latitude ? parseFloat(formData.venue_latitude) : null,
-          venue_longitude: formData.venue_longitude ? parseFloat(formData.venue_longitude) : null,
-        })
+        .insert(submitData)
         .select()
         .single()
 
