@@ -25,6 +25,18 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     setLoading(true)
 
     try {
+      // 重複登録チェック
+      const { data: existingUser } = await supabase
+        .from('organizers')
+        .select('id')
+        .eq('line_user_id', userProfile.userId)
+        .single()
+
+      if (existingUser) {
+        alert('既に登録済みです。')
+        return
+      }
+
       const { error } = await supabase
         .from('organizers')
         .insert({
@@ -33,13 +45,17 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           is_approved: false, // 運営側チェック待ち
         })
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
 
       alert('登録が完了しました。運営側の承認をお待ちください。')
       onRegistrationComplete()
     } catch (error) {
       console.error('Registration failed:', error)
-      alert('登録に失敗しました。もう一度お試しください。')
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      alert(`登録に失敗しました。エラー: ${error.message || '不明なエラー'}`)
     } finally {
       setLoading(false)
     }

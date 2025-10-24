@@ -34,6 +34,18 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     setLoading(true)
 
     try {
+      // 重複登録チェック
+      const { data: existingUser } = await supabase
+        .from('exhibitors')
+        .select('id')
+        .eq('line_user_id', userProfile.userId)
+        .single()
+
+      if (existingUser) {
+        alert('既に登録済みです。')
+        return
+      }
+
       // 書類のアップロード（実際の実装ではSupabase Storageを使用）
       const documentUrls: Partial<Exhibitor> = {}
       
@@ -63,12 +75,16 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           line_user_id: userProfile.userId,
         })
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
 
       onRegistrationComplete()
     } catch (error) {
       console.error('Registration failed:', error)
-      alert('登録に失敗しました。もう一度お試しください。')
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      alert(`登録に失敗しました。エラー: ${error.message || '不明なエラー'}`)
     } finally {
       setLoading(false)
     }
