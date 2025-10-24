@@ -34,6 +34,9 @@ CREATE POLICY "Allow public update on organizers" ON organizers
 -- 5. eventsテーブルのRLSポリシーを削除して再作成
 DROP POLICY IF EXISTS "Anyone can view published events" ON events;
 DROP POLICY IF EXISTS "Organizers can manage their own events" ON events;
+DROP POLICY IF EXISTS "Allow public select on events" ON events;
+DROP POLICY IF EXISTS "Allow public insert on events" ON events;
+DROP POLICY IF EXISTS "Allow public update on events" ON events;
 
 CREATE POLICY "Allow public select on events" ON events
     FOR SELECT USING (true);
@@ -43,6 +46,9 @@ CREATE POLICY "Allow public insert on events" ON events
 
 CREATE POLICY "Allow public update on events" ON events
     FOR UPDATE USING (true);
+
+CREATE POLICY "Allow public delete on events" ON events
+    FOR DELETE USING (true);
 
 -- 6. event_applicationsテーブルのRLSポリシーを削除して再作成
 DROP POLICY IF EXISTS "Users can view their own applications" ON event_applications;

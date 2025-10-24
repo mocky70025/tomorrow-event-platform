@@ -83,6 +83,59 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
     setLoading(true)
 
     try {
+      // 必須フィールドのバリデーション
+      if (!formData.event_name.trim()) {
+        alert('イベント名称を入力してください。')
+        return
+      }
+      if (!formData.event_name_furigana.trim()) {
+        alert('イベント名称フリガナを入力してください。')
+        return
+      }
+      if (!formData.genre) {
+        alert('ジャンルを選択してください。')
+        return
+      }
+      if (!formData.event_start_date) {
+        alert('イベント開催開始日を入力してください。')
+        return
+      }
+      if (!formData.event_end_date) {
+        alert('イベント開催終了日を入力してください。')
+        return
+      }
+      if (!formData.event_display_period.trim()) {
+        alert('イベント開催期間(表示用)を入力してください。')
+        return
+      }
+      if (!formData.lead_text.trim()) {
+        alert('リード文を入力してください。')
+        return
+      }
+      if (!formData.event_description.trim()) {
+        alert('イベント紹介文を入力してください。')
+        return
+      }
+      if (!formData.venue_name.trim()) {
+        alert('会場名称を入力してください。')
+        return
+      }
+      if (!formData.contact_name.trim()) {
+        alert('問い合わせ先名称を入力してください。')
+        return
+      }
+      if (!formData.contact_phone.trim()) {
+        alert('電話番号を入力してください。')
+        return
+      }
+
+      console.log('Submitting event data:', {
+        ...formData,
+        organizer_id: organizer.id,
+        venue_latitude: formData.venue_latitude ? parseFloat(formData.venue_latitude) : null,
+        venue_longitude: formData.venue_longitude ? parseFloat(formData.venue_longitude) : null,
+      })
+
       const { data, error } = await supabase
         .from('events')
         .insert({
@@ -94,12 +147,17 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
         .select()
         .single()
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
+      }
 
       onEventCreated(data)
     } catch (error) {
       console.error('Event creation failed:', error)
-      alert('イベントの作成に失敗しました。もう一度お試しください。')
+      console.error('Error details:', JSON.stringify(error, null, 2))
+      const errorMessage = error instanceof Error ? error.message : '不明なエラー'
+      alert(`イベントの作成に失敗しました。エラー: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
