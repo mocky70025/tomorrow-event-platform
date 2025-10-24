@@ -55,7 +55,8 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     } catch (error) {
       console.error('Registration failed:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
-      alert(`登録に失敗しました。エラー: ${error.message || '不明なエラー'}`)
+      const errorMessage = error instanceof Error ? error.message : '不明なエラー'
+      alert(`登録に失敗しました。エラー: ${errorMessage}`)
     } finally {
       setLoading(false)
     }
