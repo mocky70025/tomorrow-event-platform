@@ -25,7 +25,17 @@ VALUES (
   ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 );
 
--- 4. 出店者用書類バケットのRLSポリシー
+-- 4. 既存のRLSポリシーを削除（存在する場合）
+DROP POLICY IF EXISTS "Allow authenticated users to upload exhibitor documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow users to view their own exhibitor documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow users to update their own exhibitor documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow users to delete their own exhibitor documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated users to upload event images" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public to view event images" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated users to update event images" ON storage.objects;
+DROP POLICY IF EXISTS "Allow authenticated users to delete event images" ON storage.objects;
+
+-- 5. 出店者用書類バケットのRLSポリシー
 CREATE POLICY "Allow authenticated users to upload exhibitor documents" ON storage.objects
 FOR INSERT WITH CHECK (
   bucket_id = 'exhibitor-documents' 
@@ -50,7 +60,7 @@ FOR DELETE USING (
   AND auth.role() = 'authenticated'
 );
 
--- 5. イベント画像バケットのRLSポリシー
+-- 6. イベント画像バケットのRLSポリシー
 CREATE POLICY "Allow authenticated users to upload event images" ON storage.objects
 FOR INSERT WITH CHECK (
   bucket_id = 'event-images' 
