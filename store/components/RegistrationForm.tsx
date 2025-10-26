@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase, type Exhibitor } from '@/lib/supabase'
+import ImageUpload from './ImageUpload'
 
 interface RegistrationFormProps {
   userProfile: any
@@ -19,12 +20,12 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     genre_free_text: '',
   })
 
-  const [documents, setDocuments] = useState({
-    business_license: null as File | null,
-    vehicle_inspection: null as File | null,
-    automobile_inspection: null as File | null,
-    pl_insurance: null as File | null,
-    fire_equipment_layout: null as File | null,
+  const [documentUrls, setDocumentUrls] = useState({
+    business_license: '',
+    vehicle_inspection: '',
+    automobile_inspection: '',
+    pl_insurance: '',
+    fire_equipment_layout: '',
   })
 
   const [loading, setLoading] = useState(false)
@@ -46,32 +47,30 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         return
       }
 
-      // 書類のアップロード（実際の実装ではSupabase Storageを使用）
-      const documentUrls: Partial<Exhibitor> = {}
+      // 書類のURLを設定
+      const documentImageUrls: Partial<Exhibitor> = {}
       
-      // ここで実際のファイルアップロード処理を行う
-      // 今回は仮のURLを設定
-      if (documents.business_license) {
-        documentUrls.business_license_image_url = 'uploaded_url_1'
+      if (documentUrls.business_license) {
+        documentImageUrls.business_license_image_url = documentUrls.business_license
       }
-      if (documents.vehicle_inspection) {
-        documentUrls.vehicle_inspection_image_url = 'uploaded_url_2'
+      if (documentUrls.vehicle_inspection) {
+        documentImageUrls.vehicle_inspection_image_url = documentUrls.vehicle_inspection
       }
-      if (documents.automobile_inspection) {
-        documentUrls.automobile_inspection_image_url = 'uploaded_url_3'
+      if (documentUrls.automobile_inspection) {
+        documentImageUrls.automobile_inspection_image_url = documentUrls.automobile_inspection
       }
-      if (documents.pl_insurance) {
-        documentUrls.pl_insurance_image_url = 'uploaded_url_4'
+      if (documentUrls.pl_insurance) {
+        documentImageUrls.pl_insurance_image_url = documentUrls.pl_insurance
       }
-      if (documents.fire_equipment_layout) {
-        documentUrls.fire_equipment_layout_image_url = 'uploaded_url_5'
+      if (documentUrls.fire_equipment_layout) {
+        documentImageUrls.fire_equipment_layout_image_url = documentUrls.fire_equipment_layout
       }
 
       const { error } = await supabase
         .from('exhibitors')
         .insert({
           ...formData,
-          ...documentUrls,
+          ...documentImageUrls,
           line_user_id: userProfile.userId,
         })
 
@@ -206,31 +205,46 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           <div className="bg-white rounded-lg shadow p-6">
             <h2 className="text-lg font-semibold mb-4">必要書類</h2>
             
-            <div className="space-y-4">
-              {[
-                { key: 'business_license', label: '営業許可証' },
-                { key: 'vehicle_inspection', label: '車検証' },
-                { key: 'automobile_inspection', label: '自動車検査証' },
-                { key: 'pl_insurance', label: 'PL保険' },
-                { key: 'fire_equipment_layout', label: '火器類配置図' },
-              ].map((doc) => (
-                <div key={doc.key}>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {doc.label}
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0]
-                      if (file) {
-                        setDocuments({ ...documents, [doc.key]: file })
-                      }
-                    }}
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  />
-                </div>
-              ))}
+            <div className="space-y-6">
+              <ImageUpload
+                label="営業許可証"
+                documentType="business_license"
+                userId={userProfile.userId}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, business_license: url }))}
+                onUploadError={(error) => alert(error)}
+              />
+              
+              <ImageUpload
+                label="車検証"
+                documentType="vehicle_inspection"
+                userId={userProfile.userId}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))}
+                onUploadError={(error) => alert(error)}
+              />
+              
+              <ImageUpload
+                label="自動車検査証"
+                documentType="automobile_inspection"
+                userId={userProfile.userId}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))}
+                onUploadError={(error) => alert(error)}
+              />
+              
+              <ImageUpload
+                label="PL保険"
+                documentType="pl_insurance"
+                userId={userProfile.userId}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))}
+                onUploadError={(error) => alert(error)}
+              />
+              
+              <ImageUpload
+                label="火器類配置図"
+                documentType="fire_equipment_layout"
+                userId={userProfile.userId}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))}
+                onUploadError={(error) => alert(error)}
+              />
             </div>
           </div>
 

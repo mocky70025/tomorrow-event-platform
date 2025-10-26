@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase, type Event, type Organizer } from '@/lib/supabase'
+import ImageUpload from './ImageUpload'
 
 interface EventFormProps {
   organizer: Organizer
@@ -49,6 +50,14 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
 
   const [loading, setLoading] = useState(false)
   const [addressLoading, setAddressLoading] = useState(false)
+  const [eventId, setEventId] = useState<string>('')
+  const [imageUrls, setImageUrls] = useState({
+    main: '',
+    additional1: '',
+    additional2: '',
+    additional3: '',
+    additional4: '',
+  })
 
   // 郵便番号から住所を取得する関数
   const fetchAddressFromPostalCode = async (postalCode: string) => {
@@ -146,26 +155,51 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
 
       console.log('Submitting event data:', submitData)
 
-      // Supabase接続テスト
-      console.log('Testing Supabase connection...')
-      const { data: testData, error: testError } = await supabase
-        .from('organizers')
-        .select('id')
-        .eq('id', organizer.id)
-        .single()
-      
-      if (testError) {
-        console.error('Supabase connection test failed:', testError)
-        throw new Error(`Supabase接続エラー: ${testError.message}`)
-      }
-      
-      console.log('Supabase connection test successful:', testData)
-
-      const { data, error } = await supabase
+      // まずイベントを作成（画像なしで）
+      const { data: eventData, error: eventError } = await supabase
         .from('events')
         .insert(submitData)
         .select()
         .single()
+
+      if (eventError) {
+        console.error('Event creation error:', eventError)
+        throw eventError
+      }
+
+      console.log('Event created successfully:', eventData)
+      setEventId(eventData.id)
+
+      // 画像URLを更新
+      const updatedEventData = {
+        ...eventData,
+        main_image_url: imageUrls.main || null,
+        additional_image1_url: imageUrls.additional1 || null,
+        additional_image2_url: imageUrls.additional2 || null,
+        additional_image3_url: imageUrls.additional3 || null,
+        additional_image4_url: imageUrls.additional4 || null,
+      }
+
+      // 画像URLでイベントを更新
+      const { data: updatedData, error: updateError } = await supabase
+        .from('events')
+        .update({
+          main_image_url: updatedEventData.main_image_url,
+          additional_image1_url: updatedEventData.additional_image1_url,
+          additional_image2_url: updatedEventData.additional_image2_url,
+          additional_image3_url: updatedEventData.additional_image3_url,
+          additional_image4_url: updatedEventData.additional_image4_url,
+        })
+        .eq('id', eventData.id)
+        .select()
+        .single()
+
+      if (updateError) {
+        console.error('Event update error:', updateError)
+        throw updateError
+      }
+
+      const { data, error } = { data: updatedData, error: null }
 
       if (error) {
         console.error('Supabase error:', error)
@@ -384,6 +418,62 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
                   rows={4}
                 />
               </div>
+            </div>
+          </div>
+
+          {/* イベント画像 */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold mb-4">イベント画像</h2>
+            
+            <div className="space-y-6">
+              <ImageUpload
+                label="メイン画像"
+                eventId={eventId || 'temp'}
+                imageType="main"
+                onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, main: url }))}
+                onUploadError={(error) => alert(error)}
+                currentImageUrl={imageUrls.main}
+              />
+              
+              <ImageUpload
+                label="追加画像1"
+                eventId={eventId || 'temp'}
+                imageType="additional"
+                imageIndex={1}
+                onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional1: url }))}
+                onUploadError={(error) => alert(error)}
+                currentImageUrl={imageUrls.additional1}
+              />
+              
+              <ImageUpload
+                label="追加画像2"
+                eventId={eventId || 'temp'}
+                imageType="additional"
+                imageIndex={2}
+                onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional2: url }))}
+                onUploadError={(error) => alert(error)}
+                currentImageUrl={imageUrls.additional2}
+              />
+              
+              <ImageUpload
+                label="追加画像3"
+                eventId={eventId || 'temp'}
+                imageType="additional"
+                imageIndex={3}
+                onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional3: url }))}
+                onUploadError={(error) => alert(error)}
+                currentImageUrl={imageUrls.additional3}
+              />
+              
+              <ImageUpload
+                label="追加画像4"
+                eventId={eventId || 'temp'}
+                imageType="additional"
+                imageIndex={4}
+                onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional4: url }))}
+                onUploadError={(error) => alert(error)}
+                currentImageUrl={imageUrls.additional4}
+              />
             </div>
           </div>
 
