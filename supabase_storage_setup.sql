@@ -1,7 +1,11 @@
 -- Supabase Storage設定
 -- このSQLをSupabaseのSQL Editorで実行してください
 
--- 1. 出店者用書類バケットを作成
+-- 1. 既存のバケットを削除（存在する場合）
+DELETE FROM storage.buckets WHERE id = 'exhibitor-documents';
+DELETE FROM storage.buckets WHERE id = 'event-images';
+
+-- 2. 出店者用書類バケットを作成
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
   'exhibitor-documents',
@@ -11,7 +15,7 @@ VALUES (
   ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 );
 
--- 2. イベント画像バケットを作成
+-- 3. イベント画像バケットを作成
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 VALUES (
   'event-images',
@@ -21,7 +25,7 @@ VALUES (
   ARRAY['image/jpeg', 'image/png', 'image/gif', 'image/webp']
 );
 
--- 3. 出店者用書類バケットのRLSポリシー
+-- 4. 出店者用書類バケットのRLSポリシー
 CREATE POLICY "Allow authenticated users to upload exhibitor documents" ON storage.objects
 FOR INSERT WITH CHECK (
   bucket_id = 'exhibitor-documents' 
@@ -46,7 +50,7 @@ FOR DELETE USING (
   AND auth.role() = 'authenticated'
 );
 
--- 4. イベント画像バケットのRLSポリシー
+-- 5. イベント画像バケットのRLSポリシー
 CREATE POLICY "Allow authenticated users to upload event images" ON storage.objects
 FOR INSERT WITH CHECK (
   bucket_id = 'event-images' 
