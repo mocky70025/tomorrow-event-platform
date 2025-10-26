@@ -52,12 +52,18 @@ export const uploadEventImage = async (
       fileName = `${eventId}/additional_${imageIndex}_${Date.now()}.${fileExt}`
     }
     
+    console.log('Uploading file:', fileName)
+    console.log('File size:', file.size)
+    console.log('File type:', file.type)
+    
     const { data, error } = await supabase.storage
       .from('event-images')
       .upload(fileName, file, {
         cacheControl: '3600',
         upsert: false
       })
+
+    console.log('Upload result:', { data, error })
 
     if (error) {
       console.error('Upload error:', error)
