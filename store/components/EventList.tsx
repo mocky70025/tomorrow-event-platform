@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase, type Event } from '@/lib/supabase'
 import EventCard from './EventCard'
+import ExhibitorProfile from './ExhibitorProfile'
 
 interface EventListProps {
   userProfile: any
@@ -11,6 +12,7 @@ interface EventListProps {
 export default function EventList({ userProfile }: EventListProps) {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
+  const [showProfile, setShowProfile] = useState(false)
 
   useEffect(() => {
     fetchEvents()
@@ -43,12 +45,24 @@ export default function EventList({ userProfile }: EventListProps) {
     )
   }
 
+  if (showProfile) {
+    return (
+      <ExhibitorProfile
+        userProfile={userProfile}
+        onBack={() => setShowProfile(false)}
+      />
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">イベント一覧</h1>
-          <button className="text-blue-500 hover:text-blue-600">
+          <button
+            onClick={() => setShowProfile(true)}
+            className="text-blue-500 hover:text-blue-600"
+          >
             登録情報変更
           </button>
         </div>
