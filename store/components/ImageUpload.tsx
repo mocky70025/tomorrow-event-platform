@@ -32,6 +32,13 @@ export default function ImageUpload({
     previewUrl,
     documentType
   })
+  
+  // デバッグ用アラート（スマホでも見れる）
+  if (currentImageUrl && currentImageUrl.trim() !== '') {
+    alert(`${label}の画像URL: ${currentImageUrl}`)
+  } else {
+    alert(`${label}の画像URL: なし`)
+  }
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]

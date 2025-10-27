@@ -57,6 +57,17 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
         fire_equipment_layout: data?.fire_equipment_layout,
       })
       
+      // デバッグ用アラート（スマホでも見れる）
+      const imageCount = [
+        data?.business_license,
+        data?.vehicle_inspection,
+        data?.automobile_inspection,
+        data?.pl_insurance,
+        data?.fire_equipment_layout,
+      ].filter(url => url && url.trim() !== '').length
+      
+      alert(`データ取得完了！\n画像URL数: ${imageCount}/5\n営業許可証: ${data?.business_license ? 'あり' : 'なし'}\n車検証: ${data?.vehicle_inspection ? 'あり' : 'なし'}`)
+      
       setExhibitorData(data)
     } catch (error) {
       console.error('Failed to fetch exhibitor data:', error)
