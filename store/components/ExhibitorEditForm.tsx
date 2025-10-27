@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { uploadExhibitorDocument } from '@/lib/storage'
 import ImageUpload from './ImageUpload'
 
 interface ExhibitorEditFormProps {
@@ -50,13 +49,6 @@ export default function ExhibitorEditForm({
     setImageUrls(prev => ({
       ...prev,
       [field]: url
-    }))
-  }
-
-  const handleImageDelete = (field: string) => {
-    setImageUrls(prev => ({
-      ...prev,
-      [field]: ''
     }))
   }
 
@@ -296,42 +288,47 @@ export default function ExhibitorEditForm({
               <div className="space-y-4">
                 <ImageUpload
                   label="営業許可証"
+                  documentType="business_license"
+                  userId={userProfile.userId}
                   currentImageUrl={imageUrls.business_license}
-                  onImageUpload={(url) => handleImageUpload('business_license', url)}
-                  onImageDelete={() => handleImageDelete('business_license')}
-                  uploadFunction={uploadExhibitorDocument}
+                  onUploadComplete={(url) => handleImageUpload('business_license', url)}
+                  onUploadError={(error) => alert(error)}
                 />
 
                 <ImageUpload
                   label="車検証"
+                  documentType="vehicle_inspection"
+                  userId={userProfile.userId}
                   currentImageUrl={imageUrls.vehicle_inspection}
-                  onImageUpload={(url) => handleImageUpload('vehicle_inspection', url)}
-                  onImageDelete={() => handleImageDelete('vehicle_inspection')}
-                  uploadFunction={uploadExhibitorDocument}
+                  onUploadComplete={(url) => handleImageUpload('vehicle_inspection', url)}
+                  onUploadError={(error) => alert(error)}
                 />
 
                 <ImageUpload
                   label="自動車検査証"
+                  documentType="automobile_inspection"
+                  userId={userProfile.userId}
                   currentImageUrl={imageUrls.automobile_inspection}
-                  onImageUpload={(url) => handleImageUpload('automobile_inspection', url)}
-                  onImageDelete={() => handleImageDelete('automobile_inspection')}
-                  uploadFunction={uploadExhibitorDocument}
+                  onUploadComplete={(url) => handleImageUpload('automobile_inspection', url)}
+                  onUploadError={(error) => alert(error)}
                 />
 
                 <ImageUpload
                   label="PL保険"
+                  documentType="pl_insurance"
+                  userId={userProfile.userId}
                   currentImageUrl={imageUrls.pl_insurance}
-                  onImageUpload={(url) => handleImageUpload('pl_insurance', url)}
-                  onImageDelete={() => handleImageDelete('pl_insurance')}
-                  uploadFunction={uploadExhibitorDocument}
+                  onUploadComplete={(url) => handleImageUpload('pl_insurance', url)}
+                  onUploadError={(error) => alert(error)}
                 />
 
                 <ImageUpload
                   label="火器類配置図"
+                  documentType="fire_equipment_layout"
+                  userId={userProfile.userId}
                   currentImageUrl={imageUrls.fire_equipment_layout}
-                  onImageUpload={(url) => handleImageUpload('fire_equipment_layout', url)}
-                  onImageDelete={() => handleImageDelete('fire_equipment_layout')}
-                  uploadFunction={uploadExhibitorDocument}
+                  onUploadComplete={(url) => handleImageUpload('fire_equipment_layout', url)}
+                  onUploadError={(error) => alert(error)}
                 />
               </div>
             </div>
