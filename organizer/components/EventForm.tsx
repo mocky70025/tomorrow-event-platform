@@ -199,16 +199,8 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
         throw updateError
       }
 
-      const { data, error } = { data: updatedData, error: null }
-
-      if (error) {
-        console.error('Supabase error:', error)
-        console.error('Supabase error details:', JSON.stringify(error, null, 2))
-        throw new Error(`Supabase error: ${error.message || JSON.stringify(error)}`)
-      }
-
-      console.log('Event created successfully:', data)
-      onEventCreated(data)
+      console.log('Event updated successfully:', updatedData)
+      onEventCreated(updatedData)
     } catch (error) {
       console.error('Event creation failed:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
