@@ -119,12 +119,13 @@ export default function ExhibitorEditForm({
         if (error instanceof Error) {
           errorMessage = error.message
         } else if (typeof error === 'object' && error !== null) {
-          if ('message' in error) {
-            errorMessage = String(error.message)
-          } else if ('details' in error) {
-            errorMessage = String(error.details)
-          } else if ('hint' in error) {
-            errorMessage = String(error.hint)
+          const errorObj = error as any
+          if (errorObj.message) {
+            errorMessage = String(errorObj.message)
+          } else if (errorObj.details) {
+            errorMessage = String(errorObj.details)
+          } else if (errorObj.hint) {
+            errorMessage = String(errorObj.hint)
           }
         }
         
@@ -143,12 +144,13 @@ export default function ExhibitorEditForm({
       if (error instanceof Error) {
         errorMessage = error.message
       } else if (typeof error === 'object' && error !== null) {
-        if ('message' in error) {
-          errorMessage = String(error.message)
-        } else if ('details' in error) {
-          errorMessage = String(error.details)
-        } else if ('hint' in error) {
-          errorMessage = String(error.hint)
+        const errorObj = error as any
+        if (errorObj.message) {
+          errorMessage = String(errorObj.message)
+        } else if (errorObj.details) {
+          errorMessage = String(errorObj.details)
+        } else if (errorObj.hint) {
+          errorMessage = String(errorObj.hint)
         } else {
           errorMessage = JSON.stringify(error)
         }
