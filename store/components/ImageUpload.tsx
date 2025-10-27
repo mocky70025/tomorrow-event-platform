@@ -9,6 +9,7 @@ interface ImageUploadProps {
   userId: string
   onUploadComplete: (url: string) => void
   onUploadError: (error: string) => void
+  onImageDelete?: () => void
   currentImageUrl?: string
 }
 
@@ -18,6 +19,7 @@ export default function ImageUpload({
   userId,
   onUploadComplete,
   onUploadError,
+  onImageDelete,
   currentImageUrl
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
@@ -72,6 +74,10 @@ export default function ImageUpload({
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+    // 親コンポーネントに削除を通知
+    if (onImageDelete) {
+      onImageDelete()
+    }
   }
 
   return (
@@ -91,9 +97,13 @@ export default function ImageUpload({
             type="button"
             onClick={handleRemoveImage}
             className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+            title="画像を削除"
           >
             ×
           </button>
+          <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+            {currentImageUrl && previewUrl === currentImageUrl ? '現在の画像' : '新しい画像'}
+          </div>
         </div>
       )}
 
@@ -115,7 +125,7 @@ export default function ImageUpload({
               : 'bg-white hover:bg-gray-50'
           }`}
         >
-          {uploading ? 'アップロード中...' : 'ファイルを選択'}
+          {uploading ? 'アップロード中...' : previewUrl ? '画像を変更' : 'ファイルを選択'}
         </label>
       </div>
       

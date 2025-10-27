@@ -52,6 +52,13 @@ export default function ExhibitorEditForm({
     }))
   }
 
+  const handleImageDelete = (field: string) => {
+    setImageUrls(prev => ({
+      ...prev,
+      [field]: ''
+    }))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -293,6 +300,7 @@ export default function ExhibitorEditForm({
                   currentImageUrl={imageUrls.business_license}
                   onUploadComplete={(url) => handleImageUpload('business_license', url)}
                   onUploadError={(error) => alert(error)}
+                  onImageDelete={() => handleImageDelete('business_license')}
                 />
 
                 <ImageUpload
@@ -302,6 +310,7 @@ export default function ExhibitorEditForm({
                   currentImageUrl={imageUrls.vehicle_inspection}
                   onUploadComplete={(url) => handleImageUpload('vehicle_inspection', url)}
                   onUploadError={(error) => alert(error)}
+                  onImageDelete={() => handleImageDelete('vehicle_inspection')}
                 />
 
                 <ImageUpload
@@ -311,6 +320,7 @@ export default function ExhibitorEditForm({
                   currentImageUrl={imageUrls.automobile_inspection}
                   onUploadComplete={(url) => handleImageUpload('automobile_inspection', url)}
                   onUploadError={(error) => alert(error)}
+                  onImageDelete={() => handleImageDelete('automobile_inspection')}
                 />
 
                 <ImageUpload
@@ -320,6 +330,7 @@ export default function ExhibitorEditForm({
                   currentImageUrl={imageUrls.pl_insurance}
                   onUploadComplete={(url) => handleImageUpload('pl_insurance', url)}
                   onUploadError={(error) => alert(error)}
+                  onImageDelete={() => handleImageDelete('pl_insurance')}
                 />
 
                 <ImageUpload
@@ -329,6 +340,7 @@ export default function ExhibitorEditForm({
                   currentImageUrl={imageUrls.fire_equipment_layout}
                   onUploadComplete={(url) => handleImageUpload('fire_equipment_layout', url)}
                   onUploadError={(error) => alert(error)}
+                  onImageDelete={() => handleImageDelete('fire_equipment_layout')}
                 />
               </div>
             </div>
