@@ -10,6 +10,14 @@ DROP POLICY IF EXISTS "Allow authenticated users to upload event images" ON stor
 DROP POLICY IF EXISTS "Allow public to view event images" ON storage.objects;
 DROP POLICY IF EXISTS "Allow authenticated users to update event images" ON storage.objects;
 DROP POLICY IF EXISTS "Allow authenticated users to delete event images" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public upload to exhibitor-documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public select from exhibitor-documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public update to exhibitor-documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public delete from exhibitor-documents" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public upload to event-images" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public select from event-images" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public update to event-images" ON storage.objects;
+DROP POLICY IF EXISTS "Allow public delete from event-images" ON storage.objects;
 
 -- 2. 緩和されたRLSポリシーを作成
 -- 出店者用書類バケット
