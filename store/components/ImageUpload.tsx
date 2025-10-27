@@ -26,6 +26,13 @@ export default function ImageUpload({
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // デバッグ用ログ
+  console.log(`ImageUpload ${label}:`, {
+    currentImageUrl,
+    previewUrl,
+    documentType
+  })
+
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return

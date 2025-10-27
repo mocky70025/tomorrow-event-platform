@@ -46,6 +46,17 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
         .single()
 
       if (error) throw error
+      
+      // デバッグ用ログ
+      console.log('Fetched exhibitor data:', data)
+      console.log('Image URLs:', {
+        business_license: data?.business_license,
+        vehicle_inspection: data?.vehicle_inspection,
+        automobile_inspection: data?.automobile_inspection,
+        pl_insurance: data?.pl_insurance,
+        fire_equipment_layout: data?.fire_equipment_layout,
+      })
+      
       setExhibitorData(data)
     } catch (error) {
       console.error('Failed to fetch exhibitor data:', error)

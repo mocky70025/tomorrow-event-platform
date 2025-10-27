@@ -35,6 +35,10 @@ export default function ExhibitorEditForm({
     fire_equipment_layout: exhibitorData.fire_equipment_layout || '',
   })
 
+  // デバッグ用ログ
+  console.log('ExhibitorEditForm imageUrls:', imageUrls)
+  console.log('ExhibitorEditForm exhibitorData:', exhibitorData)
+
   const [loading, setLoading] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
