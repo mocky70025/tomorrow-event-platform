@@ -66,7 +66,16 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
         data?.fire_equipment_layout,
       ].filter(url => url && url.trim() !== '').length
       
-      alert(`データ取得完了！\n画像URL数: ${imageCount}/5\n営業許可証: ${data?.business_license ? 'あり' : 'なし'}\n車検証: ${data?.vehicle_inspection ? 'あり' : 'なし'}`)
+      // より詳細なデバッグ情報
+      const debugInfo = [
+        `営業許可証: ${data?.business_license || 'null'}`,
+        `車検証: ${data?.vehicle_inspection || 'null'}`,
+        `自動車検査証: ${data?.automobile_inspection || 'null'}`,
+        `PL保険: ${data?.pl_insurance || 'null'}`,
+        `火器類配置図: ${data?.fire_equipment_layout || 'null'}`
+      ].join('\n')
+      
+      alert(`データ取得完了！\n画像URL数: ${imageCount}/5\n\n詳細:\n${debugInfo}`)
       
       setExhibitorData(data)
     } catch (error) {
