@@ -210,40 +210,75 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 label="営業許可証"
                 documentType="business_license"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, business_license: url }))}
-                onUploadError={(error) => alert(error)}
+                onUploadComplete={(url) => {
+                  console.log('Business license uploaded:', url)
+                  alert(`営業許可証アップロード成功！\nURL: ${url}`)
+                  setDocumentUrls(prev => ({ ...prev, business_license: url }))
+                }}
+                onUploadError={(error) => {
+                  console.error('Business license upload error:', error)
+                  alert(`営業許可証アップロード失敗！\nエラー: ${error}`)
+                }}
               />
               
               <ImageUpload
                 label="車検証"
                 documentType="vehicle_inspection"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))}
-                onUploadError={(error) => alert(error)}
+                onUploadComplete={(url) => {
+                  console.log('Vehicle inspection uploaded:', url)
+                  alert(`車検証アップロード成功！\nURL: ${url}`)
+                  setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))
+                }}
+                onUploadError={(error) => {
+                  console.error('Vehicle inspection upload error:', error)
+                  alert(`車検証アップロード失敗！\nエラー: ${error}`)
+                }}
               />
               
               <ImageUpload
                 label="自動車検査証"
                 documentType="automobile_inspection"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))}
-                onUploadError={(error) => alert(error)}
+                onUploadComplete={(url) => {
+                  console.log('Automobile inspection uploaded:', url)
+                  alert(`自動車検査証アップロード成功！\nURL: ${url}`)
+                  setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))
+                }}
+                onUploadError={(error) => {
+                  console.error('Automobile inspection upload error:', error)
+                  alert(`自動車検査証アップロード失敗！\nエラー: ${error}`)
+                }}
               />
               
               <ImageUpload
                 label="PL保険"
                 documentType="pl_insurance"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))}
-                onUploadError={(error) => alert(error)}
+                onUploadComplete={(url) => {
+                  console.log('PL insurance uploaded:', url)
+                  alert(`PL保険アップロード成功！\nURL: ${url}`)
+                  setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))
+                }}
+                onUploadError={(error) => {
+                  console.error('PL insurance upload error:', error)
+                  alert(`PL保険アップロード失敗！\nエラー: ${error}`)
+                }}
               />
               
               <ImageUpload
                 label="火器類配置図"
                 documentType="fire_equipment_layout"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))}
-                onUploadError={(error) => alert(error)}
+                onUploadComplete={(url) => {
+                  console.log('Fire equipment layout uploaded:', url)
+                  alert(`火器類配置図アップロード成功！\nURL: ${url}`)
+                  setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))
+                }}
+                onUploadError={(error) => {
+                  console.error('Fire equipment layout upload error:', error)
+                  alert(`火器類配置図アップロード失敗！\nエラー: ${error}`)
+                }}
               />
             </div>
           </div>
