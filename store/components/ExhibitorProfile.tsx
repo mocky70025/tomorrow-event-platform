@@ -166,7 +166,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.business_license_image_url}
                         alt="営業許可証"
-                        className="w-full h-32 object-cover rounded border"
+                        className="w-full h-32 object-contain rounded border bg-gray-100"
                       />
                     </div>
                   )}
@@ -176,7 +176,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.vehicle_inspection_image_url}
                         alt="車検証"
-                        className="w-full h-32 object-cover rounded border"
+                        className="w-full h-32 object-contain rounded border bg-gray-100"
                       />
                     </div>
                   )}
@@ -186,7 +186,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.automobile_inspection_image_url}
                         alt="自動車検査証"
-                        className="w-full h-32 object-cover rounded border"
+                        className="w-full h-32 object-contain rounded border bg-gray-100"
                       />
                     </div>
                   )}
@@ -196,7 +196,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.pl_insurance_image_url}
                         alt="PL保険"
-                        className="w-full h-32 object-cover rounded border"
+                        className="w-full h-32 object-contain rounded border bg-gray-100"
                       />
                     </div>
                   )}
@@ -206,7 +206,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.fire_equipment_layout_image_url}
                         alt="火器類配置図"
-                        className="w-full h-32 object-cover rounded border"
+                        className="w-full h-32 object-contain rounded border bg-gray-100"
                       />
                     </div>
                   )}
