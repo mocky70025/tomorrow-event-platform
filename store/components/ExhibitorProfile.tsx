@@ -14,15 +14,15 @@ interface ExhibitorData {
   name: string
   gender: string
   age: number
-  phone: string
+  phone_number: string
   email: string
-  genre: string
-  genre_detail: string
-  business_license: string | null
-  vehicle_inspection: string | null
-  automobile_inspection: string | null
-  pl_insurance: string | null
-  fire_equipment_layout: string | null
+  genre_category?: string
+  genre_free_text?: string
+  business_license_image_url?: string | null
+  vehicle_inspection_image_url?: string | null
+  automobile_inspection_image_url?: string | null
+  pl_insurance_image_url?: string | null
+  fire_equipment_layout_image_url?: string | null
   line_user_id: string
   created_at: string
   updated_at: string
@@ -46,16 +46,6 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
         .single()
 
       if (error) throw error
-      
-      // デバッグ用ログ
-      console.log('Fetched exhibitor data:', data)
-      console.log('Image URLs:', {
-        business_license: data?.business_license,
-        vehicle_inspection: data?.vehicle_inspection,
-        automobile_inspection: data?.automobile_inspection,
-        pl_insurance: data?.pl_insurance,
-        fire_equipment_layout: data?.fire_equipment_layout,
-      })
       
       setExhibitorData(data)
     } catch (error) {
@@ -140,7 +130,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   電話番号
                 </label>
-                <p className="text-gray-900">{exhibitorData.phone}</p>
+                <p className="text-gray-900">{exhibitorData.phone_number}</p>
               </div>
 
               <div>
@@ -154,14 +144,14 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   ジャンル
                 </label>
-                <p className="text-gray-900">{exhibitorData.genre}</p>
+                <p className="text-gray-900">{exhibitorData.genre_category || '-'}</p>
               </div>
 
               <div className="md:col-span-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   ジャンル詳細
                 </label>
-                <p className="text-gray-900">{exhibitorData.genre_detail}</p>
+                <p className="text-gray-900">{exhibitorData.genre_free_text || '-'}</p>
               </div>
 
               {/* 書類画像の表示 */}
@@ -170,51 +160,51 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   登録書類
                 </label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {exhibitorData.business_license && (
+                  {exhibitorData.business_license_image_url && (
                     <div>
                       <p className="text-sm text-gray-600 mb-2">営業許可証</p>
                       <img
-                        src={exhibitorData.business_license}
+                        src={exhibitorData.business_license_image_url}
                         alt="営業許可証"
                         className="w-full h-32 object-cover rounded border"
                       />
                     </div>
                   )}
-                  {exhibitorData.vehicle_inspection && (
+                  {exhibitorData.vehicle_inspection_image_url && (
                     <div>
                       <p className="text-sm text-gray-600 mb-2">車検証</p>
                       <img
-                        src={exhibitorData.vehicle_inspection}
+                        src={exhibitorData.vehicle_inspection_image_url}
                         alt="車検証"
                         className="w-full h-32 object-cover rounded border"
                       />
                     </div>
                   )}
-                  {exhibitorData.automobile_inspection && (
+                  {exhibitorData.automobile_inspection_image_url && (
                     <div>
                       <p className="text-sm text-gray-600 mb-2">自動車検査証</p>
                       <img
-                        src={exhibitorData.automobile_inspection}
+                        src={exhibitorData.automobile_inspection_image_url}
                         alt="自動車検査証"
                         className="w-full h-32 object-cover rounded border"
                       />
                     </div>
                   )}
-                  {exhibitorData.pl_insurance && (
+                  {exhibitorData.pl_insurance_image_url && (
                     <div>
                       <p className="text-sm text-gray-600 mb-2">PL保険</p>
                       <img
-                        src={exhibitorData.pl_insurance}
+                        src={exhibitorData.pl_insurance_image_url}
                         alt="PL保険"
                         className="w-full h-32 object-cover rounded border"
                       />
                     </div>
                   )}
-                  {exhibitorData.fire_equipment_layout && (
+                  {exhibitorData.fire_equipment_layout_image_url && (
                     <div>
                       <p className="text-sm text-gray-600 mb-2">火器類配置図</p>
                       <img
-                        src={exhibitorData.fire_equipment_layout}
+                        src={exhibitorData.fire_equipment_layout_image_url}
                         alt="火器類配置図"
                         className="w-full h-32 object-cover rounded border"
                       />

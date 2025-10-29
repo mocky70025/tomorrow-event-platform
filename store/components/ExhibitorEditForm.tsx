@@ -21,25 +21,21 @@ export default function ExhibitorEditForm({
     name: exhibitorData.name || '',
     gender: exhibitorData.gender || '',
     age: exhibitorData.age || '',
-    phone: exhibitorData.phone || '',
+    phone_number: exhibitorData.phone_number || '',
     email: exhibitorData.email || '',
-    genre: exhibitorData.genre || '',
-    genre_detail: exhibitorData.genre_detail || '',
+    genre_category: exhibitorData.genre_category || '',
+    genre_free_text: exhibitorData.genre_free_text || '',
   })
 
   const [imageUrls, setImageUrls] = useState({
-    business_license: exhibitorData.business_license || '',
-    vehicle_inspection: exhibitorData.vehicle_inspection || '',
-    automobile_inspection: exhibitorData.automobile_inspection || '',
-    pl_insurance: exhibitorData.pl_insurance || '',
-    fire_equipment_layout: exhibitorData.fire_equipment_layout || '',
+    business_license_image_url: exhibitorData.business_license_image_url || '',
+    vehicle_inspection_image_url: exhibitorData.vehicle_inspection_image_url || '',
+    automobile_inspection_image_url: exhibitorData.automobile_inspection_image_url || '',
+    pl_insurance_image_url: exhibitorData.pl_insurance_image_url || '',
+    fire_equipment_layout_image_url: exhibitorData.fire_equipment_layout_image_url || '',
   })
 
-  // デバッグ用ログ
-    console.log('ExhibitorEditForm imageUrls:', imageUrls)
-    console.log('ExhibitorEditForm exhibitorData:', exhibitorData)
-
-    const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -81,7 +77,7 @@ export default function ExhibitorEditForm({
         alert('年齢を正しく入力してください（0-99歳）')
         return
       }
-      if (!formData.phone.trim()) {
+      if (!formData.phone_number.trim()) {
         alert('電話番号を入力してください')
         return
       }
@@ -89,20 +85,16 @@ export default function ExhibitorEditForm({
         alert('メールアドレスを入力してください')
         return
       }
-      if (!formData.genre) {
-        alert('ジャンルを選択してください')
-        return
-      }
 
       // 更新データの準備
       const updateData = {
         ...formData,
         age: parseInt(formData.age),
-        business_license: imageUrls.business_license || null,
-        vehicle_inspection: imageUrls.vehicle_inspection || null,
-        automobile_inspection: imageUrls.automobile_inspection || null,
-        pl_insurance: imageUrls.pl_insurance || null,
-        fire_equipment_layout: imageUrls.fire_equipment_layout || null,
+        business_license_image_url: imageUrls.business_license_image_url || null,
+        vehicle_inspection_image_url: imageUrls.vehicle_inspection_image_url || null,
+        automobile_inspection_image_url: imageUrls.automobile_inspection_image_url || null,
+        pl_insurance_image_url: imageUrls.pl_insurance_image_url || null,
+        fire_equipment_layout_image_url: imageUrls.fire_equipment_layout_image_url || null,
         updated_at: new Date().toISOString()
       }
 
@@ -235,8 +227,8 @@ export default function ExhibitorEditForm({
               </label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
+                name="phone_number"
+                value={formData.phone_number}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
@@ -259,31 +251,29 @@ export default function ExhibitorEditForm({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ジャンル <span className="text-red-500">*</span>
+                ジャンル
               </label>
               <select
-                name="genre"
-                value={formData.genre}
+                name="genre_category"
+                value={formData.genre_category}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                required
               >
                 <option value="">選択してください</option>
                 <option value="飲食">飲食</option>
-                <option value="雑貨">雑貨</option>
-                <option value="アート・工芸">アート・工芸</option>
-                <option value="ファッション">ファッション</option>
+                <option value="物販">物販</option>
+                <option value="サービス">サービス</option>
                 <option value="その他">その他</option>
               </select>
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ジャンル詳細
+                ジャンル（自由回答）
               </label>
               <textarea
-                name="genre_detail"
-                value={formData.genre_detail}
+                name="genre_free_text"
+                value={formData.genre_free_text}
                 onChange={handleInputChange}
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -301,50 +291,50 @@ export default function ExhibitorEditForm({
                   label="営業許可証"
                   documentType="business_license"
                   userId={userProfile.userId}
-                  currentImageUrl={imageUrls.business_license}
-                  onUploadComplete={(url) => handleImageUpload('business_license', url)}
+                  currentImageUrl={imageUrls.business_license_image_url}
+                  onUploadComplete={(url) => handleImageUpload('business_license_image_url', url)}
                   onUploadError={(error) => alert(error)}
-                  onImageDelete={() => handleImageDelete('business_license')}
+                  onImageDelete={() => handleImageDelete('business_license_image_url')}
                 />
 
                 <ImageUpload
                   label="車検証"
                   documentType="vehicle_inspection"
                   userId={userProfile.userId}
-                  currentImageUrl={imageUrls.vehicle_inspection}
-                  onUploadComplete={(url) => handleImageUpload('vehicle_inspection', url)}
+                  currentImageUrl={imageUrls.vehicle_inspection_image_url}
+                  onUploadComplete={(url) => handleImageUpload('vehicle_inspection_image_url', url)}
                   onUploadError={(error) => alert(error)}
-                  onImageDelete={() => handleImageDelete('vehicle_inspection')}
+                  onImageDelete={() => handleImageDelete('vehicle_inspection_image_url')}
                 />
 
                 <ImageUpload
                   label="自動車検査証"
                   documentType="automobile_inspection"
                   userId={userProfile.userId}
-                  currentImageUrl={imageUrls.automobile_inspection}
-                  onUploadComplete={(url) => handleImageUpload('automobile_inspection', url)}
+                  currentImageUrl={imageUrls.automobile_inspection_image_url}
+                  onUploadComplete={(url) => handleImageUpload('automobile_inspection_image_url', url)}
                   onUploadError={(error) => alert(error)}
-                  onImageDelete={() => handleImageDelete('automobile_inspection')}
+                  onImageDelete={() => handleImageDelete('automobile_inspection_image_url')}
                 />
 
                 <ImageUpload
                   label="PL保険"
                   documentType="pl_insurance"
                   userId={userProfile.userId}
-                  currentImageUrl={imageUrls.pl_insurance}
-                  onUploadComplete={(url) => handleImageUpload('pl_insurance', url)}
+                  currentImageUrl={imageUrls.pl_insurance_image_url}
+                  onUploadComplete={(url) => handleImageUpload('pl_insurance_image_url', url)}
                   onUploadError={(error) => alert(error)}
-                  onImageDelete={() => handleImageDelete('pl_insurance')}
+                  onImageDelete={() => handleImageDelete('pl_insurance_image_url')}
                 />
 
                 <ImageUpload
                   label="火器類配置図"
                   documentType="fire_equipment_layout"
                   userId={userProfile.userId}
-                  currentImageUrl={imageUrls.fire_equipment_layout}
-                  onUploadComplete={(url) => handleImageUpload('fire_equipment_layout', url)}
+                  currentImageUrl={imageUrls.fire_equipment_layout_image_url}
+                  onUploadComplete={(url) => handleImageUpload('fire_equipment_layout_image_url', url)}
                   onUploadError={(error) => alert(error)}
-                  onImageDelete={() => handleImageDelete('fire_equipment_layout')}
+                  onImageDelete={() => handleImageDelete('fire_equipment_layout_image_url')}
                 />
               </div>
             </div>
