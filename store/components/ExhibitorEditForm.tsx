@@ -36,14 +36,10 @@ export default function ExhibitorEditForm({
   })
 
   // デバッグ用ログ
-  console.log('ExhibitorEditForm imageUrls:', imageUrls)
-  console.log('ExhibitorEditForm exhibitorData:', exhibitorData)
-  
-  // デバッグ用アラート（スマホでも見れる）
-  const imageCount = Object.values(imageUrls).filter(url => url && url.trim() !== '').length
-  alert(`編集フォーム初期化！\n画像URL数: ${imageCount}/5\n営業許可証: ${imageUrls.business_license ? 'あり' : 'なし'}\n車検証: ${imageUrls.vehicle_inspection ? 'あり' : 'なし'}`)
+    console.log('ExhibitorEditForm imageUrls:', imageUrls)
+    console.log('ExhibitorEditForm exhibitorData:', exhibitorData)
 
-  const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

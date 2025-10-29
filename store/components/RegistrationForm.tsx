@@ -50,9 +50,6 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       // 書類のURLを設定
       const documentImageUrls: Partial<Exhibitor> = {}
       
-      console.log('Document URLs before processing:', documentUrls)
-      alert(`登録データ確認:\n営業許可証: ${documentUrls.business_license ? 'あり' : 'なし'}\n車検証: ${documentUrls.vehicle_inspection ? 'あり' : 'なし'}\n自動車検査証: ${documentUrls.automobile_inspection ? 'あり' : 'なし'}\nPL保険: ${documentUrls.pl_insurance ? 'あり' : 'なし'}\n火器類配置図: ${documentUrls.fire_equipment_layout ? 'あり' : 'なし'}`)
-      
       if (documentUrls.business_license) {
         documentImageUrls.business_license_image_url = documentUrls.business_license
       }
@@ -68,27 +65,17 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       if (documentUrls.fire_equipment_layout) {
         documentImageUrls.fire_equipment_layout_image_url = documentUrls.fire_equipment_layout
       }
-      
-      console.log('Processed document URLs:', documentImageUrls)
-      alert(`処理後の画像URL:\n${JSON.stringify(documentImageUrls, null, 2)}`)
-
-      const insertData = {
-        ...formData,
-        ...documentImageUrls,
-        line_user_id: userProfile.userId,
-      }
-      
-      console.log('Insert data:', insertData)
-      alert(`Supabaseに送信するデータ:\n${JSON.stringify(insertData, null, 2)}`)
 
       const { error } = await supabase
         .from('exhibitors')
-        .insert(insertData)
+        .insert({
+          ...formData,
+          ...documentImageUrls,
+          line_user_id: userProfile.userId,
+        })
 
       if (error) {
         console.error('Supabase error:', error)
-        console.error('Supabase error details:', JSON.stringify(error, null, 2))
-        alert(`Supabaseエラー詳細:\n${JSON.stringify(error, null, 2)}`)
         throw error
       }
 
@@ -223,75 +210,40 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 label="営業許可証"
                 documentType="business_license"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => {
-                  console.log('Business license uploaded:', url)
-                  alert(`営業許可証アップロード成功！\nURL: ${url}`)
-                  setDocumentUrls(prev => ({ ...prev, business_license: url }))
-                }}
-                onUploadError={(error) => {
-                  console.error('Business license upload error:', error)
-                  alert(`営業許可証アップロード失敗！\nエラー: ${error}`)
-                }}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, business_license: url }))}
+                onUploadError={(error) => alert(error)}
               />
               
               <ImageUpload
                 label="車検証"
                 documentType="vehicle_inspection"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => {
-                  console.log('Vehicle inspection uploaded:', url)
-                  alert(`車検証アップロード成功！\nURL: ${url}`)
-                  setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))
-                }}
-                onUploadError={(error) => {
-                  console.error('Vehicle inspection upload error:', error)
-                  alert(`車検証アップロード失敗！\nエラー: ${error}`)
-                }}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))}
+                onUploadError={(error) => alert(error)}
               />
               
               <ImageUpload
                 label="自動車検査証"
                 documentType="automobile_inspection"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => {
-                  console.log('Automobile inspection uploaded:', url)
-                  alert(`自動車検査証アップロード成功！\nURL: ${url}`)
-                  setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))
-                }}
-                onUploadError={(error) => {
-                  console.error('Automobile inspection upload error:', error)
-                  alert(`自動車検査証アップロード失敗！\nエラー: ${error}`)
-                }}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))}
+                onUploadError={(error) => alert(error)}
               />
               
               <ImageUpload
                 label="PL保険"
                 documentType="pl_insurance"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => {
-                  console.log('PL insurance uploaded:', url)
-                  alert(`PL保険アップロード成功！\nURL: ${url}`)
-                  setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))
-                }}
-                onUploadError={(error) => {
-                  console.error('PL insurance upload error:', error)
-                  alert(`PL保険アップロード失敗！\nエラー: ${error}`)
-                }}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))}
+                onUploadError={(error) => alert(error)}
               />
               
               <ImageUpload
                 label="火器類配置図"
                 documentType="fire_equipment_layout"
                 userId={userProfile.userId}
-                onUploadComplete={(url) => {
-                  console.log('Fire equipment layout uploaded:', url)
-                  alert(`火器類配置図アップロード成功！\nURL: ${url}`)
-                  setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))
-                }}
-                onUploadError={(error) => {
-                  console.error('Fire equipment layout upload error:', error)
-                  alert(`火器類配置図アップロード失敗！\nエラー: ${error}`)
-                }}
+                onUploadComplete={(url) => setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))}
+                onUploadError={(error) => alert(error)}
               />
             </div>
           </div>
