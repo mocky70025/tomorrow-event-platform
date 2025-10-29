@@ -50,6 +50,9 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       // 書類のURLを設定
       const documentImageUrls: Partial<Exhibitor> = {}
       
+      console.log('Document URLs before processing:', documentUrls)
+      alert(`登録データ確認:\n営業許可証: ${documentUrls.business_license ? 'あり' : 'なし'}\n車検証: ${documentUrls.vehicle_inspection ? 'あり' : 'なし'}\n自動車検査証: ${documentUrls.automobile_inspection ? 'あり' : 'なし'}\nPL保険: ${documentUrls.pl_insurance ? 'あり' : 'なし'}\n火器類配置図: ${documentUrls.fire_equipment_layout ? 'あり' : 'なし'}`)
+      
       if (documentUrls.business_license) {
         documentImageUrls.business_license_image_url = documentUrls.business_license
       }
@@ -65,17 +68,27 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       if (documentUrls.fire_equipment_layout) {
         documentImageUrls.fire_equipment_layout_image_url = documentUrls.fire_equipment_layout
       }
+      
+      console.log('Processed document URLs:', documentImageUrls)
+      alert(`処理後の画像URL:\n${JSON.stringify(documentImageUrls, null, 2)}`)
+
+      const insertData = {
+        ...formData,
+        ...documentImageUrls,
+        line_user_id: userProfile.userId,
+      }
+      
+      console.log('Insert data:', insertData)
+      alert(`Supabaseに送信するデータ:\n${JSON.stringify(insertData, null, 2)}`)
 
       const { error } = await supabase
         .from('exhibitors')
-        .insert({
-          ...formData,
-          ...documentImageUrls,
-          line_user_id: userProfile.userId,
-        })
+        .insert(insertData)
 
       if (error) {
         console.error('Supabase error:', error)
+        console.error('Supabase error details:', JSON.stringify(error, null, 2))
+        alert(`Supabaseエラー詳細:\n${JSON.stringify(error, null, 2)}`)
         throw error
       }
 
