@@ -98,7 +98,7 @@ export default function ImageUpload({
           <img
             src={previewUrl}
             alt={label}
-            className="w-full h-48 object-contain rounded-md border bg-gray-100"
+            className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
           />
           <button
             type="button"

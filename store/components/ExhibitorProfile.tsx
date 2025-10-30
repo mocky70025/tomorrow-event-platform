@@ -159,14 +159,14 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   登録書類
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-6">
                   {exhibitorData.business_license_image_url && (
                     <div>
                       <p className="text-sm text-gray-600 mb-2">営業許可証</p>
                       <img
                         src={exhibitorData.business_license_image_url}
                         alt="営業許可証"
-                        className="w-full h-48 object-contain rounded border bg-gray-100"
+                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
                       />
                     </div>
                   )}
@@ -176,7 +176,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.vehicle_inspection_image_url}
                         alt="車検証"
-                        className="w-full h-48 object-contain rounded border bg-gray-100"
+                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
                       />
                     </div>
                   )}
@@ -186,7 +186,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.automobile_inspection_image_url}
                         alt="自動車検査証"
-                        className="w-full h-48 object-contain rounded border bg-gray-100"
+                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
                       />
                     </div>
                   )}
@@ -196,7 +196,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.pl_insurance_image_url}
                         alt="PL保険"
-                        className="w-full h-48 object-contain rounded border bg-gray-100"
+                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
                       />
                     </div>
                   )}
@@ -206,7 +206,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                       <img
                         src={exhibitorData.fire_equipment_layout_image_url}
                         alt="火器類配置図"
-                        className="w-full h-48 object-contain rounded border bg-gray-100"
+                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
                       />
                     </div>
                   )}
