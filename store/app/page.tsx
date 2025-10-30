@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import WelcomeScreen from '@/components/WelcomeScreen'
 import RegistrationForm from '@/components/RegistrationForm'
 import EventList from '@/components/EventList'
+import ExhibitorProfile from '@/components/ExhibitorProfile'
 import ApplicationManagement from '@/components/ApplicationManagement'
 import LoadingSpinner from '@/components/LoadingSpinner'
 
