@@ -161,17 +161,25 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
       let finalEvent
 
       if (eventId) {
-        // 更新フロー
+        // 更新フロー: 空文字は上書きしない（既存値保持）。
+        const updatePayload: any = {}
+        Object.entries(submitData).forEach(([key, value]) => {
+          if (value === '' || value === undefined) return // skip empty
+          updatePayload[key] = value
+        })
+        // 画像は指定があるものだけ更新
+        if (imageUrls.main) updatePayload.main_image_url = imageUrls.main
+        if (imageUrls.additional1) updatePayload.additional_image1_url = imageUrls.additional1
+        if (imageUrls.additional2) updatePayload.additional_image2_url = imageUrls.additional2
+        if (imageUrls.additional3) updatePayload.additional_image3_url = imageUrls.additional3
+        if (imageUrls.additional4) updatePayload.additional_image4_url = imageUrls.additional4
+
+        // 可変でnullを許す日付フィールドは明示的にnullを指定したい場合にのみ対応
+        // （UIで空にしただけでは上書きしない方針）
+
         const { data: updated, error: updateError } = await supabase
           .from('events')
-          .update({
-            ...submitData,
-            main_image_url: imageUrls.main || null,
-            additional_image1_url: imageUrls.additional1 || null,
-            additional_image2_url: imageUrls.additional2 || null,
-            additional_image3_url: imageUrls.additional3 || null,
-            additional_image4_url: imageUrls.additional4 || null,
-          })
+          .update(updatePayload)
           .eq('id', eventId)
           .select()
           .single()
