@@ -149,9 +149,13 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
       console.log('Submitting event data:', submitData)
 
+      // 更新モードかどうかを明確に判定（initialEventが渡されている or eventIdが存在）
+      const isUpdateMode = !!(initialEvent?.id || eventId)
+      const targetEventId = initialEvent?.id || eventId
+
       let finalEvent
 
-      if (eventId) {
+      if (isUpdateMode && targetEventId) {
         // 更新フロー: 空文字は上書きしない（既存値保持）。
         const updatePayload: any = {}
         Object.entries(submitData).forEach(([key, value]) => {
@@ -171,7 +175,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
         const { data: updated, error: updateError } = await supabase
           .from('events')
           .update(updatePayload)
-          .eq('id', eventId)
+          .eq('id', targetEventId)
           .select()
           .single()
 
@@ -227,7 +231,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
         }
       }
       
-      alert(`イベントの作成に失敗しました。エラー: ${errorMessage}`)
+      alert(`イベントの${isUpdateMode ? '更新' : '作成'}に失敗しました。エラー: ${errorMessage}`)
     } finally {
       setLoading(false)
     }

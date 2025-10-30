@@ -48,8 +48,19 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     }
   }
 
-  const handleEventCreated = (newEvent: Event) => {
-    setEvents([newEvent, ...events])
+  const handleEventCreated = (savedEvent: Event) => {
+    // 更新の場合: 既存のイベントを置き換え
+    // 作成の場合: 先頭に追加
+    const existingIndex = events.findIndex(e => e.id === savedEvent.id)
+    if (existingIndex >= 0) {
+      // 更新: 既存イベントを置き換え
+      const updatedEvents = [...events]
+      updatedEvents[existingIndex] = savedEvent
+      setEvents(updatedEvents)
+    } else {
+      // 新規: 先頭に追加
+      setEvents([savedEvent, ...events])
+    }
     setShowEventForm(false)
     setEventToEdit(null)
   }
