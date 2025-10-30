@@ -60,6 +60,36 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     additional4: (initialEvent as any)?.additional_image4_url || '',
   })
 
+  // 必須項目のバリデーション（最初の未入力へスクロール＆フォーカス）
+  const validateRequired = (): { ok: boolean; message?: string } => {
+    const requiredList: Array<{ key: keyof typeof formData; label: string }> = [
+      { key: 'event_name', label: 'イベント名称' },
+      { key: 'event_name_furigana', label: 'イベント名称フリガナ' },
+      { key: 'genre', label: 'ジャンル' },
+      { key: 'event_start_date', label: '開催開始日' },
+      { key: 'event_end_date', label: '開催終了日' },
+      { key: 'event_display_period', label: '開催期間(表示用)' },
+      { key: 'lead_text', label: 'リード文' },
+      { key: 'event_description', label: 'イベント紹介文' },
+      { key: 'venue_name', label: '会場名称' },
+      { key: 'contact_name', label: '問い合わせ先名称' },
+      { key: 'contact_phone', label: '電話番号' },
+    ]
+
+    for (const { key, label } of requiredList) {
+      const value = (formData as any)[key]
+      if (value === undefined || value === null || String(value).trim() === '') {
+        const el = document.getElementById(`field-${String(key)}`)
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          ;(el as HTMLInputElement).focus()
+        }
+        return { ok: false, message: `${label}を入力してください。` }
+      }
+    }
+    return { ok: true }
+  }
+
   // 郵便番号から住所を取得する関数
   const fetchAddressFromPostalCode = async (postalCode: string) => {
     if (!postalCode || postalCode.length !== 7) return
@@ -93,49 +123,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     setLoading(true)
 
     try {
-      // 必須フィールドのバリデーション
-      if (!formData.event_name.trim()) {
-        alert('イベント名称を入力してください。')
-        return
-      }
-      if (!formData.event_name_furigana.trim()) {
-        alert('イベント名称フリガナを入力してください。')
-        return
-      }
-      if (!formData.genre) {
-        alert('ジャンルを選択してください。')
-        return
-      }
-      if (!formData.event_start_date || formData.event_start_date.trim() === '') {
-        alert('イベント開催開始日を入力してください。')
-        return
-      }
-      if (!formData.event_end_date || formData.event_end_date.trim() === '') {
-        alert('イベント開催終了日を入力してください。')
-        return
-      }
-      if (!formData.event_display_period.trim()) {
-        alert('イベント開催期間(表示用)を入力してください。')
-        return
-      }
-      if (!formData.lead_text.trim()) {
-        alert('リード文を入力してください。')
-        return
-      }
-      if (!formData.event_description.trim()) {
-        alert('イベント紹介文を入力してください。')
-        return
-      }
-      if (!formData.venue_name.trim()) {
-        alert('会場名称を入力してください。')
-        return
-      }
-      if (!formData.contact_name.trim()) {
-        alert('問い合わせ先名称を入力してください。')
-        return
-      }
-      if (!formData.contact_phone.trim()) {
-        alert('電話番号を入力してください。')
+      // 必須フィールドのバリデーション（未入力項目へスクロール＆フォーカス）
+      const result = validateRequired()
+      if (!result.ok) {
+        alert(result.message)
         return
       }
 
@@ -266,6 +257,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   イベント名称 *
                 </label>
                 <input
+                  id="field-event_name"
                   type="text"
                   required
                   maxLength={50}
@@ -280,6 +272,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   イベント名称フリガナ *
                 </label>
                 <input
+                  id="field-event_name_furigana"
                   type="text"
                   required
                   maxLength={50}
@@ -294,6 +287,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   ジャンル *
                 </label>
                 <select
+                  id="field-genre"
                   required
                   value={formData.genre}
                   onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
@@ -345,6 +339,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 </label>
                 <div className="flex items-center gap-2">
                   <input
+                    id="field-event_start_date"
                     type="date"
                     required
                     value={formData.event_start_date}
@@ -353,6 +348,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   />
                   <span className="text-gray-500 font-bold">〜</span>
                   <input
+                    id="field-event_end_date"
                     type="date"
                     required
                     value={formData.event_end_date}
@@ -367,6 +363,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   イベント開催期間(表示用) *
                 </label>
                 <input
+                  id="field-event_display_period"
                   type="text"
                   required
                   maxLength={50}
@@ -402,6 +399,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   リード文 *
                 </label>
                 <textarea
+                  id="field-lead_text"
                   required
                   maxLength={100}
                   value={formData.lead_text}
@@ -416,6 +414,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   イベント紹介文 *
                 </label>
                 <textarea
+                  id="field-event_description"
                   required
                   maxLength={250}
                   value={formData.event_description}
@@ -493,6 +492,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   会場又は集合場所の名称 *
                 </label>
                 <input
+                  id="field-venue_name"
                   type="text"
                   required
                   value={formData.venue_name}
@@ -507,6 +507,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 </label>
                 <div className="flex gap-2">
                   <input
+                    id="field-venue_postal_code"
                     type="text"
                     value={formData.venue_postal_code}
                     onChange={(e) => setFormData({ ...formData, venue_postal_code: e.target.value })}
@@ -573,6 +574,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   問い合わせ先名称 *
                 </label>
                 <input
+                  id="field-contact_name"
                   type="text"
                   required
                   value={formData.contact_name}
@@ -586,6 +588,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   電話番号 *
                 </label>
                 <input
+                  id="field-contact_phone"
                   type="tel"
                   required
                   value={formData.contact_phone}
