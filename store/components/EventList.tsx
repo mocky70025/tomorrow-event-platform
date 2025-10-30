@@ -41,6 +41,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
       const { data, error } = await supabase
         .from('events')
         .select('*')
+        .eq('approval_status', 'approved')
         .order('event_start_date', { ascending: true })
 
       if (error) throw error

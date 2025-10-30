@@ -75,14 +75,38 @@ export default function EventList({ events, onEventUpdated }: EventListProps) {
               <div className="text-xs text-gray-500">
                 作成日: {new Date(event.created_at).toLocaleDateString('ja-JP')}
               </div>
-              
-              <button
-                onClick={() => handleDelete(event.id)}
-                disabled={deleting === event.id}
-                className="bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white px-3 py-1 rounded text-sm transition-colors"
-              >
-                {deleting === event.id ? '削除中...' : '削除'}
-              </button>
+              <div className="flex items-center space-x-2">
+                {/* 承認ステータス表示 */}
+                {'approval_status' in event && (
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    // @ts-ignore
+                    event.approval_status === 'approved'
+                      ? 'bg-green-100 text-green-800'
+                      // @ts-ignore
+                      : event.approval_status === 'rejected'
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {/* @ts-ignore */}
+                    {event.approval_status === 'approved' ? '承認済み' :
+                    // @ts-ignore
+                    event.approval_status === 'rejected' ? '却下' : '審査中'}
+                  </span>
+                )}
+                <button
+                  onClick={() => window.dispatchEvent(new CustomEvent('edit-event', { detail: { id: event.id } }))}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                >
+                  編集
+                </button>
+                <button
+                  onClick={() => handleDelete(event.id)}
+                  disabled={deleting === event.id}
+                  className="bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white px-3 py-1 rounded text-sm transition-colors"
+                >
+                  {deleting === event.id ? '削除中...' : '削除'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

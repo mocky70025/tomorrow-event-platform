@@ -13,6 +13,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   const [organizer, setOrganizer] = useState<Organizer | null>(null)
   const [events, setEvents] = useState<Event[]>([])
   const [showEventForm, setShowEventForm] = useState(false)
+  const [eventToEdit, setEventToEdit] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -50,7 +51,22 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   const handleEventCreated = (newEvent: Event) => {
     setEvents([newEvent, ...events])
     setShowEventForm(false)
+    setEventToEdit(null)
   }
+
+  // 編集イベントを受け取るカスタムイベント
+  useEffect(() => {
+    const handler = (e: any) => {
+      const id = e.detail?.id
+      const target = events.find(ev => ev.id === id)
+      if (target) {
+        setEventToEdit(target)
+        setShowEventForm(true)
+      }
+    }
+    window.addEventListener('edit-event', handler)
+    return () => window.removeEventListener('edit-event', handler)
+  }, [events])
 
   if (loading) {
     return (
@@ -95,6 +111,8 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
       <EventForm
         organizer={organizer}
         onEventCreated={handleEventCreated}
+        // @ts-ignore
+        initialEvent={eventToEdit || undefined}
         onCancel={() => setShowEventForm(false)}
       />
     )

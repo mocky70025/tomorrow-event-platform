@@ -245,6 +245,48 @@ export default function AdminDashboard() {
                     </p>
                     <p className="text-gray-500 text-sm">{event.venue_name}</p>
                     <p className="text-gray-700 text-sm mt-2">{event.lead_text}</p>
+
+                    {/* 承認ステータス */}
+                    {'approval_status' in event && (
+                      <div className="mt-3">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          // @ts-ignore
+                          event.approval_status === 'approved'
+                            ? 'bg-green-100 text-green-800'
+                            // @ts-ignore
+                            : event.approval_status === 'rejected'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {/* @ts-ignore */}
+                          {event.approval_status === 'approved' ? '承認済み' :
+                          // @ts-ignore
+                          event.approval_status === 'rejected' ? '却下' : '審査中'}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* 承認/却下ボタン */}
+                    <div className="flex space-x-2 mt-4">
+                      <button
+                        onClick={async () => {
+                          await supabase.from('events').update({ approval_status: 'approved' }).eq('id', event.id)
+                          await fetchData()
+                        }}
+                        className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors"
+                      >
+                        承認
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await supabase.from('events').update({ approval_status: 'rejected' }).eq('id', event.id)
+                          await fetchData()
+                        }}
+                        className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors"
+                      >
+                        却下
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

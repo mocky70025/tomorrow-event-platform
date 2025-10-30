@@ -8,37 +8,38 @@ interface EventFormProps {
   organizer: Organizer
   onEventCreated: (event: Event) => void
   onCancel: () => void
+  initialEvent?: Partial<Event> // 編集時に事前入力
 }
 
-export default function EventForm({ organizer, onEventCreated, onCancel }: EventFormProps) {
+export default function EventForm({ organizer, onEventCreated, onCancel, initialEvent }: EventFormProps) {
   const [formData, setFormData] = useState({
-    event_name: '',
+    event_name: initialEvent?.event_name || '',
     event_name_furigana: '',
-    genre: '',
+    genre: initialEvent?.genre || '',
     is_shizuoka_vocational_assoc_related: false,
     opt_out_newspaper_publication: false,
-    event_start_date: '',
-    event_end_date: '',
-    event_display_period: '',
+    event_start_date: (initialEvent?.event_start_date as any) || '',
+    event_end_date: (initialEvent?.event_end_date as any) || '',
+    event_display_period: initialEvent?.event_display_period || '',
     event_period_notes: '',
-    event_time: '',
+    event_time: initialEvent?.event_time || '',
     application_start_date: '',
     application_end_date: '',
     application_display_period: '',
     application_notes: '',
     ticket_release_start_date: '',
     ticket_sales_location: '',
-    lead_text: '',
-    event_description: '',
+    lead_text: initialEvent?.lead_text || '',
+    event_description: initialEvent?.event_description || '',
     event_introduction_text: '',
-    venue_name: '',
+    venue_name: initialEvent?.venue_name || '',
     venue_postal_code: '',
-    venue_city: '',
+    venue_city: initialEvent?.venue_city || '',
     venue_town: '',
     venue_address: '',
     venue_latitude: '',
     venue_longitude: '',
-    homepage_url: '',
+    homepage_url: initialEvent?.homepage_url || '',
     related_page_url: '',
     contact_name: '',
     contact_phone: '',
@@ -50,13 +51,13 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
 
   const [loading, setLoading] = useState(false)
   const [addressLoading, setAddressLoading] = useState(false)
-  const [eventId, setEventId] = useState<string>('')
+  const [eventId, setEventId] = useState<string>((initialEvent?.id as string) || '')
   const [imageUrls, setImageUrls] = useState({
-    main: '',
-    additional1: '',
-    additional2: '',
-    additional3: '',
-    additional4: '',
+    main: initialEvent?.main_image_url || '',
+    additional1: (initialEvent as any)?.additional_image1_url || '',
+    additional2: (initialEvent as any)?.additional_image2_url || '',
+    additional3: (initialEvent as any)?.additional_image3_url || '',
+    additional4: (initialEvent as any)?.additional_image4_url || '',
   })
 
   // 郵便番号から住所を取得する関数
@@ -155,52 +156,55 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
 
       console.log('Submitting event data:', submitData)
 
-      // まずイベントを作成（画像なしで）
-      const { data: eventData, error: eventError } = await supabase
-        .from('events')
-        .insert(submitData)
-        .select()
-        .single()
+      let finalEvent
 
-      if (eventError) {
-        console.error('Event creation error:', eventError)
-        throw eventError
+      if (eventId) {
+        // 更新フロー
+        const { data: updated, error: updateError } = await supabase
+          .from('events')
+          .update({
+            ...submitData,
+            main_image_url: imageUrls.main || null,
+            additional_image1_url: imageUrls.additional1 || null,
+            additional_image2_url: imageUrls.additional2 || null,
+            additional_image3_url: imageUrls.additional3 || null,
+            additional_image4_url: imageUrls.additional4 || null,
+          })
+          .eq('id', eventId)
+          .select()
+          .single()
+
+        if (updateError) throw updateError
+        finalEvent = updated
+      } else {
+        // 作成フロー
+        const { data: eventData, error: eventError } = await supabase
+          .from('events')
+          .insert(submitData)
+          .select()
+          .single()
+
+        if (eventError) throw eventError
+        setEventId(eventData.id)
+
+        const { data: updatedData, error: updateError } = await supabase
+          .from('events')
+          .update({
+            main_image_url: imageUrls.main || null,
+            additional_image1_url: imageUrls.additional1 || null,
+            additional_image2_url: imageUrls.additional2 || null,
+            additional_image3_url: imageUrls.additional3 || null,
+            additional_image4_url: imageUrls.additional4 || null,
+          })
+          .eq('id', eventData.id)
+          .select()
+          .single()
+
+        if (updateError) throw updateError
+        finalEvent = updatedData
       }
 
-      console.log('Event created successfully:', eventData)
-      setEventId(eventData.id)
-
-      // 画像URLを更新
-      const updatedEventData = {
-        ...eventData,
-        main_image_url: imageUrls.main || null,
-        additional_image1_url: imageUrls.additional1 || null,
-        additional_image2_url: imageUrls.additional2 || null,
-        additional_image3_url: imageUrls.additional3 || null,
-        additional_image4_url: imageUrls.additional4 || null,
-      }
-
-      // 画像URLでイベントを更新
-      const { data: updatedData, error: updateError } = await supabase
-        .from('events')
-        .update({
-          main_image_url: updatedEventData.main_image_url,
-          additional_image1_url: updatedEventData.additional_image1_url,
-          additional_image2_url: updatedEventData.additional_image2_url,
-          additional_image3_url: updatedEventData.additional_image3_url,
-          additional_image4_url: updatedEventData.additional_image4_url,
-        })
-        .eq('id', eventData.id)
-        .select()
-        .single()
-
-      if (updateError) {
-        console.error('Event update error:', updateError)
-        throw updateError
-      }
-
-      console.log('Event updated successfully:', updatedData)
-      onEventCreated(updatedData)
+      onEventCreated(finalEvent)
     } catch (error) {
       console.error('Event creation failed:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
@@ -232,7 +236,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">イベント掲載</h1>
+          <h1 className="text-2xl font-bold text-gray-800">{eventId ? 'イベント編集' : 'イベント掲載'}</h1>
           <button
             onClick={onCancel}
             className="text-gray-500 hover:text-gray-700"
@@ -607,7 +611,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel }: Event
               disabled={loading}
               className="flex-1 bg-purple-500 hover:bg-purple-600 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg transition-colors"
             >
-              {loading ? '作成中...' : 'イベントを掲載'}
+              {loading ? (eventId ? '更新中...' : '作成中...') : (eventId ? 'イベントを更新' : 'イベントを掲載')}
             </button>
           </div>
         </form>
