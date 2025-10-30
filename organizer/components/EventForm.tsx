@@ -14,7 +14,7 @@ interface EventFormProps {
 export default function EventForm({ organizer, onEventCreated, onCancel, initialEvent }: EventFormProps) {
   const [formData, setFormData] = useState({
     event_name: initialEvent?.event_name || '',
-    event_name_furigana: '',
+    event_name_furigana: (initialEvent as any)?.event_name_furigana || '',
     genre: initialEvent?.genre || '',
     is_shizuoka_vocational_assoc_related: false,
     opt_out_newspaper_publication: false,
@@ -33,20 +33,20 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     event_description: initialEvent?.event_description || '',
     event_introduction_text: '',
     venue_name: initialEvent?.venue_name || '',
-    venue_postal_code: '',
+    venue_postal_code: (initialEvent as any)?.venue_postal_code || '',
     venue_city: initialEvent?.venue_city || '',
-    venue_town: '',
-    venue_address: '',
+    venue_town: (initialEvent as any)?.venue_town || '',
+    venue_address: (initialEvent as any)?.venue_address || '',
     venue_latitude: '',
     venue_longitude: '',
     homepage_url: initialEvent?.homepage_url || '',
     related_page_url: '',
-    contact_name: '',
-    contact_phone: '',
-    contact_email: '',
-    parking_info: '',
-    fee_info: '',
-    organizer_info: '',
+    contact_name: (initialEvent as any)?.contact_name || '',
+    contact_phone: (initialEvent as any)?.contact_phone || '',
+    contact_email: (initialEvent as any)?.contact_email || '',
+    parking_info: (initialEvent as any)?.parking_info || '',
+    fee_info: (initialEvent as any)?.fee_info || '',
+    organizer_info: (initialEvent as any)?.organizer_info || '',
   })
 
   const [loading, setLoading] = useState(false)
@@ -147,12 +147,14 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
         venue_longitude: formData.venue_longitude ? parseFloat(formData.venue_longitude) : null,
       }
 
-      // 空文字列をnullに変換
-      Object.keys(submitData).forEach(key => {
-        if (submitData[key] === '') {
-          submitData[key] = null
-        }
-      })
+      // 作成時のみ、空文字をnullに変換（更新時は既存値を保持したいので変換しない）
+      if (!eventId) {
+        Object.keys(submitData).forEach(key => {
+          if (submitData[key] === '') {
+            submitData[key] = null
+          }
+        })
+      }
 
       console.log('Submitting event data:', submitData)
 
