@@ -7,9 +7,10 @@ import Image from 'next/image'
 interface EventListProps {
   events: Event[]
   onEventUpdated: () => void
+  onEdit?: (event: Event) => void
 }
 
-export default function EventList({ events, onEventUpdated }: EventListProps) {
+export default function EventList({ events, onEventUpdated, onEdit }: EventListProps) {
   const [deleting, setDeleting] = useState<string | null>(null)
 
   const handleDelete = async (eventId: string) => {
@@ -94,7 +95,7 @@ export default function EventList({ events, onEventUpdated }: EventListProps) {
                   </span>
                 )}
                 <button
-                  onClick={() => window.dispatchEvent(new CustomEvent('edit-event', { detail: { id: event.id } }))}
+                  onClick={() => onEdit && onEdit(event)}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
                 >
                   編集

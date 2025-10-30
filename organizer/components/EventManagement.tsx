@@ -131,7 +131,11 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
           </button>
         </div>
 
-        <EventList events={events} onEventUpdated={fetchOrganizerData} />
+        <EventList 
+          events={events} 
+          onEventUpdated={fetchOrganizerData}
+          onEdit={(ev) => { setEventToEdit(ev); setShowEventForm(true) }}
+        />
       </div>
     </div>
   )
