@@ -122,6 +122,11 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     e.preventDefault()
     setLoading(true)
 
+    // 更新モードかどうかを明確に判定（initialEventが渡されている or eventIdが存在）
+    // tryブロック外で定義してcatchからも参照可能にする
+    const isUpdateMode = !!(initialEvent?.id || eventId)
+    const targetEventId = initialEvent?.id || eventId
+
     try {
       // 必須フィールドのバリデーション（未入力項目へスクロール＆フォーカス）
       const result = validateRequired()
@@ -139,7 +144,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
       }
 
       // 作成時のみ、空文字をnullに変換（更新時は既存値を保持したいので変換しない）
-      if (!eventId) {
+      if (!targetEventId) {
         Object.keys(submitData).forEach(key => {
           if (submitData[key] === '') {
             submitData[key] = null
@@ -148,10 +153,6 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
       }
 
       console.log('Submitting event data:', submitData)
-
-      // 更新モードかどうかを明確に判定（initialEventが渡されている or eventIdが存在）
-      const isUpdateMode = !!(initialEvent?.id || eventId)
-      const targetEventId = initialEvent?.id || eventId
 
       let finalEvent
 
