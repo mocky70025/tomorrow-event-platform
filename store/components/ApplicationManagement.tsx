@@ -64,7 +64,16 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
         .order('applied_at', { ascending: false })
 
       if (error) throw error
-      setApplications(data || [])
+      
+      // データを正しい型に変換
+      const applications = (data || []).map((app: any) => ({
+        id: app.id,
+        application_status: app.application_status,
+        applied_at: app.applied_at,
+        event: Array.isArray(app.event) ? app.event[0] : app.event
+      }))
+      
+      setApplications(applications)
     } catch (error) {
       console.error('Failed to fetch applications:', error)
       alert('申し込み一覧の取得に失敗しました')
