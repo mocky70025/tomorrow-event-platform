@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { supabase, type Event } from '@/lib/supabase'
-import Image from 'next/image'
 
 interface EventListProps {
   events: Event[]
@@ -47,12 +46,11 @@ export default function EventList({ events, onEventUpdated, onEdit }: EventListP
       {events.map((event) => (
         <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden">
           {event.main_image_url && (
-            <div className="relative h-48 w-full">
-              <Image
+            <div className="relative h-48 w-full overflow-hidden">
+              <img
                 src={event.main_image_url}
                 alt={event.event_name}
-                fill
-                className="object-cover"
+                className="w-full h-full object-cover"
               />
             </div>
           )}
