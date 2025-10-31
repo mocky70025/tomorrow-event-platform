@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase, type Event, type Organizer } from '@/lib/supabase'
 import EventForm from './EventForm'
 import EventList from './EventList'
+import EventApplications from './EventApplications'
 
 interface EventManagementProps {
   userProfile: any
@@ -14,6 +15,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   const [events, setEvents] = useState<Event[]>([])
   const [showEventForm, setShowEventForm] = useState(false)
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null)
+  const [eventForApplications, setEventForApplications] = useState<Event | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -124,7 +126,20 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
         onEventCreated={handleEventCreated}
         // @ts-ignore
         initialEvent={eventToEdit || undefined}
-        onCancel={() => setShowEventForm(false)}
+        onCancel={() => {
+          setShowEventForm(false)
+          setEventToEdit(null)
+        }}
+      />
+    )
+  }
+
+  if (eventForApplications) {
+    return (
+      <EventApplications
+        eventId={eventForApplications.id}
+        eventName={eventForApplications.event_name}
+        onBack={() => setEventForApplications(null)}
       />
     )
   }
@@ -146,6 +161,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
           events={events} 
           onEventUpdated={fetchOrganizerData}
           onEdit={(ev) => { setEventToEdit(ev); setShowEventForm(true) }}
+          onViewApplications={(ev) => { setEventForApplications(ev) }}
         />
       </div>
     </div>

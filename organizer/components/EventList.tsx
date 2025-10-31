@@ -7,9 +7,10 @@ interface EventListProps {
   events: Event[]
   onEventUpdated: () => void
   onEdit?: (event: Event) => void
+  onViewApplications?: (event: Event) => void
 }
 
-export default function EventList({ events, onEventUpdated, onEdit }: EventListProps) {
+export default function EventList({ events, onEventUpdated, onEdit, onViewApplications }: EventListProps) {
   const [deleting, setDeleting] = useState<string | null>(null)
 
   const handleDelete = async (eventId: string) => {
@@ -74,7 +75,7 @@ export default function EventList({ events, onEventUpdated, onEdit }: EventListP
               <div className="text-xs text-gray-500">
                 作成日: {new Date(event.created_at).toLocaleDateString('ja-JP')}
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap">
                 {/* 承認ステータス表示 */}
                 {'approval_status' in event && (
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -92,6 +93,12 @@ export default function EventList({ events, onEventUpdated, onEdit }: EventListP
                     event.approval_status === 'rejected' ? '却下' : '審査中'}
                   </span>
                 )}
+                <button
+                  onClick={() => onViewApplications && onViewApplications(event)}
+                  className="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                >
+                  申し込み管理
+                </button>
                 <button
                   onClick={() => onEdit && onEdit(event)}
                   className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
