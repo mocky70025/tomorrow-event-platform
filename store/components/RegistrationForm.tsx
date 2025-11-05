@@ -33,6 +33,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(false)
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   // 全角数字を半角に変換
   const convertToHalfWidth = (str: string): string => {
@@ -64,7 +65,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     alignItems: 'center',
     padding: '12px 16px',
     gap: '10px',
-    width: '330px',
+    width: '100%',
     height: '48px',
     background: '#FFFFFF',
     border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
@@ -108,6 +109,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     if (!documentUrls.automobile_inspection) newErrors.automobile_inspection = true
     if (!documentUrls.pl_insurance) newErrors.pl_insurance = true
     if (!documentUrls.fire_equipment_layout) newErrors.fire_equipment_layout = true
+    if (!termsAccepted) newErrors.termsAccepted = true
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -188,7 +190,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
   // 進捗インジケーター（Figmaデザインに基づく）
   const ProgressIndicator = () => (
-    <div className="flex items-center justify-center mb-8">
+    <div className="flex items-center justify-center" style={{ marginBottom: '32px' }}>
       <div className="relative" style={{ width: '250.5px', height: '16px' }}>
         {/* ステップ1の円 */}
         <div 
@@ -308,12 +310,12 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           padding: '24px',
           marginBottom: '24px'
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
             {/* 名前 */}
-            <div style={{ width: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
               <label style={labelStyle}>名前</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={formFieldStyle(errors.name)}>
+                <div style={{ ...formFieldStyle(errors.name), width: '100%' }}>
                   <input
                     type="text"
                     value={formData.name}
@@ -332,7 +334,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 性別 */}
-            <div style={{ width: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
               <label style={labelStyle}>性別</label>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
                 {(['男性', '女性', 'その他'] as const).map((option) => {
@@ -366,10 +368,10 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 年齢 */}
-            <div style={{ width: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
               <label style={labelStyle}>年齢</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={formFieldStyle(errors.age)}>
+                <div style={{ ...formFieldStyle(errors.age), width: '100%' }}>
                   <select
                     value={formData.age || ''}
                     onChange={(e) => {
@@ -392,10 +394,10 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 電話番号 */}
-            <div style={{ width: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
               <label style={labelStyle}>電話番号</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={formFieldStyle(errors.phone_number)}>
+                <div style={{ ...formFieldStyle(errors.phone_number), width: '100%' }}>
                   <input
                     type="tel"
                     value={formData.phone_number}
@@ -414,10 +416,10 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* メールアドレス */}
-            <div style={{ width: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
               <label style={labelStyle}>メールアドレス</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={formFieldStyle(errors.email)}>
+                <div style={{ ...formFieldStyle(errors.email), width: '100%' }}>
                   <input
                     type="email"
                     value={formData.email}
@@ -436,10 +438,10 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* ジャンル */}
-            <div style={{ width: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
               <label style={labelStyle}>ジャンル</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={formFieldStyle(errors.genre_category)}>
+                <div style={{ ...formFieldStyle(errors.genre_category), width: '100%' }}>
                   <select
                     value={formData.genre_category}
                     onChange={(e) => {
@@ -462,10 +464,10 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* より詳しいジャンル */}
-            <div style={{ width: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
               <label style={labelStyle}>より詳しいジャンル</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={formFieldStyle(errors.genre_free_text)}>
+                <div style={{ ...formFieldStyle(errors.genre_free_text), width: '100%' }}>
                   <input
                     type="text"
                     value={formData.genre_free_text}
@@ -493,7 +495,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           padding: '24px',
           marginBottom: '24px'
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
             <ImageUpload
               label="営業許可証"
               documentType="business_license"
@@ -557,24 +559,37 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         </div>
 
         {/* 利用規約とボタン */}
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '24px', width: '100%', maxWidth: '330px', marginLeft: 'auto', marginRight: 'auto' }}>
           <label style={{
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
-            gap: '8px'
+            gap: '8px',
+            cursor: 'pointer'
           }}>
             <div style={{
               width: '20px',
               height: '20px',
-              background: '#06C755',
+              background: termsAccepted ? '#06C755' : '#FFFFFF',
+              border: termsAccepted ? 'none' : '1px solid #E5E5E5',
               borderRadius: '4px',
-              position: 'relative'
-            }}>
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            onClick={() => {
+              setTermsAccepted(!termsAccepted)
+              if (errors.termsAccepted) setErrors({ ...errors, termsAccepted: false })
+            }}
+            >
               <input
                 type="checkbox"
-                checked
-                readOnly
+                checked={termsAccepted}
+                onChange={(e) => {
+                  setTermsAccepted(e.target.checked)
+                  if (errors.termsAccepted) setErrors({ ...errors, termsAccepted: false })
+                }}
                 style={{
                   position: 'absolute',
                   width: '20px',
@@ -583,28 +598,31 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                   cursor: 'pointer'
                 }}
               />
-              <svg style={{
-                position: 'absolute',
-                width: '11px',
-                height: '9px',
-                left: '4px',
-                top: '5px',
-                color: '#FFFFFF'
-              }} fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
+              {termsAccepted && (
+                <svg style={{
+                  width: '11px',
+                  height: '9px',
+                  color: '#FFFFFF'
+                }} fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
             </div>
             <span style={{
               fontFamily: 'Inter, sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
-              color: '#06C755'
+              color: termsAccepted ? '#06C755' : '#000000'
             }}>利用規約に同意する</span>
           </label>
+          {errors.termsAccepted && (
+            <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>利用規約への同意が必要です</p>
+          )}
         </div>
 
         <button
           onClick={handleNext}
+          disabled={!termsAccepted}
           style={{
             display: 'flex',
             flexDirection: 'row',
@@ -613,8 +631,9 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             padding: '16px 24px',
             gap: '10px',
             width: '100%',
+            maxWidth: '330px',
             height: '48px',
-            background: '#06C755',
+            background: termsAccepted ? '#06C755' : '#D9D9D9',
             borderRadius: '8px',
             border: 'none',
             fontFamily: 'Inter, sans-serif',
@@ -622,7 +641,9 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             fontWeight: 700,
             lineHeight: '19px',
             color: '#FFFFFF',
-            cursor: 'pointer'
+            cursor: termsAccepted ? 'pointer' : 'not-allowed',
+            marginLeft: 'auto',
+            marginRight: 'auto'
           }}
         >
           次に進む

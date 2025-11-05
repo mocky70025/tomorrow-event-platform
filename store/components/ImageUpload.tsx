@@ -95,7 +95,7 @@ export default function ImageUpload({
   }
 
   return (
-    <div style={{ marginBottom: '24px' }}>
+    <div style={{ marginBottom: '24px', width: '100%', maxWidth: '330px' }}>
       <label style={{
         fontFamily: 'Inter, sans-serif',
         fontSize: '14px',
@@ -109,16 +109,16 @@ export default function ImageUpload({
       </label>
       
       {previewUrl ? (
-        <div style={{ position: 'relative', width: '330px', height: '200px' }}>
+        <div style={{ position: 'relative', width: '100%', height: '200px' }}>
           <div style={{
             boxSizing: 'border-box',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '32px 99px',
+            padding: '2px',
             gap: '10px',
-            width: '330px',
+            width: '100%',
             height: '200px',
             background: '#F7F7F7',
             border: '2px solid #06C755',
@@ -129,7 +129,7 @@ export default function ImageUpload({
               src={previewUrl}
               alt={label}
               style={{
-                width: '326px',
+                width: 'calc(100% - 4px)',
                 height: '196px',
                 objectFit: 'contain',
                 borderRadius: '6px'
@@ -169,7 +169,7 @@ export default function ImageUpload({
           </div>
         </div>
       ) : (
-        <div style={{ position: 'relative', width: '330px', height: '200px' }}>
+        <div style={{ position: 'relative', width: '100%', height: '200px' }}>
           <div
             style={{
               boxSizing: 'border-box',
@@ -177,9 +177,9 @@ export default function ImageUpload({
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '32px 99px',
+              padding: '32px 16px',
               gap: '10px',
-              width: '330px',
+              width: '100%',
               height: '200px',
               background: '#F7F7F7',
               border: hasError ? '2px dashed #FF3B30' : '2px dashed #E5E5E5',
@@ -216,7 +216,7 @@ export default function ImageUpload({
               position: 'absolute',
               width: '24px',
               height: '24px',
-              left: '311px',
+              right: '-5px',
               top: '-5px',
               background: '#FF3B30',
               borderRadius: '12px',
