@@ -484,18 +484,8 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* 書類アップロード */}
-        <div style={{
-          background: '#FFFFFF',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px',
-          padding: '24px',
-          marginBottom: '24px'
-        }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
+            {/* 書類アップロード */}
             <ImageUpload
               label="営業許可証"
               documentType="business_license"
@@ -555,6 +545,19 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               onUploadError={(error) => alert(error)}
               hasError={errors.pl_insurance}
             />
+
+            {/* 対応形式の説明（1回だけ表示） */}
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '12px',
+              color: '#6B6B6B',
+              marginTop: '-8px',
+              width: '100%',
+              maxWidth: '330px',
+              textAlign: 'left'
+            }}>
+              対応形式: JPEG, PNG, GIF, WebP, HEIC（最大5MB）
+            </p>
           </div>
         </div>
 

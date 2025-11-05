@@ -236,17 +236,6 @@ export default function ImageUpload({
           )}
         </div>
       )}
-      
-      {!previewUrl && (
-        <p style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '12px',
-          color: '#6B6B6B',
-          marginTop: '8px'
-        }}>
-          対応形式: JPEG, PNG, GIF, WebP, HEIC（最大5MB）
-        </p>
-      )}
     </div>
   )
 }
