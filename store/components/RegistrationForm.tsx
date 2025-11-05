@@ -323,7 +323,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                       setFormData({ ...formData, name: e.target.value })
                       if (errors.name) setErrors({ ...errors, name: false })
                     }}
-                    placeholder="例) 山田太郎"
+                    placeholder="山田太郎"
                     style={inputStyle(!!formData.name)}
                   />
                 </div>
@@ -405,7 +405,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                       setFormData({ ...formData, phone_number: e.target.value })
                       if (errors.phone_number) setErrors({ ...errors, phone_number: false })
                     }}
-                    placeholder="例)01234567890"
+                    placeholder="01234567890"
                     style={inputStyle(!!formData.phone_number)}
                   />
                 </div>
@@ -427,7 +427,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                       setFormData({ ...formData, email: e.target.value })
                       if (errors.email) setErrors({ ...errors, email: false })
                     }}
-                    placeholder="例)kitchencar@gmail.com"
+                    placeholder="kitchencar@gmail.com"
                     style={inputStyle(!!formData.email)}
                   />
                 </div>
@@ -475,7 +475,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                       setFormData({ ...formData, genre_free_text: e.target.value })
                       if (errors.genre_free_text) setErrors({ ...errors, genre_free_text: false })
                     }}
-                    placeholder="例) カレーライス、飲み物"
+                    placeholder="カレーライス、飲み物"
                     style={inputStyle(!!formData.genre_free_text)}
                   />
                 </div>
@@ -556,7 +556,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               maxWidth: '330px',
               textAlign: 'left'
             }}>
-              対応形式: JPEG, PNG, GIF, WebP, HEIC（最大5MB）
+              対応形式: JPEG, PNG, GIF, WebP, HEIC（最大10MB）
             </p>
           </div>
         </div>
@@ -571,8 +571,8 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             cursor: 'pointer'
           }}>
             <div style={{
-              width: '20px',
-              height: '20px',
+              width: '24px',
+              height: '24px',
               background: termsAccepted ? '#06C755' : '#FFFFFF',
               border: termsAccepted ? 'none' : '1px solid #E5E5E5',
               borderRadius: '4px',
@@ -595,16 +595,16 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 }}
                 style={{
                   position: 'absolute',
-                  width: '20px',
-                  height: '20px',
+                  width: '24px',
+                  height: '24px',
                   opacity: 0,
                   cursor: 'pointer'
                 }}
               />
               {termsAccepted && (
                 <svg style={{
-                  width: '11px',
-                  height: '9px',
+                  width: '14px',
+                  height: '11px',
                   color: '#FFFFFF'
                 }} fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -682,34 +682,34 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div>
-              <label style={labelStyle}>名前</label>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>{formData.name}</p>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>名前</label>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.name}</p>
             </div>
             <div>
-              <label style={labelStyle}>性別</label>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>性別</label>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>
                 {formData.gender === '男' ? '男性' : formData.gender === '女' ? '女性' : formData.gender === 'それ以外' ? 'その他' : ''}
               </p>
             </div>
             <div>
-              <label style={labelStyle}>年齢</label>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>{formData.age}</p>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>年齢</label>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.age}歳</p>
             </div>
             <div>
-              <label style={labelStyle}>電話番号</label>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>{formData.phone_number}</p>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>電話番号</label>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.phone_number}</p>
             </div>
             <div>
-              <label style={labelStyle}>メールアドレス</label>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>{formData.email}</p>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>メールアドレス</label>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.email}</p>
             </div>
             <div>
-              <label style={labelStyle}>ジャンル</label>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>{formData.genre_category}</p>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>ジャンル</label>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.genre_category}</p>
             </div>
             <div>
-              <label style={labelStyle}>より詳しいジャンル</label>
-              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>{formData.genre_free_text}</p>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>より詳しいジャンル</label>
+              <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.genre_free_text}</p>
             </div>
           </div>
         </div>
@@ -884,53 +884,6 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               </div>
             )}
           </div>
-        </div>
-
-        {/* 利用規約 */}
-        <div style={{ marginBottom: '24px' }}>
-          <label style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
-            <div style={{
-              width: '20px',
-              height: '20px',
-              background: '#06C755',
-              borderRadius: '4px',
-              position: 'relative'
-            }}>
-              <input
-                type="checkbox"
-                checked
-                readOnly
-                style={{
-                  position: 'absolute',
-                  width: '20px',
-                  height: '20px',
-                  opacity: 0,
-                  cursor: 'pointer'
-                }}
-              />
-              <svg style={{
-                position: 'absolute',
-                width: '11px',
-                height: '9px',
-                left: '4px',
-                top: '5px',
-                color: '#FFFFFF'
-              }} fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <span style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '16px',
-              lineHeight: '150%',
-              color: '#06C755'
-            }}>利用規約に同意する</span>
-          </label>
         </div>
 
         {/* ボタン */}

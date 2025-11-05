@@ -43,9 +43,9 @@ export default function ImageUpload({
     const file = event.target.files?.[0]
     if (!file) return
 
-    // ファイルサイズチェック（5MB）
-    if (file.size > 5 * 1024 * 1024) {
-      onUploadError('ファイルサイズは5MB以下にしてください。')
+    // ファイルサイズチェック（10MB）
+    if (file.size > 10 * 1024 * 1024) {
+      onUploadError('ファイルサイズは10MB以下にしてください。')
       return
     }
 
