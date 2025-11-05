@@ -146,7 +146,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               lineHeight: '150%',
               color: '#666666'
             }}>
-              利用規約の内容はこちらに表示されます。
+              主催者向け利用規約の内容はこちらに表示されます。
             </p>
           </div>
 
@@ -324,11 +324,12 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 height: '24px',
                 background: termsAccepted ? '#06C755' : '#FFFFFF',
                 border: termsAccepted ? 'none' : '1px solid #E5E5E5',
-                borderRadius: '4px',
+                borderRadius: '8px',
                 position: 'relative',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                flexShrink: 0
               }}
               onClick={() => {
                 setTermsAccepted(!termsAccepted)
@@ -360,27 +361,38 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                   </svg>
                 )}
               </div>
+              <span
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowTermsPage(true)
+                }}
+                style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  lineHeight: '150%',
+                  color: '#06C755',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+              >
+                利用規約
+                <svg style={{
+                  width: '14px',
+                  height: '14px',
+                  color: '#06C755'
+                }} fill="none" stroke="currentColor" viewBox="0 0 20 20">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </span>
               <span style={{
                 fontFamily: 'Inter, sans-serif',
                 fontSize: '16px',
                 lineHeight: '150%',
-                color: termsAccepted ? '#06C755' : '#000000'
+                color: '#000000'
               }}>
-                利用規約に同意する
-                <span
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    setShowTermsPage(true)
-                  }}
-                  style={{
-                    color: '#06C755',
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    marginLeft: '4px'
-                  }}
-                >
-                  利用規約
-                </span>
+                に同意する
               </span>
             </label>
             {errors.termsAccepted && (
