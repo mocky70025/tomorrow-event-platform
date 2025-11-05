@@ -22,6 +22,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [showTermsPage, setShowTermsPage] = useState(false)
   const [errors, setErrors] = useState<Record<string, boolean>>({})
+  const [hasViewedTerms, setHasViewedTerms] = useState(false)
 
   // バリデーション実行
   const validateForm = (): boolean => {
@@ -42,6 +43,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   // 利用規約ページから戻ったときのチェック
   const handleBackFromTerms = () => {
     setShowTermsPage(false)
+    setHasViewedTerms(true) // 利用規約ページを見たことを記録
     const isValid = validateForm()
     if (!isValid) {
       setTimeout(() => {
@@ -329,9 +331,16 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                flexShrink: 0
+                flexShrink: 0,
+                cursor: hasViewedTerms ? 'pointer' : 'not-allowed',
+                opacity: hasViewedTerms ? 1 : 0.5
               }}
               onClick={() => {
+                if (!hasViewedTerms) {
+                  // 利用規約を見ていない場合は、利用規約ページに遷移
+                  setShowTermsPage(true)
+                  return
+                }
                 setTermsAccepted(!termsAccepted)
                 if (errors.termsAccepted) setErrors({ ...errors, termsAccepted: false })
               }}
@@ -340,15 +349,21 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                   type="checkbox"
                   checked={termsAccepted}
                   onChange={(e) => {
+                    if (!hasViewedTerms) {
+                      // 利用規約を見ていない場合は何もしない
+                      setShowTermsPage(true)
+                      return
+                    }
                     setTermsAccepted(e.target.checked)
                     if (errors.termsAccepted) setErrors({ ...errors, termsAccepted: false })
                   }}
+                  disabled={!hasViewedTerms}
                   style={{
                     position: 'absolute',
                     width: '24px',
                     height: '24px',
                     opacity: 0,
-                    cursor: 'pointer'
+                    cursor: hasViewedTerms ? 'pointer' : 'not-allowed'
                   }}
                 />
                 {termsAccepted && (
