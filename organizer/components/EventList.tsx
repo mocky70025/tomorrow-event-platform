@@ -36,87 +36,178 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
 
   if (events.length === 0) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">掲載中のイベントはありません</p>
+      <div style={{
+        background: '#FFFFFF',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '12px',
+        padding: '48px 24px',
+        textAlign: 'center'
+      }}>
+        <p style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '16px',
+          lineHeight: '150%',
+          color: '#666666'
+        }}>掲載中のイベントはありません</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
-      {events.map((event) => (
-        <div key={event.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-          {event.main_image_url && (
-            <div className="relative h-48 w-full overflow-hidden">
-              <img
-                src={event.main_image_url}
-                alt={event.event_name}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          )}
-          
-          <div className="p-4">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">
-              {event.event_name}
-            </h3>
-            
-            <div className="text-sm text-gray-600 mb-3">
-              <p>開催期間: {event.event_display_period}</p>
-              {event.event_time && <p>時間: {event.event_time}</p>}
-              <p>会場: {event.venue_name}</p>
-            </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {events.map((event) => {
+        // @ts-ignore
+        const approvalStatus = event.approval_status || 'pending'
+        const statusColor = approvalStatus === 'approved' 
+          ? { bg: '#E6F7ED', text: '#06C755' }
+          : approvalStatus === 'rejected'
+          ? { bg: '#FFE6E6', text: '#FF3B30' }
+          : { bg: '#FFF9E6', text: '#B8860B' }
+        const statusText = approvalStatus === 'approved' ? '承認済み' : approvalStatus === 'rejected' ? '却下' : '審査中'
 
-            <p className="text-gray-700 text-sm mb-4">
-              {event.lead_text}
-            </p>
-
-            <div className="flex justify-between items-center">
-              <div className="text-xs text-gray-500">
-                作成日: {new Date(event.created_at).toLocaleDateString('ja-JP')}
+        return (
+          <div
+            key={event.id}
+            style={{
+              background: '#FFFFFF',
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+              borderRadius: '12px',
+              overflow: 'hidden'
+            }}
+          >
+            {event.main_image_url && (
+              <div style={{ position: 'relative', height: '200px', width: '100%', overflow: 'hidden' }}>
+                <img
+                  src={event.main_image_url}
+                  alt={event.event_name}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'contain',
+                    background: '#F7F7F7'
+                  }}
+                />
               </div>
-              <div className="flex items-center space-x-2 flex-wrap">
-                {/* 承認ステータス表示 */}
-                {'approval_status' in event && (
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    // @ts-ignore
-                    event.approval_status === 'approved'
-                      ? 'bg-green-100 text-green-800'
-                      // @ts-ignore
-                      : event.approval_status === 'rejected'
-                      ? 'bg-red-100 text-red-800'
-                      : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {/* @ts-ignore */}
-                    {event.approval_status === 'approved' ? '承認済み' :
-                    // @ts-ignore
-                    event.approval_status === 'rejected' ? '却下' : '審査中'}
-                  </span>
-                )}
+            )}
+            
+            <div style={{ padding: '16px' }}>
+              <h3 style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '18px',
+                fontWeight: 700,
+                lineHeight: '120%',
+                color: '#000000',
+                marginBottom: '12px'
+              }}>
+                {event.event_name}
+              </h3>
+              
+              <div style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '14px',
+                lineHeight: '120%',
+                color: '#666666',
+                marginBottom: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '4px'
+              }}>
+                <p>開催期間: {event.event_display_period}</p>
+                {event.event_time && <p>時間: {event.event_time}</p>}
+                <p>会場: {event.venue_name}</p>
+              </div>
+
+              <p style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '14px',
+                lineHeight: '120%',
+                color: '#000000',
+                marginBottom: '16px'
+              }}>
+                {event.lead_text}
+              </p>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '12px',
+                  lineHeight: '120%',
+                  color: '#999999'
+                }}>
+                  作成日: {new Date(event.created_at).toLocaleDateString('ja-JP')}
+                </div>
+                <span style={{
+                  padding: '4px 12px',
+                  borderRadius: '12px',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  background: statusColor.bg,
+                  color: statusColor.text
+                }}>
+                  {statusText}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => onViewApplications && onViewApplications(event)}
-                  className="bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                  style={{
+                    padding: '8px 16px',
+                    background: '#06C755',
+                    color: '#FFFFFF',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    cursor: 'pointer'
+                  }}
                 >
                   申し込み管理
                 </button>
                 <button
                   onClick={() => onEdit && onEdit(event)}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors"
+                  style={{
+                    padding: '8px 16px',
+                    background: '#06C755',
+                    color: '#FFFFFF',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    cursor: 'pointer'
+                  }}
                 >
                   編集
                 </button>
                 <button
                   onClick={() => handleDelete(event.id)}
                   disabled={deleting === event.id}
-                  className="bg-red-500 hover:bg-red-600 disabled:bg-gray-400 text-white px-3 py-1 rounded text-sm transition-colors"
+                  style={{
+                    padding: '8px 16px',
+                    background: deleting === event.id ? '#D9D9D9' : '#FF3B30',
+                    color: '#FFFFFF',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    cursor: deleting === event.id ? 'not-allowed' : 'pointer'
+                  }}
                 >
                   {deleting === event.id ? '削除中...' : '削除'}
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

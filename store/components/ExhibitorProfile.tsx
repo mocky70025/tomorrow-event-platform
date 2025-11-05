@@ -63,10 +63,23 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">プロフィールを読み込み中...</p>
+      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '3px solid #E5E5E5',
+            borderTopColor: '#06C755',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            lineHeight: '150%',
+            color: '#666666'
+          }}>プロフィールを読み込み中...</p>
         </div>
       </div>
     )
@@ -84,149 +97,345 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={onBack}
-            className="text-blue-500 hover:text-blue-600 flex items-center"
-          >
-            ← 戻る
-          </button>
-          <h1 className="text-2xl font-bold text-gray-800">登録情報</h1>
+    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
+          <div style={{ width: '60px' }}></div>
+          <h1 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000',
+            textAlign: 'center'
+          }}>登録情報</h1>
           <button
             onClick={() => setIsEditing(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+            style={{
+              padding: '8px 16px',
+              background: '#06C755',
+              color: '#FFFFFF',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
+              fontWeight: 500,
+              lineHeight: '120%',
+              cursor: 'pointer'
+            }}
           >
             編集
           </button>
         </div>
 
         {exhibitorData && (
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  お名前
-                </label>
-                <p className="text-gray-900">{exhibitorData.name}</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>お名前</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{exhibitorData.name}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  性別
-                </label>
-                <p className="text-gray-900">{exhibitorData.gender}</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>性別</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{exhibitorData.gender === '男' ? '男性' : exhibitorData.gender === '女' ? '女性' : 'その他'}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  年齢
-                </label>
-                <p className="text-gray-900">{exhibitorData.age}歳</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>年齢</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{exhibitorData.age}歳</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  電話番号
-                </label>
-                <p className="text-gray-900">{exhibitorData.phone_number}</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>電話番号</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{exhibitorData.phone_number}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  メールアドレス
-                </label>
-                <p className="text-gray-900">{exhibitorData.email}</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>メールアドレス</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{exhibitorData.email}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ジャンル
-                </label>
-                <p className="text-gray-900">{exhibitorData.genre_category || '-'}</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>ジャンル</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{exhibitorData.genre_category || '-'}</p>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ジャンル詳細
-                </label>
-                <p className="text-gray-900">{exhibitorData.genre_free_text || '-'}</p>
+              <div>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>ジャンル詳細</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{exhibitorData.genre_free_text || '-'}</p>
               </div>
 
               {/* 書類画像の表示 */}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  登録書類
-                </label>
-                <div className="grid grid-cols-1 gap-6">
+              <div>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '16px',
+                  display: 'block'
+                }}>登録書類</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                   {exhibitorData.business_license_image_url && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-2">営業許可証</p>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666',
+                        marginBottom: '8px'
+                      }}>営業許可証</p>
                       <img
                         src={exhibitorData.business_license_image_url}
                         alt="営業許可証"
-                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'contain',
+                          borderRadius: '8px',
+                          background: '#F7F7F7',
+                          border: '1px solid #E5E5E5'
+                        }}
                       />
                     </div>
                   )}
                   {exhibitorData.vehicle_inspection_image_url && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-2">車検証</p>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666',
+                        marginBottom: '8px'
+                      }}>車検証</p>
                       <img
                         src={exhibitorData.vehicle_inspection_image_url}
                         alt="車検証"
-                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'contain',
+                          borderRadius: '8px',
+                          background: '#F7F7F7',
+                          border: '1px solid #E5E5E5'
+                        }}
                       />
                     </div>
                   )}
                   {exhibitorData.automobile_inspection_image_url && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-2">自動車検査証</p>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666',
+                        marginBottom: '8px'
+                      }}>自動車検査証</p>
                       <img
                         src={exhibitorData.automobile_inspection_image_url}
                         alt="自動車検査証"
-                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'contain',
+                          borderRadius: '8px',
+                          background: '#F7F7F7',
+                          border: '1px solid #E5E5E5'
+                        }}
                       />
                     </div>
                   )}
                   {exhibitorData.pl_insurance_image_url && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-2">PL保険</p>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666',
+                        marginBottom: '8px'
+                      }}>PL保険</p>
                       <img
                         src={exhibitorData.pl_insurance_image_url}
                         alt="PL保険"
-                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'contain',
+                          borderRadius: '8px',
+                          background: '#F7F7F7',
+                          border: '1px solid #E5E5E5'
+                        }}
                       />
                     </div>
                   )}
                   {exhibitorData.fire_equipment_layout_image_url && (
                     <div>
-                      <p className="text-sm text-gray-600 mb-2">火器類配置図</p>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666',
+                        marginBottom: '8px'
+                      }}>火器類配置図</p>
                       <img
                         src={exhibitorData.fire_equipment_layout_image_url}
                         alt="火器類配置図"
-                        className="w-full h-64 object-contain rounded-lg border-2 border-gray-200 bg-gray-50 shadow-sm"
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'contain',
+                          borderRadius: '8px',
+                          background: '#F7F7F7',
+                          border: '1px solid #E5E5E5'
+                        }}
                       />
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  登録日時
-                </label>
-                <p className="text-gray-900">
+              <div>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>登録日時</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>
                   {new Date(exhibitorData.created_at).toLocaleString('ja-JP')}
                 </p>
               </div>
 
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  最終更新日時
-                </label>
-                <p className="text-gray-900">
+              <div>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>最終更新日時</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>
                   {new Date(exhibitorData.updated_at).toLocaleString('ja-JP')}
                 </p>
               </div>

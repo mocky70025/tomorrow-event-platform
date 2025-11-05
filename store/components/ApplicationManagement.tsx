@@ -94,13 +94,13 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return { bg: '#FFF9E6', text: '#B8860B' }
       case 'approved':
-        return 'bg-green-100 text-green-800'
+        return { bg: '#E6F7ED', text: '#06C755' }
       case 'rejected':
-        return 'bg-red-100 text-red-800'
+        return { bg: '#FFE6E6', text: '#FF3B30' }
       default:
-        return 'bg-gray-100 text-gray-800'
+        return { bg: '#F7F7F7', text: '#666666' }
     }
   }
 
@@ -119,77 +119,175 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">申し込み一覧を読み込み中...</p>
+      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '3px solid #E5E5E5',
+            borderTopColor: '#06C755',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            lineHeight: '150%',
+            color: '#666666'
+          }}>申し込み一覧を読み込み中...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={onBack}
-            className="text-blue-500 hover:text-blue-600 flex items-center"
-          >
-            ← 戻る
-          </button>
-          <h1 className="text-2xl font-bold text-gray-800">申し込み管理</h1>
-          <div></div>
+    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+        <div style={{ marginBottom: '24px', paddingTop: '24px' }}>
+          <h1 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000',
+            textAlign: 'center'
+          }}>申し込み管理</h1>
         </div>
 
         {applications.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">申し込み履歴がありません</p>
-            <p className="text-gray-400 text-sm mt-2">イベント一覧から出店申し込みを行ってください</p>
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '48px 24px',
+            textAlign: 'center'
+          }}>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#666666',
+              marginBottom: '8px'
+            }}>申し込み履歴がありません</p>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
+              lineHeight: '120%',
+              color: '#999999',
+              marginTop: '8px'
+            }}>イベント一覧から出店申し込みを行ってください</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {applications.map((application) => (
-              <div key={application.id} className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      {application.event.event_name}
-                    </h3>
-                    <p className="text-gray-600 text-sm">
-                      {formatDate(application.event.event_start_date)} 〜 {formatDate(application.event.event_end_date)}
-                    </p>
-                    <p className="text-gray-500 text-sm">{application.event.venue_name}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {applications.map((application) => {
+              const statusColor = getStatusColor(application.application_status)
+              return (
+                <div
+                  key={application.id}
+                  style={{
+                    background: '#FFFFFF',
+                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        lineHeight: '120%',
+                        color: '#000000',
+                        marginBottom: '8px'
+                      }}>
+                        {application.event.event_name}
+                      </h3>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666',
+                        marginBottom: '4px'
+                      }}>
+                        {formatDate(application.event.event_start_date)} 〜 {formatDate(application.event.event_end_date)}
+                      </p>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666'
+                      }}>{application.event.venue_name}</p>
+                    </div>
+                    <span style={{
+                      padding: '4px 12px',
+                      borderRadius: '12px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      lineHeight: '120%',
+                      background: statusColor.bg,
+                      color: statusColor.text
+                    }}>
+                      {getStatusText(application.application_status)}
+                    </span>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(application.application_status)}`}>
-                    {getStatusText(application.application_status)}
-                  </span>
-                </div>
 
-                {application.event.main_image_url && (
-                  <div className="mb-4">
-                    <img
-                      src={application.event.main_image_url}
-                      alt={application.event.event_name}
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
+                  {application.event.main_image_url && (
+                    <div style={{ marginBottom: '16px' }}>
+                      <img
+                        src={application.event.main_image_url}
+                        alt={application.event.event_name}
+                        style={{
+                          width: '100%',
+                          height: '120px',
+                          objectFit: 'contain',
+                          borderRadius: '8px',
+                          background: '#F7F7F7'
+                        }}
+                      />
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '14px',
+                      lineHeight: '120%',
+                      color: '#666666'
+                    }}>申し込み日: {formatDate(application.applied_at)}</span>
+                    {application.application_status === 'approved' && (
+                      <span style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        lineHeight: '120%',
+                        color: '#06C755'
+                      }}>✓ 出店可能</span>
+                    )}
+                    {application.application_status === 'rejected' && (
+                      <span style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        lineHeight: '120%',
+                        color: '#FF3B30'
+                      }}>✗ 出店不可</span>
+                    )}
+                    {application.application_status === 'pending' && (
+                      <span style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        fontWeight: 600,
+                        lineHeight: '120%',
+                        color: '#B8860B'
+                      }}>⏳ 審査中</span>
+                    )}
                   </div>
-                )}
-
-                <div className="flex justify-between items-center text-sm text-gray-500">
-                  <span>申し込み日: {formatDate(application.applied_at)}</span>
-                  {application.application_status === 'approved' && (
-                    <span className="text-green-600 font-medium">✓ 出店可能</span>
-                  )}
-                  {application.application_status === 'rejected' && (
-                    <span className="text-red-600 font-medium">✗ 出店不可</span>
-                  )}
-                  {application.application_status === 'pending' && (
-                    <span className="text-yellow-600 font-medium">⏳ 審査中</span>
-                  )}
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

@@ -83,10 +83,23 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">読み込み中...</p>
+      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '3px solid #E5E5E5',
+            borderTopColor: '#06C755',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            lineHeight: '150%',
+            color: '#666666'
+          }}>読み込み中...</p>
         </div>
       </div>
     )
@@ -94,9 +107,14 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
 
   if (!organizer) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-500">主催者情報が見つかりません</p>
+      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            lineHeight: '150%',
+            color: '#666666'
+          }}>主催者情報が見つかりません</p>
         </div>
       </div>
     )
@@ -104,13 +122,32 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
 
   if (!organizer.is_approved) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 text-center">
-            <h2 className="text-lg font-semibold text-yellow-800 mb-2">
+      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <div style={{
+            background: '#FFF9E6',
+            border: '1px solid #F5D76E',
+            borderRadius: '12px',
+            padding: '24px',
+            textAlign: 'center',
+            marginTop: '24px'
+          }}>
+            <h2 style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '18px',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#B8860B',
+              marginBottom: '8px'
+            }}>
               承認待ち
             </h2>
-            <p className="text-yellow-700">
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#B8860B'
+            }}>
               運営側の承認をお待ちください。承認後、イベントの掲載が可能になります。
             </p>
           </div>
@@ -145,13 +182,30 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">イベント管理</h1>
+    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
+          <h1 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000'
+          }}>イベント管理</h1>
           <button
             onClick={() => setShowEventForm(true)}
-            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors"
+            style={{
+              padding: '8px 16px',
+              background: '#06C755',
+              color: '#FFFFFF',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '14px',
+              fontWeight: 500,
+              lineHeight: '120%',
+              cursor: 'pointer'
+            }}
           >
             新しいイベントを掲載
           </button>

@@ -82,40 +82,77 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
       {/* ナビゲーションバー */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold text-gray-800">Tomorrow - 出店者向け</h1>
-            <div className="flex space-x-4">
+      <div style={{
+        background: '#FFFFFF',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+        borderBottom: '1px solid #E5E5E5'
+      }}>
+        <div className="container mx-auto" style={{ padding: '16px', maxWidth: '394px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h1 style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '20px',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#000000',
+              textAlign: 'center'
+            }}>
+              Tomorrow - 出店者向け
+            </h1>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
               <button
                 onClick={() => setCurrentView('events')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  currentView === 'events' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: currentView === 'events' ? '#FFFFFF' : '#666666',
+                  background: currentView === 'events' ? '#06C755' : '#F7F7F7',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 イベント一覧
               </button>
               <button
                 onClick={() => setCurrentView('profile')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  currentView === 'profile' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: currentView === 'profile' ? '#FFFFFF' : '#666666',
+                  background: currentView === 'profile' ? '#06C755' : '#F7F7F7',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 登録情報
               </button>
               <button
                 onClick={() => setCurrentView('applications')}
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  currentView === 'applications' 
-                    ? 'bg-blue-500 text-white' 
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: currentView === 'applications' ? '#FFFFFF' : '#666666',
+                  background: currentView === 'applications' ? '#06C755' : '#F7F7F7',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
               >
                 申し込み管理
               </button>

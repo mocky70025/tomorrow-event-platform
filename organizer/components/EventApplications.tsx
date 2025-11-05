@@ -98,13 +98,13 @@ export default function EventApplications({ eventId, eventName, onBack }: EventA
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800'
+        return { bg: '#FFF9E6', text: '#B8860B' }
       case 'approved':
-        return 'bg-green-100 text-green-800'
+        return { bg: '#E6F7ED', text: '#06C755' }
       case 'rejected':
-        return 'bg-red-100 text-red-800'
+        return { bg: '#FFE6E6', text: '#FF3B30' }
       default:
-        return 'bg-gray-100 text-gray-800'
+        return { bg: '#F7F7F7', text: '#666666' }
     }
   }
 
@@ -123,76 +123,191 @@ export default function EventApplications({ eventId, eventName, onBack }: EventA
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">申し込み一覧を読み込み中...</p>
+      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '3px solid #E5E5E5',
+            borderTopColor: '#06C755',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            lineHeight: '150%',
+            color: '#666666'
+          }}>申し込み一覧を読み込み中...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
+    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
           <button
             onClick={onBack}
-            className="text-purple-500 hover:text-purple-600 flex items-center"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#06C755',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
           >
             ← 戻る
           </button>
-          <h1 className="text-xl font-bold text-gray-800">出店申し込み管理</h1>
-          <div></div>
+          <h1 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000'
+          }}>出店申し込み管理</h1>
+          <div style={{ width: '60px' }}></div>
         </div>
 
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold text-gray-700">{eventName}</h2>
+        <div style={{ marginBottom: '16px' }}>
+          <h2 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '18px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000'
+          }}>{eventName}</h2>
         </div>
 
         {applications.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">このイベントへの出店申し込みはありません</p>
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '48px 24px',
+            textAlign: 'center'
+          }}>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#666666'
+            }}>このイベントへの出店申し込みはありません</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            {applications.map((application) => (
-              <div key={application.id} className="bg-white rounded-lg shadow-md p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">
-                      {application.exhibitor.name}
-                    </h3>
-                    <p className="text-gray-600 text-sm">{application.exhibitor.email}</p>
-                    <p className="text-gray-600 text-sm">電話: {application.exhibitor.phone_number}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {applications.map((application) => {
+              const statusColor = getStatusColor(application.application_status)
+              return (
+                <div
+                  key={application.id}
+                  style={{
+                    background: '#FFFFFF',
+                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+                    borderRadius: '12px',
+                    padding: '24px'
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                    <div>
+                      <h3 style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        lineHeight: '120%',
+                        color: '#000000',
+                        marginBottom: '8px'
+                      }}>
+                        {application.exhibitor.name}
+                      </h3>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666',
+                        marginBottom: '4px'
+                      }}>{application.exhibitor.email}</p>
+                      <p style={{
+                        fontFamily: 'Inter, sans-serif',
+                        fontSize: '14px',
+                        lineHeight: '120%',
+                        color: '#666666'
+                      }}>電話: {application.exhibitor.phone_number}</p>
+                    </div>
+                    <span style={{
+                      padding: '4px 12px',
+                      borderRadius: '12px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      lineHeight: '120%',
+                      background: statusColor.bg,
+                      color: statusColor.text
+                    }}>
+                      {getStatusText(application.application_status)}
+                    </span>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(application.application_status)}`}>
-                    {getStatusText(application.application_status)}
-                  </span>
-                </div>
 
-                <div className="text-sm text-gray-500 mb-4">
-                  <p>申し込み日: {formatDate(application.applied_at)}</p>
-                </div>
-
-                {application.application_status === 'pending' && (
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => handleApplicationApproval(application.id, 'approved')}
-                      className="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors"
-                    >
-                      承認
-                    </button>
-                    <button
-                      onClick={() => handleApplicationApproval(application.id, 'rejected')}
-                      className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors"
-                    >
-                      却下
-                    </button>
+                  <div style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: '120%',
+                    color: '#666666',
+                    marginBottom: '16px'
+                  }}>
+                    <p>申し込み日: {formatDate(application.applied_at)}</p>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {application.application_status === 'pending' && (
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button
+                        onClick={() => handleApplicationApproval(application.id, 'approved')}
+                        style={{
+                          flex: 1,
+                          padding: '12px 16px',
+                          background: '#06C755',
+                          color: '#FFFFFF',
+                          borderRadius: '8px',
+                          border: 'none',
+                          fontFamily: 'Inter, sans-serif',
+                          fontSize: '16px',
+                          fontWeight: 700,
+                          lineHeight: '19px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        承認
+                      </button>
+                      <button
+                        onClick={() => handleApplicationApproval(application.id, 'rejected')}
+                        style={{
+                          flex: 1,
+                          padding: '12px 16px',
+                          background: '#FF3B30',
+                          color: '#FFFFFF',
+                          borderRadius: '8px',
+                          border: 'none',
+                          fontFamily: 'Inter, sans-serif',
+                          fontSize: '16px',
+                          fontWeight: 700,
+                          lineHeight: '19px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        却下
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

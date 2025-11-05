@@ -115,10 +115,23 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">イベント一覧を読み込み中...</p>
+      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            border: '3px solid #E5E5E5',
+            borderTopColor: '#06C755',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            lineHeight: '150%',
+            color: '#666666'
+          }}>イベント一覧を読み込み中...</p>
         </div>
       </div>
     )
@@ -126,84 +139,229 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   if (selectedEvent) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex justify-between items-center mb-6">
+      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
             <button
               onClick={() => setSelectedEvent(null)}
-              className="text-blue-500 hover:text-blue-600 flex items-center"
+              style={{
+                background: 'transparent',
+                border: 'none',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                lineHeight: '150%',
+                color: '#06C755',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
             >
               ← 戻る
             </button>
-            <h1 className="text-2xl font-bold text-gray-800">イベント詳細</h1>
-            <div></div>
+            <h1 style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '20px',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#000000'
+            }}>イベント詳細</h1>
+            <div style={{ width: '60px' }}></div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
             {selectedEvent.main_image_url && (
-              <div className="mb-6">
+              <div style={{ marginBottom: '24px' }}>
                 <img
                   src={selectedEvent.main_image_url}
                   alt={selectedEvent.main_image_caption || selectedEvent.event_name}
-                  className="w-full h-64 object-cover rounded-lg"
+                  style={{
+                    width: '100%',
+                    height: '200px',
+                    objectFit: 'contain',
+                    borderRadius: '8px',
+                    background: '#F7F7F7'
+                  }}
                 />
                 {selectedEvent.main_image_caption && (
-                  <p className="text-sm text-gray-600 mt-2">{selectedEvent.main_image_caption}</p>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: '120%',
+                    color: '#666666',
+                    marginTop: '8px'
+                  }}>{selectedEvent.main_image_caption}</p>
                 )}
               </div>
             )}
 
-            <div className="space-y-4">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
-                <h2 className="text-xl font-bold text-gray-800 mb-2">{selectedEvent.event_name}</h2>
-                <p className="text-gray-600">{selectedEvent.event_name_furigana}</p>
+                <h2 style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '20px',
+                  fontWeight: 700,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px'
+                }}>{selectedEvent.event_name}</h2>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  lineHeight: '150%',
+                  color: '#666666'
+                }}>{selectedEvent.event_name_furigana}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">ジャンル</label>
-                  <p className="text-gray-900">{selectedEvent.genre}</p>
+                  <label style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    color: '#000000',
+                    marginBottom: '8px',
+                    display: 'block'
+                  }}>ジャンル</label>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000'
+                  }}>{selectedEvent.genre}</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">開催期間</label>
-                  <p className="text-gray-900">
+                  <label style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    color: '#000000',
+                    marginBottom: '8px',
+                    display: 'block'
+                  }}>開催期間</label>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000'
+                  }}>
                     {formatDate(selectedEvent.event_start_date)} 〜 {formatDate(selectedEvent.event_end_date)}
                   </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">開催時間</label>
-                  <p className="text-gray-900">{selectedEvent.event_time || '未定'}</p>
+                  <label style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    color: '#000000',
+                    marginBottom: '8px',
+                    display: 'block'
+                  }}>開催時間</label>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000'
+                  }}>{selectedEvent.event_time || '未定'}</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">会場</label>
-                  <p className="text-gray-900">{selectedEvent.venue_name}</p>
+                  <label style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    color: '#000000',
+                    marginBottom: '8px',
+                    display: 'block'
+                  }}>会場</label>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000'
+                  }}>{selectedEvent.venue_name}</p>
                   {selectedEvent.venue_city && (
-                    <p className="text-sm text-gray-600">{selectedEvent.venue_city}</p>
+                    <p style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '14px',
+                      lineHeight: '120%',
+                      color: '#666666',
+                      marginTop: '4px'
+                    }}>{selectedEvent.venue_city}</p>
                   )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">リード文</label>
-                <p className="text-gray-900">{selectedEvent.lead_text}</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>リード文</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{selectedEvent.lead_text}</p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">イベント説明</label>
-                <p className="text-gray-900">{selectedEvent.event_description}</p>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>イベント説明</label>
+                <p style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  lineHeight: '150%',
+                  color: '#000000'
+                }}>{selectedEvent.event_description}</p>
               </div>
 
               {selectedEvent.homepage_url && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">公式サイト</label>
+                  <label style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    color: '#000000',
+                    marginBottom: '8px',
+                    display: 'block'
+                  }}>公式サイト</label>
                   <a
                     href={selectedEvent.homepage_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:text-blue-600 underline"
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '16px',
+                      lineHeight: '150%',
+                      color: '#06C755',
+                      textDecoration: 'underline'
+                    }}
                   >
                     {selectedEvent.homepage_url}
                   </a>
@@ -211,10 +369,29 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
               )}
             </div>
 
-            <div className="mt-8 flex justify-center">
+            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center' }}>
               <button
                 onClick={() => handleApply(selectedEvent.id)}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: '16px 24px',
+                  gap: '10px',
+                  width: '100%',
+                  maxWidth: '330px',
+                  height: '48px',
+                  background: '#06C755',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  lineHeight: '19px',
+                  color: '#FFFFFF',
+                  cursor: 'pointer'
+                }}
               >
                 出店申し込み
               </button>
@@ -226,46 +403,103 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <button
-            onClick={onBack}
-            className="text-blue-500 hover:text-blue-600 flex items-center"
-          >
-            ← 戻る
-          </button>
-          <h1 className="text-2xl font-bold text-gray-800">イベント一覧</h1>
-          <div></div>
+    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+        <div style={{ marginBottom: '24px', paddingTop: '24px' }}>
+          <h1 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000',
+            textAlign: 'center'
+          }}>イベント一覧</h1>
         </div>
 
         {events.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">開催予定のイベントがありません</p>
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '48px 24px',
+            textAlign: 'center'
+          }}>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#666666'
+            }}>開催予定のイベントがありません</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {events.map((event) => (
               <div
                 key={event.id}
                 onClick={() => handleEventClick(event)}
-                className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+                style={{
+                  background: '#FFFFFF',
+                  boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  cursor: 'pointer'
+                }}
               >
                 {event.main_image_url && (
                   <img
                     src={event.main_image_url}
                     alt={event.event_name}
-                    className="w-full h-48 object-cover"
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      objectFit: 'contain',
+                      background: '#F7F7F7'
+                    }}
                   />
                 )}
-                <div className="p-4">
-                  <h3 className="font-bold text-lg text-gray-800 mb-2">{event.event_name}</h3>
-                  <p className="text-gray-600 text-sm mb-2">{event.genre}</p>
-                  <p className="text-gray-500 text-sm">
+                <div style={{ padding: '16px' }}>
+                  <h3 style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '18px',
+                    fontWeight: 700,
+                    lineHeight: '120%',
+                    color: '#000000',
+                    marginBottom: '8px'
+                  }}>{event.event_name}</h3>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: '120%',
+                    color: '#666666',
+                    marginBottom: '8px'
+                  }}>{event.genre}</p>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: '120%',
+                    color: '#666666',
+                    marginBottom: '4px'
+                  }}>
                     {formatDate(event.event_start_date)} 〜 {formatDate(event.event_end_date)}
                   </p>
-                  <p className="text-gray-500 text-sm mt-1">{event.venue_name}</p>
-                  <p className="text-gray-700 text-sm mt-2 line-clamp-2">{event.lead_text}</p>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: '120%',
+                    color: '#666666',
+                    marginBottom: '8px'
+                  }}>{event.venue_name}</p>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    lineHeight: '120%',
+                    color: '#000000',
+                    marginTop: '8px',
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden'
+                  }}>{event.lead_text}</p>
                 </div>
               </div>
             ))}
