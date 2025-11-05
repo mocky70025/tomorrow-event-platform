@@ -524,11 +524,15 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               label="営業許可証"
               documentType="business_license"
               userId={userProfile.userId}
+              currentImageUrl={documentUrls.business_license}
               onUploadComplete={(url) => {
                 setDocumentUrls(prev => ({ ...prev, business_license: url }))
                 if (errors.business_license) setErrors({ ...errors, business_license: false })
               }}
               onUploadError={(error) => alert(error)}
+              onImageDelete={() => {
+                setDocumentUrls(prev => ({ ...prev, business_license: '' }))
+              }}
               hasError={errors.business_license}
             />
             
@@ -536,11 +540,15 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               label="車検証"
               documentType="vehicle_inspection"
               userId={userProfile.userId}
+              currentImageUrl={documentUrls.vehicle_inspection}
               onUploadComplete={(url) => {
                 setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))
                 if (errors.vehicle_inspection) setErrors({ ...errors, vehicle_inspection: false })
               }}
               onUploadError={(error) => alert(error)}
+              onImageDelete={() => {
+                setDocumentUrls(prev => ({ ...prev, vehicle_inspection: '' }))
+              }}
               hasError={errors.vehicle_inspection}
             />
             
@@ -548,11 +556,15 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               label="自動車検査証"
               documentType="automobile_inspection"
               userId={userProfile.userId}
+              currentImageUrl={documentUrls.automobile_inspection}
               onUploadComplete={(url) => {
                 setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))
                 if (errors.automobile_inspection) setErrors({ ...errors, automobile_inspection: false })
               }}
               onUploadError={(error) => alert(error)}
+              onImageDelete={() => {
+                setDocumentUrls(prev => ({ ...prev, automobile_inspection: '' }))
+              }}
               hasError={errors.automobile_inspection}
             />
             
@@ -560,11 +572,15 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               label="火器類配置図"
               documentType="fire_equipment_layout"
               userId={userProfile.userId}
+              currentImageUrl={documentUrls.fire_equipment_layout}
               onUploadComplete={(url) => {
                 setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))
                 if (errors.fire_equipment_layout) setErrors({ ...errors, fire_equipment_layout: false })
               }}
               onUploadError={(error) => alert(error)}
+              onImageDelete={() => {
+                setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: '' }))
+              }}
               hasError={errors.fire_equipment_layout}
             />
             
@@ -572,11 +588,15 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               label="PL保険登録証"
               documentType="pl_insurance"
               userId={userProfile.userId}
+              currentImageUrl={documentUrls.pl_insurance}
               onUploadComplete={(url) => {
                 setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))
                 if (errors.pl_insurance) setErrors({ ...errors, pl_insurance: false })
               }}
               onUploadError={(error) => alert(error)}
+              onImageDelete={() => {
+                setDocumentUrls(prev => ({ ...prev, pl_insurance: '' }))
+              }}
               hasError={errors.pl_insurance}
             />
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { uploadExhibitorDocument, getPublicUrl } from '@/lib/storage'
 
 interface ImageUploadProps {
@@ -27,6 +27,11 @@ export default function ImageUpload({
   const [uploading, setUploading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // currentImageUrlが変更されたときにpreviewUrlを更新
+  useEffect(() => {
+    setPreviewUrl(currentImageUrl || null)
+  }, [currentImageUrl])
 
   // 許可する画像形式
   const allowedTypes = [
@@ -142,7 +147,7 @@ export default function ImageUpload({
                 position: 'absolute',
                 width: '24px',
                 height: '24px',
-                left: '311px',
+                right: '-5px',
                 top: '-5px',
                 background: '#FF3B30',
                 borderRadius: '12px',
