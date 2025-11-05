@@ -95,7 +95,7 @@ export default function ImageUpload({
   }
 
   return (
-    <div style={{ marginBottom: '24px', width: '100%', maxWidth: '330px' }}>
+    <div style={{ marginBottom: '24px', width: '100%', maxWidth: '330px' }} data-error-field={documentType}>
       <label style={{
         fontFamily: 'Inter, sans-serif',
         fontSize: '14px',

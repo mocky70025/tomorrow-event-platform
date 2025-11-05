@@ -34,6 +34,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
+  const [showTermsPage, setShowTermsPage] = useState(false)
 
   // 全角数字を半角に変換
   const convertToHalfWidth = (str: string): string => {
@@ -116,8 +117,41 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   }
 
   const handleNext = () => {
-    if (validateForm()) {
-      setCurrentStep(2)
+    if (!validateForm()) {
+      // エラーがある場合、最初のエラーフィールドにスクロール
+      const firstErrorKey = Object.keys(errors).find(key => errors[key])
+      if (firstErrorKey) {
+        const errorElement = document.querySelector(`[data-error-field="${firstErrorKey}"]`)
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          // フォーカス可能な要素があればフォーカス
+          const inputElement = errorElement.querySelector('input, select, textarea')
+          if (inputElement) {
+            (inputElement as HTMLElement).focus()
+          }
+        }
+      }
+      return
+    }
+    setCurrentStep(2)
+  }
+
+  // 利用規約ページから戻ったときのチェック
+  const handleBackFromTerms = () => {
+    setShowTermsPage(false)
+    // フォームがすべて入力されているかチェック
+    const isValid = validateForm()
+    // エラーがある場合は、最初のエラーフィールドにスクロール
+    if (!isValid) {
+      setTimeout(() => {
+        const firstErrorKey = Object.keys(errors).find(key => errors[key])
+        if (firstErrorKey) {
+          const errorElement = document.querySelector(`[data-error-field="${firstErrorKey}"]`)
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }
+      }, 100)
     }
   }
 
@@ -312,7 +346,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
             {/* 名前 */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="name">
               <label style={labelStyle}>名前</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                 <div style={{ ...formFieldStyle(errors.name), width: '100%' }}>
@@ -334,7 +368,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 性別 */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="gender">
               <label style={labelStyle}>性別</label>
               <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
                 {(['男性', '女性', 'その他'] as const).map((option) => {
@@ -368,7 +402,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 年齢 */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="age">
               <label style={labelStyle}>年齢</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                 <div style={{ ...formFieldStyle(errors.age), width: '100%' }}>
@@ -394,7 +428,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 電話番号 */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="phone_number">
               <label style={labelStyle}>電話番号</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                 <div style={{ ...formFieldStyle(errors.phone_number), width: '100%' }}>
@@ -416,7 +450,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* メールアドレス */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="email">
               <label style={labelStyle}>メールアドレス</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                 <div style={{ ...formFieldStyle(errors.email), width: '100%' }}>
@@ -438,7 +472,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* ジャンル */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="genre_category">
               <label style={labelStyle}>ジャンル</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                 <div style={{ ...formFieldStyle(errors.genre_category), width: '100%' }}>
@@ -464,7 +498,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* より詳しいジャンル */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }}>
+            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="genre_free_text">
               <label style={labelStyle}>より詳しいジャンル</label>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                 <div style={{ ...formFieldStyle(errors.genre_free_text), width: '100%' }}>
@@ -603,8 +637,8 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               />
               {termsAccepted && (
                 <svg style={{
-                  width: '14px',
-                  height: '11px',
+                  width: '16px',
+                  height: '13px',
                   color: '#FFFFFF'
                 }} fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -616,7 +650,23 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               fontSize: '16px',
               lineHeight: '150%',
               color: termsAccepted ? '#06C755' : '#000000'
-            }}>利用規約に同意する</span>
+            }}>
+              利用規約に同意する
+              <span
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowTermsPage(true)
+                }}
+                style={{
+                  color: '#06C755',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  marginLeft: '4px'
+                }}
+              >
+                利用規約
+              </span>
+            </span>
           </label>
           {errors.termsAccepted && (
             <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>利用規約への同意が必要です</p>
@@ -1003,6 +1053,73 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       </div>
     </div>
   )
+
+  // 利用規約ページ
+  if (showTermsPage) {
+    return (
+      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <h2 style={{ 
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000',
+            marginBottom: '24px',
+            textAlign: 'center',
+            paddingTop: '24px'
+          }}>
+            利用規約
+          </h2>
+          
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '24px',
+            minHeight: '400px'
+          }}>
+            {/* 利用規約の内容は後で追加 */}
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#666666'
+            }}>
+              利用規約の内容はこちらに表示されます。
+            </p>
+          </div>
+
+          <button
+            onClick={handleBackFromTerms}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '16px 24px',
+              gap: '10px',
+              width: '100%',
+              height: '48px',
+              background: '#06C755',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '19px',
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              marginBottom: '24px'
+            }}
+          >
+            元のページに戻る
+          </button>
+        </div>
+      </div>
+    )
+  }
 
   if (currentStep === 1) return renderStep1()
   if (currentStep === 2) return renderStep2()
