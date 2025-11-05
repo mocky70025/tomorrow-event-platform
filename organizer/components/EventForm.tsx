@@ -52,6 +52,8 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   const [loading, setLoading] = useState(false)
   const [addressLoading, setAddressLoading] = useState(false)
   const [eventId, setEventId] = useState<string>((initialEvent?.id as string) || '')
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [showTermsPage, setShowTermsPage] = useState(false)
   const [imageUrls, setImageUrls] = useState({
     main: initialEvent?.main_image_url || '',
     additional1: (initialEvent as any)?.additional_image1_url || '',
@@ -87,7 +89,33 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
         return { ok: false, message: `${label}を入力してください。` }
       }
     }
+    
+    // 利用規約チェック
+    if (!termsAccepted) {
+      return { ok: false, message: '利用規約への同意が必要です。' }
+    }
+    
     return { ok: true }
+  }
+
+  // 利用規約ページから戻ったときのチェック
+  const handleBackFromTerms = () => {
+    setShowTermsPage(false)
+    const result = validateRequired()
+    if (!result.ok) {
+      setTimeout(() => {
+        const firstErrorKey = Object.keys(formData).find(key => {
+          const value = (formData as any)[key]
+          return value === undefined || value === null || String(value).trim() === ''
+        })
+        if (firstErrorKey) {
+          const errorElement = document.getElementById(`field-${firstErrorKey}`)
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }
+      }, 100)
+    }
   }
 
   // 郵便番号から住所を取得する関数
@@ -236,6 +264,72 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     } finally {
       setLoading(false)
     }
+  }
+
+  // 利用規約ページ
+  if (showTermsPage) {
+    return (
+      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <h2 style={{ 
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000',
+            marginBottom: '24px',
+            textAlign: 'center',
+            paddingTop: '24px'
+          }}>
+            利用規約
+          </h2>
+          
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '24px',
+            minHeight: '400px'
+          }}>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#666666'
+            }}>
+              利用規約の内容はこちらに表示されます。
+            </p>
+          </div>
+
+          <button
+            onClick={handleBackFromTerms}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '16px 24px',
+              gap: '10px',
+              width: '100%',
+              height: '48px',
+              background: '#06C755',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '19px',
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              marginBottom: '24px'
+            }}
+          >
+            元のページに戻る
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
