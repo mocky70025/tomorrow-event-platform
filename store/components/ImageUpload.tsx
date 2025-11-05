@@ -95,35 +95,98 @@ export default function ImageUpload({
   }
 
   return (
-    <div className="space-y-2">
-      <label className="block text-[14px] font-medium text-gray-700">
+    <div style={{ marginBottom: '24px' }}>
+      <label style={{
+        fontFamily: 'Inter, sans-serif',
+        fontSize: '14px',
+        fontWeight: 500,
+        lineHeight: '120%',
+        color: '#000000',
+        marginBottom: '10px',
+        display: 'block'
+      }}>
         {label}
       </label>
       
       {previewUrl ? (
-        <div className="relative">
-          <img
-            src={previewUrl}
-            alt={label}
-            className="w-full h-64 object-contain rounded-lg border-2 border-[#06C755] bg-gray-50"
-          />
-          <button
-            type="button"
-            onClick={handleRemoveImage}
-            className="absolute top-2 right-2 bg-[#FF3B30] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-[#E02E24] transition-colors"
-            title="画像を削除"
-          >
-            ×
-          </button>
+        <div style={{ position: 'relative', width: '330px', height: '200px' }}>
+          <div style={{
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '32px 99px',
+            gap: '10px',
+            width: '330px',
+            height: '200px',
+            background: '#F7F7F7',
+            border: '2px solid #06C755',
+            borderRadius: '8px',
+            position: 'relative'
+          }}>
+            <img
+              src={previewUrl}
+              alt={label}
+              style={{
+                width: '326px',
+                height: '196px',
+                objectFit: 'contain',
+                borderRadius: '6px'
+              }}
+            />
+            <button
+              type="button"
+              onClick={handleRemoveImage}
+              style={{
+                position: 'absolute',
+                width: '24px',
+                height: '24px',
+                left: '311px',
+                top: '-5px',
+                background: '#FF3B30',
+                borderRadius: '12px',
+                border: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 1
+              }}
+              title="画像を削除"
+            >
+              <span style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '20px',
+                fontWeight: 700,
+                lineHeight: '120%',
+                color: '#FFFFFF',
+                display: 'flex',
+                alignItems: 'center',
+                textAlign: 'center'
+              }}>×</span>
+            </button>
+          </div>
         </div>
       ) : (
-        <div className="relative">
+        <div style={{ position: 'relative', width: '330px', height: '200px' }}>
           <div
-            className={`w-full h-64 rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-colors ${
-              hasError
-                ? 'border-[#FF3B30] bg-red-50'
-                : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
-            }`}
+            style={{
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '32px 99px',
+              gap: '10px',
+              width: '330px',
+              height: '200px',
+              background: '#F7F7F7',
+              border: hasError ? '2px dashed #FF3B30' : '2px dashed #E5E5E5',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              position: 'relative'
+            }}
             onClick={() => fileInputRef.current?.click()}
           >
             <input
@@ -132,22 +195,55 @@ export default function ImageUpload({
               accept={allowedTypes.join(',')}
               onChange={handleFileSelect}
               disabled={uploading}
-              className="hidden"
+              style={{ display: 'none' }}
               id={`file-${documentType}`}
             />
-            <div className="text-gray-400 text-4xl mb-2">+</div>
-            <div className="text-[16px] text-gray-600">画像を選択</div>
+            <div style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '32px',
+              color: '#D9D9D9',
+              marginBottom: '8px'
+            }}>+</div>
+            <div style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#6B6B6B'
+            }}>画像を選択</div>
           </div>
           {hasError && (
-            <div className="absolute top-2 right-2 bg-[#FF3B30] text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">
-              ×
+            <div style={{
+              position: 'absolute',
+              width: '24px',
+              height: '24px',
+              left: '311px',
+              top: '-5px',
+              background: '#FF3B30',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1
+            }}>
+              <span style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '20px',
+                fontWeight: 700,
+                lineHeight: '120%',
+                color: '#FFFFFF'
+              }}>×</span>
             </div>
           )}
         </div>
       )}
       
       {!previewUrl && (
-        <p className="text-[12px] text-gray-500">
+        <p style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '12px',
+          color: '#6B6B6B',
+          marginTop: '8px'
+        }}>
           対応形式: JPEG, PNG, GIF, WebP, HEIC（最大5MB）
         </p>
       )}
