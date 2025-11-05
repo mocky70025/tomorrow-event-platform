@@ -710,6 +710,75 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             </div>
           </div>
 
+          {/* 利用規約チェック */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <label style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: '8px',
+              cursor: 'pointer'
+            }}>
+              <div style={{
+                width: '24px',
+                height: '24px',
+                background: termsAccepted ? '#06C755' : '#FFFFFF',
+                border: termsAccepted ? 'none' : '1px solid #E5E5E5',
+                borderRadius: '4px',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              onClick={() => setTermsAccepted(!termsAccepted)}
+              >
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  style={{
+                    position: 'absolute',
+                    width: '24px',
+                    height: '24px',
+                    opacity: 0,
+                    cursor: 'pointer'
+                  }}
+                />
+                {termsAccepted && (
+                  <svg style={{
+                    width: '16px',
+                    height: '13px',
+                    color: '#FFFFFF'
+                  }} fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+              </div>
+              <span style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                lineHeight: '150%',
+                color: termsAccepted ? '#06C755' : '#000000'
+              }}>
+                利用規約に同意する
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setShowTermsPage(true)
+                  }}
+                  style={{
+                    color: '#06C755',
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    marginLeft: '4px'
+                  }}
+                >
+                  利用規約
+                </span>
+              </span>
+            </label>
+          </div>
+
           <div className="flex space-x-4">
             <button
               type="button"
@@ -720,8 +789,12 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             </button>
             <button
               type="submit"
-              disabled={loading}
-              className="flex-1 bg-purple-500 hover:bg-purple-600 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg transition-colors"
+              disabled={loading || !termsAccepted}
+              className={`flex-1 text-white py-3 px-6 rounded-lg transition-colors ${
+                loading || !termsAccepted
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-purple-500 hover:bg-purple-600'
+              }`}
             >
               {loading ? (eventId ? '更新中...' : '作成中...') : (eventId ? 'イベントを更新' : 'イベントを掲載')}
             </button>
