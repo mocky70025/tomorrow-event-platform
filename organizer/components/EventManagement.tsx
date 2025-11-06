@@ -5,6 +5,7 @@ import { supabase, type Event, type Organizer } from '@/lib/supabase'
 import EventForm from './EventForm'
 import EventList from './EventList'
 import EventApplications from './EventApplications'
+import OrganizerProfile from './OrganizerProfile'
 
 interface EventManagementProps {
   userProfile: any
@@ -16,6 +17,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   const [showEventForm, setShowEventForm] = useState(false)
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null)
   const [eventForApplications, setEventForApplications] = useState<Event | null>(null)
+  const [currentView, setCurrentView] = useState<'events' | 'profile'>('events')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -181,43 +183,119 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     )
   }
 
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'events':
+        return (
+          <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+            <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
+                <h1 style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '20px',
+                  fontWeight: 700,
+                  lineHeight: '120%',
+                  color: '#000000'
+                }}>イベント管理</h1>
+                <button
+                  onClick={() => setShowEventForm(true)}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#06C755',
+                    color: '#FFFFFF',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    cursor: 'pointer'
+                  }}
+                >
+                  新しいイベントを掲載
+                </button>
+              </div>
+
+              <EventList 
+                events={events} 
+                onEventUpdated={fetchOrganizerData}
+                onEdit={(ev) => { setEventToEdit(ev); setShowEventForm(true) }}
+                onViewApplications={(ev) => { setEventForApplications(ev) }}
+              />
+            </div>
+          </div>
+        )
+      case 'profile':
+        return <OrganizerProfile userProfile={userProfile} onBack={() => setCurrentView('events')} />
+      default:
+        return null
+    }
+  }
+
   return (
     <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
-          <h1 style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '20px',
-            fontWeight: 700,
-            lineHeight: '120%',
-            color: '#000000'
-          }}>イベント管理</h1>
-          <button
-            onClick={() => setShowEventForm(true)}
-            style={{
-              padding: '8px 16px',
-              background: '#06C755',
-              color: '#FFFFFF',
-              borderRadius: '8px',
-              border: 'none',
+      {/* ナビゲーションバー */}
+      <div style={{
+        background: '#FFFFFF',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+        borderBottom: '1px solid #E5E5E5'
+      }}>
+        <div className="container mx-auto" style={{ padding: '16px', maxWidth: '394px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h1 style={{
               fontFamily: 'Inter, sans-serif',
-              fontSize: '14px',
-              fontWeight: 500,
+              fontSize: '20px',
+              fontWeight: 700,
               lineHeight: '120%',
-              cursor: 'pointer'
-            }}
-          >
-            新しいイベントを掲載
-          </button>
+              color: '#000000',
+              textAlign: 'center'
+            }}>
+              主催者向け
+            </h1>
+            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+              <button
+                onClick={() => setCurrentView('events')}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: currentView === 'events' ? '#FFFFFF' : '#666666',
+                  background: currentView === 'events' ? '#06C755' : '#F7F7F7',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                イベント管理
+              </button>
+              <button
+                onClick={() => setCurrentView('profile')}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: currentView === 'profile' ? '#FFFFFF' : '#666666',
+                  background: currentView === 'profile' ? '#06C755' : '#F7F7F7',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                登録情報
+              </button>
+            </div>
+          </div>
         </div>
-
-        <EventList 
-          events={events} 
-          onEventUpdated={fetchOrganizerData}
-          onEdit={(ev) => { setEventToEdit(ev); setShowEventForm(true) }}
-          onViewApplications={(ev) => { setEventForApplications(ev) }}
-        />
       </div>
+
+      {/* メインコンテンツ */}
+      {renderCurrentView()}
     </div>
   )
 }
