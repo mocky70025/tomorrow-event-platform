@@ -19,7 +19,7 @@ export default function WelcomeScreen() {
             color: '#000000',
             marginBottom: '16px'
           }}>
-            Tomorrow
+            イベント主催プラットフォーム
           </h1>
           <p style={{
             fontFamily: 'Inter, sans-serif',

@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Tomorrow - 主催者向け',
+  title: '主催者向け',
   description: 'イベント主催者向けプラットフォーム',
 }
 

@@ -82,7 +82,7 @@ export default function AdminDashboard() {
       {/* ヘッダー */}
       <div className="bg-white shadow-sm border-b">
         <div className="container mx-auto px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-800">Tomorrow - 運営管理</h1>
+          <h1 className="text-2xl font-bold text-gray-800">運営管理</h1>
         </div>
       </div>
 

@@ -135,15 +135,20 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       return
     }
     setCurrentStep(2)
+    // Step 2に進んだときにページトップにスクロール
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }, 100)
   }
 
   // 利用規約ページから戻ったときのチェック
   const handleBackFromTerms = () => {
     setShowTermsPage(false)
     setHasViewedTerms(true) // 利用規約ページを見たことを記録
+    // スクロール位置は保持（ページトップに戻さない）
     // フォームがすべて入力されているかチェック
     const isValid = validateForm()
-    // エラーがある場合は、最初のエラーフィールドにスクロール
+    // エラーがある場合は、最初のエラーフィールドにスクロール（ただし、現在のスクロール位置を基準に）
     if (!isValid) {
       setTimeout(() => {
         const firstErrorKey = Object.keys(errors).find(key => errors[key])
@@ -226,7 +231,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
   // 進捗インジケーター（Figmaデザインに基づく）
   const ProgressIndicator = () => (
-    <div className="flex items-center justify-center" style={{ marginBottom: '32px' }}>
+    <div className="flex items-center justify-center" style={{ marginBottom: '48px', paddingTop: '24px' }}>
       <div className="relative" style={{ width: '250.5px', height: '16px' }}>
         {/* ステップ1の円 */}
         <div 
@@ -334,6 +339,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           lineHeight: '120%',
           color: '#000000',
           marginBottom: '24px',
+          marginTop: '16px',
           textAlign: 'center'
         }}>
           情報登録をしてください

@@ -99,7 +99,7 @@ export default function Home() {
               color: '#000000',
               textAlign: 'center'
             }}>
-              Tomorrow - 出店者向け
+              出店者向け
             </h1>
             <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
               <button
