@@ -315,12 +315,40 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         </div>
         
         {/* ラベル */}
-        <div className="absolute top-6 left-0" style={{ width: '250.5px' }}>
-          <div className="flex justify-between">
-            <span className="text-[14px] text-gray-700 whitespace-nowrap">情報登録</span>
-            <span className="text-[14px] text-gray-700 whitespace-nowrap">情報確認</span>
-            <span className="text-[14px] text-gray-700 whitespace-nowrap">登録完了</span>
-          </div>
+        <div className="absolute top-6 left-0" style={{ width: '250.5px', height: '20px' }}>
+          {/* 情報登録 - 円の中心は8px（left: 0px + 円の半径8px） */}
+          <span 
+            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
+            style={{
+              left: '8px',
+              transform: 'translateX(-50%)',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            情報登録
+          </span>
+          {/* 情報確認 - 円の中心は125px（left: 117px + 円の半径8px） */}
+          <span 
+            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
+            style={{
+              left: '125px',
+              transform: 'translateX(-50%)',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            情報確認
+          </span>
+          {/* 登録完了 - 円の中心は242.5px（left: 234.5px + 円の半径8px） */}
+          <span 
+            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
+            style={{
+              left: '242.5px',
+              transform: 'translateX(-50%)',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            登録完了
+          </span>
         </div>
       </div>
     </div>
