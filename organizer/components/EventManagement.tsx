@@ -188,7 +188,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
       case 'events':
         return (
           <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-            <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+            <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px', paddingBottom: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
                 <h1 style={{
                   fontFamily: 'Inter, sans-serif',
@@ -226,76 +226,66 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
           </div>
         )
       case 'profile':
-        return <OrganizerProfile userProfile={userProfile} onBack={() => setCurrentView('events')} />
+        return (
+          <div style={{ paddingBottom: '24px' }}>
+            <OrganizerProfile userProfile={userProfile} />
+          </div>
+        )
       default:
         return null
     }
   }
 
-  return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      {/* ナビゲーションバー */}
-      <div style={{
-        background: '#FFFFFF',
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-        borderBottom: '1px solid #E5E5E5'
-      }}>
-        <div className="container mx-auto" style={{ padding: '16px', maxWidth: '394px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <h1 style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '20px',
-              fontWeight: 700,
-              lineHeight: '120%',
-              color: '#000000',
-              textAlign: 'center'
-            }}>
-              主催者向け
-            </h1>
-            <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-              <button
-                onClick={() => setCurrentView('events')}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: currentView === 'events' ? '#FFFFFF' : '#666666',
-                  background: currentView === 'events' ? '#06C755' : '#F7F7F7',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                イベント管理
-              </button>
-              <button
-                onClick={() => setCurrentView('profile')}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: currentView === 'profile' ? '#FFFFFF' : '#666666',
-                  background: currentView === 'profile' ? '#06C755' : '#F7F7F7',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                登録情報
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+  const tabItems: Array<{ key: typeof currentView; label: string; icon: string }> = [
+    { key: 'events', label: 'イベント', icon: '📅' },
+    { key: 'profile', label: '登録情報', icon: '👤' }
+  ]
 
-      {/* メインコンテンツ */}
+  return (
+    <div style={{ background: '#F7F7F7', minHeight: '100vh', paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)' }}>
       {renderCurrentView()}
+
+      <nav
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          background: '#FFFFFF',
+          borderTop: '1px solid #E5E5E5',
+          boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)',
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 8px)',
+          paddingTop: '8px'
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-around', maxWidth: '394px', margin: '0 auto' }}>
+          {tabItems.map((item) => {
+            const isActive = currentView === item.key
+            const activeColor = '#06C755'
+            const inactiveColor = '#666666'
+            return (
+              <button
+                key={item.key}
+                onClick={() => setCurrentView(item.key)}
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  border: 'none',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '4px',
+                  cursor: 'pointer',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+              >
+                <span style={{ fontSize: '20px', color: isActive ? activeColor : inactiveColor }}>{item.icon}</span>
+                <span style={{ fontSize: '12px', color: isActive ? activeColor : inactiveColor }}>{item.label}</span>
+              </button>
+            )
+          })}
+        </div>
+      </nav>
     </div>
   )
 }

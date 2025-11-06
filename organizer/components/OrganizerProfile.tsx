@@ -6,7 +6,6 @@ import OrganizerEditForm from './OrganizerEditForm'
 
 interface OrganizerProfileProps {
   userProfile: any
-  onBack: () => void
 }
 
 interface OrganizerData {
@@ -23,7 +22,7 @@ interface OrganizerData {
   updated_at: string
 }
 
-export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfileProps) {
+export default function OrganizerProfile({ userProfile }: OrganizerProfileProps) {
   const [organizerData, setOrganizerData] = useState<OrganizerData | null>(null)
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
