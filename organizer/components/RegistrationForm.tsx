@@ -23,6 +23,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const [showTermsPage, setShowTermsPage] = useState(false)
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [hasViewedTerms, setHasViewedTerms] = useState(false)
+  const [currentStep] = useState<1 | 2 | 3>(1) // 主催者は常にステップ1
 
   // 全角数字を半角に変換
   const convertToHalfWidth = (str: string): string => {
@@ -179,6 +180,131 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     }
   }
 
+  // 進捗インジケーター（Figmaデザインに基づく）
+  const ProgressIndicator = () => (
+    <div className="flex items-center justify-center" style={{ marginBottom: '48px', paddingTop: '24px' }}>
+      <div className="relative" style={{ width: '250.5px', height: '16px' }}>
+        {/* ステップ1の円 */}
+        <div 
+          className="absolute rounded-full flex items-center justify-center"
+          style={{
+            width: '16px',
+            height: '16px',
+            left: '0px',
+            top: '0px',
+            backgroundColor: currentStep >= 1 ? '#06C755' : 'transparent',
+            border: currentStep >= 1 ? 'none' : '1px solid #06C755',
+          }}
+        >
+          {currentStep > 1 && (
+            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          )}
+        </div>
+        
+        {/* 線1（ステップ1と2の間） */}
+        <div 
+          className="absolute"
+          style={{
+            width: '101.75px',
+            height: '4px',
+            left: '15.75px',
+            top: '6px',
+            backgroundColor: currentStep >= 2 ? '#06C755' : '#D9D9D9',
+          }}
+        />
+        
+        {/* ステップ2の円 */}
+        <div 
+          className="absolute rounded-full flex items-center justify-center"
+          style={{
+            width: '16px',
+            height: '16px',
+            left: '117px',
+            top: '0px',
+            backgroundColor: currentStep >= 2 ? '#06C755' : 'transparent',
+            border: currentStep >= 2 ? 'none' : '1px solid #06C755',
+          }}
+        >
+          {currentStep > 2 && (
+            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          )}
+        </div>
+        
+        {/* 線2（ステップ2と3の間） */}
+        <div 
+          className="absolute"
+          style={{
+            width: '101.75px',
+            height: '4px',
+            left: '133px',
+            top: '6px',
+            backgroundColor: currentStep >= 3 ? '#06C755' : '#D9D9D9',
+          }}
+        />
+        
+        {/* ステップ3の円 */}
+        <div 
+          className="absolute rounded-full flex items-center justify-center"
+          style={{
+            width: '16px',
+            height: '16px',
+            left: '234.5px',
+            top: '0px',
+            backgroundColor: currentStep >= 3 ? '#06C755' : 'transparent',
+            border: currentStep >= 3 ? 'none' : '1px solid #06C755',
+          }}
+        >
+          {currentStep >= 3 && (
+            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          )}
+        </div>
+        
+        {/* ラベル */}
+        <div className="absolute top-6 left-0" style={{ width: '250.5px', height: '20px' }}>
+          {/* 情報登録 - 円の中心は8px（left: 0px + 円の半径8px） */}
+          <span 
+            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
+            style={{
+              left: '8px',
+              transform: 'translateX(-50%)',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            情報登録
+          </span>
+          {/* 情報確認 - 円の中心は125px（left: 117px + 円の半径8px） */}
+          <span 
+            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
+            style={{
+              left: '125px',
+              transform: 'translateX(-50%)',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            情報確認
+          </span>
+          {/* 登録完了 - 円の中心は242.5px（left: 234.5px + 円の半径8px） */}
+          <span 
+            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
+            style={{
+              left: '242.5px',
+              transform: 'translateX(-50%)',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            登録完了
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+
   // 利用規約ページ
   if (showTermsPage) {
     return (
@@ -248,6 +374,8 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   return (
     <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
       <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+        <ProgressIndicator />
+        
         <h2 style={{ 
           fontFamily: 'Inter, sans-serif',
           fontSize: '20px',
@@ -255,7 +383,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           lineHeight: '120%',
           color: '#000000',
           marginBottom: '24px',
-          marginTop: '24px',
+          marginTop: '16px',
           textAlign: 'center'
         }}>
           情報登録をしてください
