@@ -180,6 +180,25 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     cursor: 'pointer'
   }
 
+  const rangeFieldRowStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    width: '100%'
+  }
+
+  const rangeSeparatorStyle = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 700,
+    color: '#666666',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '48px',
+    padding: '0 8px'
+  }
+
   // 必須項目のバリデーション（最初の未入力へスクロール＆フォーカス）
   const validateRequired = (): { ok: boolean; message?: string } => {
     const requiredList: Array<{ key: keyof typeof formData; label: string }> = [
@@ -400,9 +419,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <h2 style={sectionTitleStyle}>基本情報</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  イベント名称 <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>イベント名称</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-event_name"
@@ -418,9 +435,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  イベント名称フリガナ <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>イベント名称フリガナ</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-event_name_furigana"
@@ -436,9 +451,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  ジャンル <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>ジャンル</label>
                 <div style={formFieldStyle(false)}>
                   <select
                     id="field-genre"
@@ -462,7 +475,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={{ width: '100%', maxWidth: '330px' }}>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', fontWeight: 500, lineHeight: '120%', color: '#000000', marginBottom: '12px' }}>チェック項目</div>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', fontWeight: 500, lineHeight: '120%', color: '#000000', marginBottom: '12px' }}>チェック項目（任意）</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>
                     <span style={{
@@ -529,10 +542,8 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <h2 style={sectionTitleStyle}>開催期間</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  イベント開催期間 <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                <label style={labelStyle}>イベント開催期間</label>
+                <div style={rangeFieldRowStyle}>
                   <div style={{ ...formFieldStyle(false), flex: 1 }}>
                     <input
                       id="field-event_start_date"
@@ -543,7 +554,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                       style={inputStyle(!!formData.event_start_date)}
                     />
                   </div>
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 700, color: '#666666' }}>〜</span>
+                  <span style={rangeSeparatorStyle}>〜</span>
                   <div style={{ ...formFieldStyle(false), flex: 1 }}>
                     <input
                       id="field-event_end_date"
@@ -558,9 +569,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  イベント開催期間(表示用) <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>イベント開催期間(表示用)</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-event_display_period"
@@ -576,7 +585,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>開催期間に関する補足</label>
+                <label style={labelStyle}>開催期間に関する補足（任意）</label>
                 <div style={formFieldStyle(false, { minHeight: 96 })}>
                   <textarea
                     value={formData.event_period_notes}
@@ -588,7 +597,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>開催時間</label>
+                <label style={labelStyle}>開催時間（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -604,11 +613,11 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
           {/* 申し込み期間 */}
           <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>申し込み期間</h2>
+            <h2 style={sectionTitleStyle}>申し込み期間（任意）</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>申し込み期間</label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                <label style={labelStyle}>申し込み期間（任意）</label>
+                <div style={rangeFieldRowStyle}>
                   <div style={{ ...formFieldStyle(false), flex: 1 }}>
                     <input
                       type="date"
@@ -617,7 +626,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                       style={inputStyle(!!formData.application_start_date)}
                     />
                   </div>
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 700, color: '#666666' }}>〜</span>
+                  <span style={rangeSeparatorStyle}>〜</span>
                   <div style={{ ...formFieldStyle(false), flex: 1 }}>
                     <input
                       type="date"
@@ -630,7 +639,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>申し込み期間(表示用)</label>
+                <label style={labelStyle}>申し込み期間(表示用)（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -643,7 +652,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>申し込みに関する補足</label>
+                <label style={labelStyle}>申し込みに関する補足（任意）</label>
                 <div style={formFieldStyle(false, { minHeight: 96 })}>
                   <textarea
                     value={formData.application_notes}
@@ -658,10 +667,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
           {/* チケット情報 */}
           <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>チケット情報</h2>
+            <h2 style={sectionTitleStyle}>チケット情報（任意）</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>チケット発売開始日</label>
+                <label style={labelStyle}>チケット発売開始日（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="date"
@@ -673,7 +682,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>チケット販売場所</label>
+                <label style={labelStyle}>チケット販売場所（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -692,9 +701,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <h2 style={sectionTitleStyle}>イベント内容</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  リード文 <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>リード文</label>
                 <div style={formFieldStyle(false, { minHeight: 120 })}>
                   <textarea
                     id="field-lead_text"
@@ -708,9 +715,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  イベント紹介文 <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>イベント紹介文</label>
                 <div style={formFieldStyle(false, { minHeight: 140 })}>
                   <textarea
                     id="field-event_description"
@@ -724,7 +729,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>イベント紹介文（長文）</label>
+                <label style={labelStyle}>イベント紹介文（長文）（任意）</label>
                 <div style={formFieldStyle(false, { minHeight: 140 })}>
                   <textarea
                     value={formData.event_introduction_text}
@@ -739,10 +744,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
           {/* イベント画像 */}
           <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>イベント画像</h2>
+            <h2 style={sectionTitleStyle}>イベント画像（任意）</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
               <ImageUpload
-                label="メイン画像"
+                label="メイン画像（任意）"
                 eventId={eventId || 'temp'}
                 imageType="main"
                 onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, main: url }))}
@@ -750,7 +755,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 currentImageUrl={imageUrls.main}
               />
               <ImageUpload
-                label="追加画像1"
+                label="追加画像1（任意）"
                 eventId={eventId || 'temp'}
                 imageType="additional"
                 imageIndex={1}
@@ -759,7 +764,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 currentImageUrl={imageUrls.additional1}
               />
               <ImageUpload
-                label="追加画像2"
+                label="追加画像2（任意）"
                 eventId={eventId || 'temp'}
                 imageType="additional"
                 imageIndex={2}
@@ -768,7 +773,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 currentImageUrl={imageUrls.additional2}
               />
               <ImageUpload
-                label="追加画像3"
+                label="追加画像3（任意）"
                 eventId={eventId || 'temp'}
                 imageType="additional"
                 imageIndex={3}
@@ -777,7 +782,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 currentImageUrl={imageUrls.additional3}
               />
               <ImageUpload
-                label="追加画像4"
+                label="追加画像4（任意）"
                 eventId={eventId || 'temp'}
                 imageType="additional"
                 imageIndex={4}
@@ -793,9 +798,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <h2 style={sectionTitleStyle}>会場情報</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  会場又は集合場所の名称 <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>会場又は集合場所の名称</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-venue_name"
@@ -809,8 +812,8 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>郵便番号</label>
-                <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                <label style={labelStyle}>郵便番号（任意）</label>
+                <div style={{ display: 'flex', gap: '12px', width: '100%' }}>
                   <div style={{ ...formFieldStyle(false), flex: 1 }}>
                     <input
                       id="field-venue_postal_code"
@@ -846,7 +849,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>市区町村</label>
+                <label style={labelStyle}>市区町村（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -858,7 +861,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>町名</label>
+                <label style={labelStyle}>町名（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -870,7 +873,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>丁目番地号</label>
+                <label style={labelStyle}>丁目番地号（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -882,7 +885,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>緯度</label>
+                <label style={labelStyle}>緯度（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -895,7 +898,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>経度</label>
+                <label style={labelStyle}>経度（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -911,10 +914,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
           {/* URL情報 */}
           <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>URL情報</h2>
+            <h2 style={sectionTitleStyle}>URL情報（任意）</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>公式サイトURL</label>
+                <label style={labelStyle}>公式サイトURL（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -927,7 +930,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>関連ページURL</label>
+                <label style={labelStyle}>関連ページURL（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
@@ -946,9 +949,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <h2 style={sectionTitleStyle}>連絡先情報</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  問い合わせ先名称 <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>問い合わせ先名称</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-contact_name"
@@ -962,9 +963,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>
-                  電話番号 <span style={{ color: '#FF3B30' }}>*</span>
-                </label>
+                <label style={labelStyle}>電話番号</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-contact_phone"
@@ -978,7 +977,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>メールアドレス</label>
+                <label style={labelStyle}>メールアドレス（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="email"
@@ -993,10 +992,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
           {/* その他情報 */}
           <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>その他情報</h2>
+            <h2 style={sectionTitleStyle}>その他情報（任意）</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>駐車場情報</label>
+                <label style={labelStyle}>駐車場情報（任意）</label>
                 <div style={formFieldStyle(false, { minHeight: 96 })}>
                   <textarea
                     value={formData.parking_info}
@@ -1008,7 +1007,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>料金情報</label>
+                <label style={labelStyle}>料金情報（任意）</label>
                 <div style={formFieldStyle(false, { minHeight: 96 })}>
                   <textarea
                     value={formData.fee_info}
@@ -1020,7 +1019,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>主催者情報</label>
+                <label style={labelStyle}>主催者情報（任意）</label>
                 <div style={formFieldStyle(false, { minHeight: 96 })}>
                   <textarea
                     value={formData.organizer_info}
