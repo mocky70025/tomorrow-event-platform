@@ -181,9 +181,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   }
 
   const rangeFieldRowStyle = {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: '1fr auto 1fr',
     alignItems: 'center',
-    gap: '12px',
+    columnGap: '12px',
     width: '100%'
   }
 
@@ -544,7 +545,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               <div style={fieldWrapperStyle}>
                 <label style={labelStyle}>イベント開催期間</label>
                 <div style={rangeFieldRowStyle}>
-                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                  <div style={formFieldStyle(false)}>
                     <input
                       id="field-event_start_date"
                       type="date"
@@ -555,7 +556,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     />
                   </div>
                   <span style={rangeSeparatorStyle}>〜</span>
-                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                  <div style={formFieldStyle(false)}>
                     <input
                       id="field-event_end_date"
                       type="date"
@@ -618,7 +619,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               <div style={fieldWrapperStyle}>
                 <label style={labelStyle}>申し込み期間（任意）</label>
                 <div style={rangeFieldRowStyle}>
-                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                  <div style={formFieldStyle(false)}>
                     <input
                       type="date"
                       value={formData.application_start_date}
@@ -627,7 +628,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     />
                   </div>
                   <span style={rangeSeparatorStyle}>〜</span>
-                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                  <div style={formFieldStyle(false)}>
                     <input
                       type="date"
                       value={formData.application_end_date}
