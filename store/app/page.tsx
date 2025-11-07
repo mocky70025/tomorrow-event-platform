@@ -56,7 +56,7 @@ export default function Home() {
       }
       scrollTimeoutRef.current = setTimeout(() => {
         setNavVisible(true)
-      }, 400)
+      }, 200)
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
