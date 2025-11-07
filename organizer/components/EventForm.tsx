@@ -60,6 +60,126 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     additional4: (initialEvent as any)?.additional_image4_url || '',
   })
 
+  const cardStyle = {
+    background: '#FFFFFF',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    borderRadius: '12px',
+    padding: '24px',
+    marginBottom: '24px'
+  }
+
+  const sectionTitleStyle = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 700,
+    lineHeight: '120%',
+    color: '#000000',
+    marginBottom: '24px',
+    textAlign: 'center' as const
+  }
+
+  const fieldsContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '24px',
+    alignItems: 'center' as const
+  }
+
+  const fieldWrapperStyle = {
+    width: '100%',
+    maxWidth: '330px',
+    position: 'relative' as const
+  }
+
+  const labelStyle = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '14px',
+    fontWeight: 500,
+    lineHeight: '120%',
+    color: '#000000',
+    marginBottom: '10px',
+    display: 'block' as const
+  }
+
+  const formFieldStyle = (hasError: boolean, options?: { minHeight?: number }) => ({
+    boxSizing: 'border-box' as const,
+    display: 'flex',
+    flexDirection: 'row' as const,
+    alignItems: options?.minHeight && options.minHeight > 48 ? 'flex-start' : 'center',
+    padding: '12px 16px',
+    gap: '10px',
+    width: '100%',
+    minHeight: options?.minHeight ?? 48,
+    background: '#FFFFFF',
+    border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
+    borderRadius: '8px'
+  })
+
+  const inputStyle = (hasValue: boolean) => ({
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: hasValue ? '#000000' : '#6B6B6B',
+    border: 'none',
+    outline: 'none',
+    width: '100%',
+    background: 'transparent'
+  })
+
+  const textareaStyle = (hasValue: boolean) => ({
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: hasValue ? '#000000' : '#6B6B6B',
+    border: 'none',
+    outline: 'none',
+    width: '100%',
+    background: 'transparent',
+    resize: 'none' as const
+  })
+
+  const buttonPrimaryStyle = {
+    display: 'flex',
+    flexDirection: 'row' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '16px 24px',
+    gap: '10px',
+    width: '100%',
+    maxWidth: '157px',
+    height: '48px',
+    background: '#06C755',
+    borderRadius: '8px',
+    border: 'none',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 700,
+    lineHeight: '19px',
+    color: '#FFFFFF',
+    cursor: 'pointer'
+  }
+
+  const buttonSecondaryStyle = {
+    display: 'flex',
+    flexDirection: 'row' as const,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '16px 24px',
+    gap: '10px',
+    width: '100%',
+    maxWidth: '157px',
+    height: '48px',
+    background: '#FFFFFF',
+    borderRadius: '8px',
+    border: '1px solid #E5E5E5',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 700,
+    lineHeight: '19px',
+    color: '#000000',
+    cursor: 'pointer'
+  }
+
   // 必須項目のバリデーション（最初の未入力へスクロール＆フォーカス）
   const validateRequired = (): { ok: boolean; message?: string } => {
     const requiredList: Array<{ key: keyof typeof formData; label: string }> = [
@@ -241,203 +361,386 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">{eventId ? 'イベント編集' : 'イベント掲載'}</h1>
+    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '24px', marginBottom: '24px' }}>
           <button
+            type="button"
             onClick={onCancel}
-            className="text-gray-500 hover:text-gray-700"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#06C755',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
           >
-            キャンセル
+            ← 戻る
           </button>
+          <h1 style={{
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000'
+          }}>
+            {eventId ? 'イベント編集' : 'イベント掲載'}
+          </h1>
+          <div style={{ width: '60px' }}></div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit}>
           {/* 基本情報 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">基本情報</h2>
-            
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  イベント名称 *
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>基本情報</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  イベント名称 <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
-                <input
-                  id="field-event_name"
-                  type="text"
-                  required
-                  maxLength={50}
-                  value={formData.event_name}
-                  onChange={(e) => setFormData({ ...formData, event_name: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  イベント名称フリガナ *
-                </label>
-                <input
-                  id="field-event_name_furigana"
-                  type="text"
-                  required
-                  maxLength={50}
-                  value={formData.event_name_furigana}
-                  onChange={(e) => setFormData({ ...formData, event_name_furigana: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ジャンル *
-                </label>
-                <select
-                  id="field-genre"
-                  required
-                  value={formData.genre}
-                  onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                >
-                  <option value="">選択してください</option>
-                  <option value="祭り・花火大会">祭り・花火大会</option>
-                  <option value="音楽・ライブ">音楽・ライブ</option>
-                  <option value="スポーツ">スポーツ</option>
-                  <option value="文化・芸術">文化・芸術</option>
-                  <option value="その他">その他</option>
-                </select>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center">
+                <div style={formFieldStyle(false)}>
                   <input
-                    type="checkbox"
-                    checked={formData.is_shizuoka_vocational_assoc_related}
-                    onChange={(e) => setFormData({ ...formData, is_shizuoka_vocational_assoc_related: e.target.checked })}
-                    className="mr-2"
+                    id="field-event_name"
+                    type="text"
+                    required
+                    maxLength={50}
+                    value={formData.event_name}
+                    onChange={(e) => setFormData({ ...formData, event_name: e.target.value })}
+                    style={inputStyle(!!formData.event_name)}
+                    placeholder="例: ○○フェスティバル"
                   />
-                  <span className="text-sm text-gray-700">静岡県職業教育振興会関係者</span>
-                </label>
+                </div>
               </div>
 
-              <div className="flex items-center space-x-4">
-                <label className="flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={formData.opt_out_newspaper_publication}
-                    onChange={(e) => setFormData({ ...formData, opt_out_newspaper_publication: e.target.checked })}
-                    className="mr-2"
-                  />
-                  <span className="text-sm text-gray-700">新聞掲載を希望しない</span>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  イベント名称フリガナ <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    id="field-event_name_furigana"
+                    type="text"
+                    required
+                    maxLength={50}
+                    value={formData.event_name_furigana}
+                    onChange={(e) => setFormData({ ...formData, event_name_furigana: e.target.value })}
+                    style={inputStyle(!!formData.event_name_furigana)}
+                    placeholder="例: ○○フェスティバル"
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  ジャンル <span style={{ color: '#FF3B30' }}>*</span>
+                </label>
+                <div style={formFieldStyle(false)}>
+                  <select
+                    id="field-genre"
+                    required
+                    value={formData.genre}
+                    onChange={(e) => setFormData({ ...formData, genre: e.target.value })}
+                    style={{
+                      ...inputStyle(!!formData.genre),
+                      appearance: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">選択してください</option>
+                    <option value="祭り・花火大会">祭り・花火大会</option>
+                    <option value="音楽・ライブ">音楽・ライブ</option>
+                    <option value="スポーツ">スポーツ</option>
+                    <option value="文化・芸術">文化・芸術</option>
+                    <option value="その他">その他</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ width: '100%', maxWidth: '330px' }}>
+                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', fontWeight: 500, lineHeight: '120%', color: '#000000', marginBottom: '12px' }}>チェック項目</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>
+                    <span style={{
+                      width: '24px',
+                      height: '24px',
+                      background: formData.is_shizuoka_vocational_assoc_related ? '#06C755' : '#FFFFFF',
+                      border: formData.is_shizuoka_vocational_assoc_related ? 'none' : '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.is_shizuoka_vocational_assoc_related}
+                        onChange={(e) => setFormData({ ...formData, is_shizuoka_vocational_assoc_related: e.target.checked })}
+                        style={{ position: 'absolute', width: '24px', height: '24px', opacity: 0, cursor: 'pointer' }}
+                      />
+                      {formData.is_shizuoka_vocational_assoc_related && (
+                        <svg style={{ width: '16px', height: '13px', color: '#FFFFFF' }} fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </span>
+                    静岡県職業教育振興会関係者
+                  </label>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>
+                    <span style={{
+                      width: '24px',
+                      height: '24px',
+                      background: formData.opt_out_newspaper_publication ? '#06C755' : '#FFFFFF',
+                      border: formData.opt_out_newspaper_publication ? 'none' : '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      position: 'relative',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={formData.opt_out_newspaper_publication}
+                        onChange={(e) => setFormData({ ...formData, opt_out_newspaper_publication: e.target.checked })}
+                        style={{ position: 'absolute', width: '24px', height: '24px', opacity: 0, cursor: 'pointer' }}
+                      />
+                      {formData.opt_out_newspaper_publication && (
+                        <svg style={{ width: '16px', height: '13px', color: '#FFFFFF' }} fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </span>
+                    新聞掲載を希望しない
+                  </label>
+                </div>
               </div>
             </div>
           </div>
 
           {/* 開催期間 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">開催期間</h2>
-            
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  イベント開催期間 *
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>開催期間</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  イベント開催期間 <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
-                <div className="flex items-center gap-2">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                    <input
+                      id="field-event_start_date"
+                      type="date"
+                      required
+                      value={formData.event_start_date}
+                      onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
+                      style={inputStyle(!!formData.event_start_date)}
+                    />
+                  </div>
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 700, color: '#666666' }}>〜</span>
+                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                    <input
+                      id="field-event_end_date"
+                      type="date"
+                      required
+                      value={formData.event_end_date}
+                      onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
+                      style={inputStyle(!!formData.event_end_date)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  イベント開催期間(表示用) <span style={{ color: '#FF3B30' }}>*</span>
+                </label>
+                <div style={formFieldStyle(false)}>
                   <input
-                    id="field-event_start_date"
-                    type="date"
+                    id="field-event_display_period"
+                    type="text"
                     required
-                    value={formData.event_start_date}
-                    onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
-                    className="flex-1 border border-gray-300 rounded-md px-3 py-2"
-                  />
-                  <span className="text-gray-500 font-bold">〜</span>
-                  <input
-                    id="field-event_end_date"
-                    type="date"
-                    required
-                    value={formData.event_end_date}
-                    onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
-                    className="flex-1 border border-gray-300 rounded-md px-3 py-2"
+                    maxLength={50}
+                    value={formData.event_display_period}
+                    onChange={(e) => setFormData({ ...formData, event_display_period: e.target.value })}
+                    style={inputStyle(!!formData.event_display_period)}
+                    placeholder="例: 2025年9月20日(土)"
                   />
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  イベント開催期間(表示用) *
-                </label>
-                <input
-                  id="field-event_display_period"
-                  type="text"
-                  required
-                  maxLength={50}
-                  value={formData.event_display_period}
-                  onChange={(e) => setFormData({ ...formData, event_display_period: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  placeholder="例: 2025年9月20日(土)"
-                />
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>開催期間に関する補足</label>
+                <div style={formFieldStyle(false, { minHeight: 96 })}>
+                  <textarea
+                    value={formData.event_period_notes}
+                    onChange={(e) => setFormData({ ...formData, event_period_notes: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.event_period_notes), minHeight: '72px' }}
+                    placeholder="補足事項があれば入力してください"
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  開催時間
-                </label>
-                <input
-                  type="text"
-                  value={formData.event_time}
-                  onChange={(e) => setFormData({ ...formData, event_time: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  placeholder="例: 14:00~17:00"
-                />
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>開催時間</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.event_time}
+                    onChange={(e) => setFormData({ ...formData, event_time: e.target.value })}
+                    style={inputStyle(!!formData.event_time)}
+                    placeholder="例: 14:00〜17:00"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 申し込み期間 */}
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>申し込み期間</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>申し込み期間</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%' }}>
+                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                    <input
+                      type="date"
+                      value={formData.application_start_date}
+                      onChange={(e) => setFormData({ ...formData, application_start_date: e.target.value })}
+                      style={inputStyle(!!formData.application_start_date)}
+                    />
+                  </div>
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 700, color: '#666666' }}>〜</span>
+                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                    <input
+                      type="date"
+                      value={formData.application_end_date}
+                      onChange={(e) => setFormData({ ...formData, application_end_date: e.target.value })}
+                      style={inputStyle(!!formData.application_end_date)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>申し込み期間(表示用)</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.application_display_period}
+                    onChange={(e) => setFormData({ ...formData, application_display_period: e.target.value })}
+                    style={inputStyle(!!formData.application_display_period)}
+                    placeholder="例: 2025年8月1日〜8月31日"
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>申し込みに関する補足</label>
+                <div style={formFieldStyle(false, { minHeight: 96 })}>
+                  <textarea
+                    value={formData.application_notes}
+                    onChange={(e) => setFormData({ ...formData, application_notes: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.application_notes), minHeight: '72px' }}
+                    placeholder="補足事項があれば入力してください"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* チケット情報 */}
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>チケット情報</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>チケット発売開始日</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="date"
+                    value={formData.ticket_release_start_date}
+                    onChange={(e) => setFormData({ ...formData, ticket_release_start_date: e.target.value })}
+                    style={inputStyle(!!formData.ticket_release_start_date)}
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>チケット販売場所</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.ticket_sales_location}
+                    onChange={(e) => setFormData({ ...formData, ticket_sales_location: e.target.value })}
+                    style={inputStyle(!!formData.ticket_sales_location)}
+                    placeholder="チケット販売場所"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {/* イベント内容 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">イベント内容</h2>
-            
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  リード文 *
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>イベント内容</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  リード文 <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
-                <textarea
-                  id="field-lead_text"
-                  required
-                  maxLength={100}
-                  value={formData.lead_text}
-                  onChange={(e) => setFormData({ ...formData, lead_text: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  rows={3}
-                />
+                <div style={formFieldStyle(false, { minHeight: 120 })}>
+                  <textarea
+                    id="field-lead_text"
+                    required
+                    maxLength={100}
+                    value={formData.lead_text}
+                    onChange={(e) => setFormData({ ...formData, lead_text: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.lead_text), minHeight: '96px' }}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  イベント紹介文 *
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  イベント紹介文 <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
-                <textarea
-                  id="field-event_description"
-                  required
-                  maxLength={250}
-                  value={formData.event_description}
-                  onChange={(e) => setFormData({ ...formData, event_description: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                  rows={4}
-                />
+                <div style={formFieldStyle(false, { minHeight: 140 })}>
+                  <textarea
+                    id="field-event_description"
+                    required
+                    maxLength={250}
+                    value={formData.event_description}
+                    onChange={(e) => setFormData({ ...formData, event_description: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.event_description), minHeight: '120px' }}
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>イベント紹介文（長文）</label>
+                <div style={formFieldStyle(false, { minHeight: 140 })}>
+                  <textarea
+                    value={formData.event_introduction_text}
+                    onChange={(e) => setFormData({ ...formData, event_introduction_text: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.event_introduction_text), minHeight: '120px' }}
+                    placeholder="イベントの詳細を入力してください"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {/* イベント画像 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">イベント画像</h2>
-            
-            <div className="space-y-6">
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>イベント画像</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
               <ImageUpload
                 label="メイン画像"
                 eventId={eventId || 'temp'}
@@ -446,7 +749,6 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.main}
               />
-              
               <ImageUpload
                 label="追加画像1"
                 eventId={eventId || 'temp'}
@@ -456,7 +758,6 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional1}
               />
-              
               <ImageUpload
                 label="追加画像2"
                 eventId={eventId || 'temp'}
@@ -466,7 +767,6 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional2}
               />
-              
               <ImageUpload
                 label="追加画像3"
                 eventId={eventId || 'temp'}
@@ -476,7 +776,6 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional3}
               />
-              
               <ImageUpload
                 label="追加画像4"
                 eventId={eventId || 'temp'}
@@ -490,146 +789,266 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
           </div>
 
           {/* 会場情報 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">会場情報</h2>
-            
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  会場又は集合場所の名称 *
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>会場情報</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  会場又は集合場所の名称 <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
-                <input
-                  id="field-venue_name"
-                  type="text"
-                  required
-                  value={formData.venue_name}
-                  onChange={(e) => setFormData({ ...formData, venue_name: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+                <div style={formFieldStyle(false)}>
+                  <input
+                    id="field-venue_name"
+                    type="text"
+                    required
+                    value={formData.venue_name}
+                    onChange={(e) => setFormData({ ...formData, venue_name: e.target.value })}
+                    style={inputStyle(!!formData.venue_name)}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  郵便番号
-                </label>
-                <div className="flex gap-2">
-                  <input
-                    id="field-venue_postal_code"
-                    type="text"
-                    value={formData.venue_postal_code}
-                    onChange={(e) => setFormData({ ...formData, venue_postal_code: e.target.value })}
-                    className="flex-1 border border-gray-300 rounded-md px-3 py-2"
-                    placeholder="1234567"
-                    maxLength={7}
-                  />
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>郵便番号</label>
+                <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                  <div style={{ ...formFieldStyle(false), flex: 1 }}>
+                    <input
+                      id="field-venue_postal_code"
+                      type="text"
+                      value={formData.venue_postal_code}
+                      onChange={(e) => setFormData({ ...formData, venue_postal_code: e.target.value })}
+                      style={inputStyle(!!formData.venue_postal_code)}
+                      placeholder="1234567"
+                      maxLength={7}
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => fetchAddressFromPostalCode(formData.venue_postal_code)}
                     disabled={addressLoading || formData.venue_postal_code.length !== 7}
-                    className="bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white px-4 py-2 rounded-md transition-colors whitespace-nowrap"
+                    style={{
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      lineHeight: '17px',
+                      color: '#FFFFFF',
+                      background: addressLoading || formData.venue_postal_code.length !== 7 ? '#D9D9D9' : '#06C755',
+                      border: 'none',
+                      borderRadius: '8px',
+                      padding: '12px 16px',
+                      cursor: addressLoading || formData.venue_postal_code.length !== 7 ? 'not-allowed' : 'pointer',
+                      height: '48px'
+                    }}
                   >
                     {addressLoading ? '取得中...' : '住所取得'}
                   </button>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  市区町村
-                </label>
-                <input
-                  type="text"
-                  value={formData.venue_city}
-                  onChange={(e) => setFormData({ ...formData, venue_city: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>市区町村</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.venue_city}
+                    onChange={(e) => setFormData({ ...formData, venue_city: e.target.value })}
+                    style={inputStyle(!!formData.venue_city)}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  町名
-                </label>
-                <input
-                  type="text"
-                  value={formData.venue_town}
-                  onChange={(e) => setFormData({ ...formData, venue_town: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>町名</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.venue_town}
+                    onChange={(e) => setFormData({ ...formData, venue_town: e.target.value })}
+                    style={inputStyle(!!formData.venue_town)}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  丁目番地号
-                </label>
-                <input
-                  type="text"
-                  value={formData.venue_address}
-                  onChange={(e) => setFormData({ ...formData, venue_address: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>丁目番地号</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.venue_address}
+                    onChange={(e) => setFormData({ ...formData, venue_address: e.target.value })}
+                    style={inputStyle(!!formData.venue_address)}
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>緯度</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.venue_latitude}
+                    onChange={(e) => setFormData({ ...formData, venue_latitude: e.target.value })}
+                    style={inputStyle(!!formData.venue_latitude)}
+                    placeholder="例: 34.975"
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>経度</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.venue_longitude}
+                    onChange={(e) => setFormData({ ...formData, venue_longitude: e.target.value })}
+                    style={inputStyle(!!formData.venue_longitude)}
+                    placeholder="例: 138.390"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* URL情報 */}
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>URL情報</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>公式サイトURL</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.homepage_url}
+                    onChange={(e) => setFormData({ ...formData, homepage_url: e.target.value })}
+                    style={inputStyle(!!formData.homepage_url)}
+                    placeholder="https://"
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>関連ページURL</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="text"
+                    value={formData.related_page_url}
+                    onChange={(e) => setFormData({ ...formData, related_page_url: e.target.value })}
+                    style={inputStyle(!!formData.related_page_url)}
+                    placeholder="https://"
+                  />
+                </div>
               </div>
             </div>
           </div>
 
           {/* 連絡先情報 */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-lg font-semibold mb-4">連絡先情報</h2>
-            
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  問い合わせ先名称 *
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>連絡先情報</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  問い合わせ先名称 <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
-                <input
-                  id="field-contact_name"
-                  type="text"
-                  required
-                  value={formData.contact_name}
-                  onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+                <div style={formFieldStyle(false)}>
+                  <input
+                    id="field-contact_name"
+                    type="text"
+                    required
+                    value={formData.contact_name}
+                    onChange={(e) => setFormData({ ...formData, contact_name: e.target.value })}
+                    style={inputStyle(!!formData.contact_name)}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  電話番号 *
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>
+                  電話番号 <span style={{ color: '#FF3B30' }}>*</span>
                 </label>
-                <input
-                  id="field-contact_phone"
-                  type="tel"
-                  required
-                  value={formData.contact_phone}
-                  onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+                <div style={formFieldStyle(false)}>
+                  <input
+                    id="field-contact_phone"
+                    type="tel"
+                    required
+                    value={formData.contact_phone}
+                    onChange={(e) => setFormData({ ...formData, contact_phone: e.target.value })}
+                    style={inputStyle(!!formData.contact_phone)}
+                  />
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  メールアドレス
-                </label>
-                <input
-                  type="email"
-                  value={formData.contact_email}
-                  onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>メールアドレス</label>
+                <div style={formFieldStyle(false)}>
+                  <input
+                    type="email"
+                    value={formData.contact_email}
+                    onChange={(e) => setFormData({ ...formData, contact_email: e.target.value })}
+                    style={inputStyle(!!formData.contact_email)}
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex space-x-4">
+          {/* その他情報 */}
+          <div style={cardStyle}>
+            <h2 style={sectionTitleStyle}>その他情報</h2>
+            <div style={fieldsContainerStyle}>
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>駐車場情報</label>
+                <div style={formFieldStyle(false, { minHeight: 96 })}>
+                  <textarea
+                    value={formData.parking_info}
+                    onChange={(e) => setFormData({ ...formData, parking_info: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.parking_info), minHeight: '72px' }}
+                    placeholder="駐車場に関する情報を入力してください"
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>料金情報</label>
+                <div style={formFieldStyle(false, { minHeight: 96 })}>
+                  <textarea
+                    value={formData.fee_info}
+                    onChange={(e) => setFormData({ ...formData, fee_info: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.fee_info), minHeight: '72px' }}
+                    placeholder="料金に関する情報を入力してください"
+                  />
+                </div>
+              </div>
+
+              <div style={fieldWrapperStyle}>
+                <label style={labelStyle}>主催者情報</label>
+                <div style={formFieldStyle(false, { minHeight: 96 })}>
+                  <textarea
+                    value={formData.organizer_info}
+                    onChange={(e) => setFormData({ ...formData, organizer_info: e.target.value })}
+                    style={{ ...textareaStyle(!!formData.organizer_info), minHeight: '72px' }}
+                    placeholder="主催者に関する情報を入力してください"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
             <button
               type="button"
               onClick={onCancel}
-              className="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 px-6 rounded-lg transition-colors"
+              style={buttonSecondaryStyle}
             >
               キャンセル
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-purple-500 hover:bg-purple-600 disabled:bg-gray-400 text-white py-3 px-6 rounded-lg transition-colors"
+              style={{
+                ...buttonPrimaryStyle,
+                background: loading ? '#D9D9D9' : '#06C755',
+                cursor: loading ? 'not-allowed' : 'pointer'
+              }}
             >
               {loading ? (eventId ? '更新中...' : '作成中...') : (eventId ? 'イベントを更新' : 'イベントを掲載')}
             </button>
