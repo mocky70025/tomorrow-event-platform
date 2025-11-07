@@ -110,7 +110,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     gap: '10px',
     width: '100%',
     minWidth: 0,
-    minHeight: options?.minHeight ?? 48,
+    minHeight: options?.minHeight ?? 56,
     background: '#FFFFFF',
     border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
     borderRadius: '8px'
@@ -181,15 +181,24 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     cursor: 'pointer'
   }
 
+  const rangeWrapperStyle = {
+    position: 'relative' as const,
+    width: '100%'
+  }
+
   const rangeFieldRowStyle = {
     display: 'grid',
-    gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
     alignItems: 'center',
-    columnGap: '12px',
+    columnGap: '16px',
     width: '100%'
   }
 
   const rangeSeparatorStyle = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
     fontFamily: 'Inter, sans-serif',
     fontSize: '16px',
     fontWeight: 700,
@@ -197,8 +206,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    height: '48px',
-    padding: '0 8px'
+    padding: '4px 8px',
+    background: '#FFFFFF',
+    borderRadius: '12px',
+    pointerEvents: 'none' as const
   }
 
   // 必須項目のバリデーション（最初の未入力へスクロール＆フォーカス）
@@ -545,28 +556,30 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
                 <label style={labelStyle}>イベント開催期間</label>
-                <div style={rangeFieldRowStyle}>
-                  <div style={formFieldStyle(false)}>
-                    <input
-                      id="field-event_start_date"
-                      type="date"
-                      required
-                      value={formData.event_start_date}
-                      onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
-                      style={inputStyle(!!formData.event_start_date)}
-                    />
+                <div style={rangeWrapperStyle}>
+                  <div style={rangeFieldRowStyle}>
+                    <div style={formFieldStyle(false)}>
+                      <input
+                        id="field-event_start_date"
+                        type="date"
+                        required
+                        value={formData.event_start_date}
+                        onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
+                        style={inputStyle(!!formData.event_start_date)}
+                      />
+                    </div>
+                    <div style={formFieldStyle(false)}>
+                      <input
+                        id="field-event_end_date"
+                        type="date"
+                        required
+                        value={formData.event_end_date}
+                        onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
+                        style={inputStyle(!!formData.event_end_date)}
+                      />
+                    </div>
                   </div>
                   <span style={rangeSeparatorStyle}>〜</span>
-                  <div style={formFieldStyle(false)}>
-                    <input
-                      id="field-event_end_date"
-                      type="date"
-                      required
-                      value={formData.event_end_date}
-                      onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
-                      style={inputStyle(!!formData.event_end_date)}
-                    />
-                  </div>
                 </div>
               </div>
 
@@ -619,24 +632,26 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
                 <label style={labelStyle}>申し込み期間（任意）</label>
-                <div style={rangeFieldRowStyle}>
-                  <div style={formFieldStyle(false)}>
-                    <input
-                      type="date"
-                      value={formData.application_start_date}
-                      onChange={(e) => setFormData({ ...formData, application_start_date: e.target.value })}
-                      style={inputStyle(!!formData.application_start_date)}
-                    />
+                <div style={rangeWrapperStyle}>
+                  <div style={rangeFieldRowStyle}>
+                    <div style={formFieldStyle(false)}>
+                      <input
+                        type="date"
+                        value={formData.application_start_date}
+                        onChange={(e) => setFormData({ ...formData, application_start_date: e.target.value })}
+                        style={inputStyle(!!formData.application_start_date)}
+                      />
+                    </div>
+                    <div style={formFieldStyle(false)}>
+                      <input
+                        type="date"
+                        value={formData.application_end_date}
+                        onChange={(e) => setFormData({ ...formData, application_end_date: e.target.value })}
+                        style={inputStyle(!!formData.application_end_date)}
+                      />
+                    </div>
                   </div>
                   <span style={rangeSeparatorStyle}>〜</span>
-                  <div style={formFieldStyle(false)}>
-                    <input
-                      type="date"
-                      value={formData.application_end_date}
-                      onChange={(e) => setFormData({ ...formData, application_end_date: e.target.value })}
-                      style={inputStyle(!!formData.application_end_date)}
-                    />
-                  </div>
                 </div>
               </div>
 
