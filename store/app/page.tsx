@@ -94,17 +94,26 @@ export default function Home() {
       <nav
         style={{
           position: 'fixed',
-          bottom: 0,
           left: 0,
           right: 0,
+          bottom: 0,
+          zIndex: 1000,
           background: '#FFFFFF',
           borderTop: '1px solid #E5E5E5',
-          boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)',
-          paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 8px)',
-          paddingTop: '8px'
+          boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)'
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-around', maxWidth: '394px', margin: '0 auto' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            maxWidth: '394px',
+            margin: '0 auto',
+            padding: '8px 16px',
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 8px)'
+          }}
+        >
           {tabItems.map((item) => {
             const isActive = currentView === item.key
             const activeColor = '#06C755'
