@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { liff } from '@line/liff'
 import { supabase } from '@/lib/supabase'
 import WelcomeScreen from '@/components/WelcomeScreen'
@@ -16,6 +16,8 @@ export default function Home() {
   const [userProfile, setUserProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [currentView, setCurrentView] = useState<'events' | 'profile' | 'applications'>('events')
+  const [navVisible, setNavVisible] = useState(true)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     const initializeLiff = async () => {
@@ -44,6 +46,27 @@ export default function Home() {
     }
 
     initializeLiff()
+  }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setNavVisible(false)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        setNavVisible(true)
+      }, 400)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
   }, [])
 
   if (loading) {
@@ -102,7 +125,10 @@ export default function Home() {
           borderTop: '1px solid #E5E5E5',
           boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)',
           transform: 'translateZ(0)',
-          willChange: 'transform'
+          willChange: 'transform',
+          transition: 'transform 0.25s ease-out',
+          transformOrigin: 'bottom center',
+          transform: navVisible ? 'translateY(0)' : 'translateY(110%)'
         }}
       >
         <div

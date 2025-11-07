@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase, type Event, type Organizer } from '@/lib/supabase'
 import EventForm from './EventForm'
 import EventList from './EventList'
@@ -19,10 +19,33 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   const [eventForApplications, setEventForApplications] = useState<Event | null>(null)
   const [currentView, setCurrentView] = useState<'events' | 'profile'>('events')
   const [loading, setLoading] = useState(true)
+  const [navVisible, setNavVisible] = useState(true)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     fetchOrganizerData()
   }, [userProfile])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setNavVisible(false)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      scrollTimeoutRef.current = setTimeout(() => {
+        setNavVisible(true)
+      }, 400)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const fetchOrganizerData = async () => {
     try {
@@ -256,7 +279,10 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
           borderTop: '1px solid #E5E5E5',
           boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)',
           transform: 'translateZ(0)',
-          willChange: 'transform'
+          willChange: 'transform',
+          transition: 'transform 0.25s ease-out',
+          transformOrigin: 'bottom center',
+          transform: navVisible ? 'translateY(0)' : 'translateY(110%)'
         }}
       >
         <div
