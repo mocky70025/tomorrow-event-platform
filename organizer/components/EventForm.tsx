@@ -109,6 +109,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     padding: '12px 16px',
     gap: '10px',
     width: '100%',
+    minWidth: 0,
     minHeight: options?.minHeight ?? 48,
     background: '#FFFFFF',
     border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
@@ -182,7 +183,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
   const rangeFieldRowStyle = {
     display: 'grid',
-    gridTemplateColumns: '1fr auto 1fr',
+    gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
     alignItems: 'center',
     columnGap: '12px',
     width: '100%'
