@@ -100,7 +100,9 @@ export default function Home() {
           zIndex: 1000,
           background: '#FFFFFF',
           borderTop: '1px solid #E5E5E5',
-          boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)'
+          boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)',
+          transform: 'translateZ(0)',
+          willChange: 'transform'
         }}
       >
         <div
@@ -108,8 +110,7 @@ export default function Home() {
             display: 'flex',
             justifyContent: 'space-around',
             alignItems: 'center',
-            maxWidth: '394px',
-            margin: '0 auto',
+            width: '100%',
             padding: '8px 16px',
             paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 8px)'
           }}
