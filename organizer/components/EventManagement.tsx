@@ -278,10 +278,9 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
           background: '#FFFFFF',
           borderTop: '1px solid #E5E5E5',
           boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)',
-          transform: 'translateZ(0)',
           willChange: 'transform',
           transition: 'transform 0.25s ease-out',
-          transform: navVisible ? 'translateY(0)' : 'translateY(110%)'
+          transform: navVisible ? 'translateY(0) translateZ(0)' : 'translateY(110%) translateZ(0)'
         }}
       >
         <div
