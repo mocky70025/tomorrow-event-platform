@@ -281,7 +281,6 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
           transform: 'translateZ(0)',
           willChange: 'transform',
           transition: 'transform 0.25s ease-out',
-          transformOrigin: 'bottom center',
           transform: navVisible ? 'translateY(0)' : 'translateY(110%)'
         }}
       >

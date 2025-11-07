@@ -127,7 +127,6 @@ export default function Home() {
           transform: 'translateZ(0)',
           willChange: 'transform',
           transition: 'transform 0.25s ease-out',
-          transformOrigin: 'bottom center',
           transform: navVisible ? 'translateY(0)' : 'translateY(110%)'
         }}
       >
