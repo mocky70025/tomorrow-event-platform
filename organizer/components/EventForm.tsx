@@ -181,24 +181,21 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     cursor: 'pointer'
   }
 
-  const rangeWrapperStyle = {
-    position: 'relative' as const,
-    width: '100%'
-  }
-
-  const rangeFieldRowStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+  const rangeContainerStyle = {
+    display: 'flex',
     alignItems: 'center',
-    columnGap: '16px',
-    width: '100%'
+    gap: '12px',
+    width: '100%',
+    padding: '12px 16px',
+    minHeight: 56,
+    background: '#FFFFFF',
+    border: '1px solid #E5E5E5',
+    borderRadius: '8px',
+    boxSizing: 'border-box' as const,
+    minWidth: 0
   }
 
   const rangeSeparatorStyle = {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
     fontFamily: 'Inter, sans-serif',
     fontSize: '16px',
     fontWeight: 700,
@@ -206,10 +203,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '4px 8px',
-    background: '#FFFFFF',
-    borderRadius: '12px',
-    pointerEvents: 'none' as const
+    padding: '0 4px'
   }
 
   // 必須項目のバリデーション（最初の未入力へスクロール＆フォーカス）
@@ -556,30 +550,24 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
                 <label style={labelStyle}>イベント開催期間</label>
-                <div style={rangeWrapperStyle}>
-                  <div style={rangeFieldRowStyle}>
-                    <div style={formFieldStyle(false)}>
-                      <input
-                        id="field-event_start_date"
-                        type="date"
-                        required
-                        value={formData.event_start_date}
-                        onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
-                        style={inputStyle(!!formData.event_start_date)}
-                      />
-                    </div>
-                    <div style={formFieldStyle(false)}>
-                      <input
-                        id="field-event_end_date"
-                        type="date"
-                        required
-                        value={formData.event_end_date}
-                        onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
-                        style={inputStyle(!!formData.event_end_date)}
-                      />
-                    </div>
-                  </div>
+                <div style={rangeContainerStyle}>
+                  <input
+                    id="field-event_start_date"
+                    type="date"
+                    required
+                    value={formData.event_start_date}
+                    onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
+                    style={{ ...inputStyle(!!formData.event_start_date), flex: 1 }}
+                  />
                   <span style={rangeSeparatorStyle}>〜</span>
+                  <input
+                    id="field-event_end_date"
+                    type="date"
+                    required
+                    value={formData.event_end_date}
+                    onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
+                    style={{ ...inputStyle(!!formData.event_end_date), flex: 1 }}
+                  />
                 </div>
               </div>
 
@@ -632,26 +620,20 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
                 <label style={labelStyle}>申し込み期間（任意）</label>
-                <div style={rangeWrapperStyle}>
-                  <div style={rangeFieldRowStyle}>
-                    <div style={formFieldStyle(false)}>
-                      <input
-                        type="date"
-                        value={formData.application_start_date}
-                        onChange={(e) => setFormData({ ...formData, application_start_date: e.target.value })}
-                        style={inputStyle(!!formData.application_start_date)}
-                      />
-                    </div>
-                    <div style={formFieldStyle(false)}>
-                      <input
-                        type="date"
-                        value={formData.application_end_date}
-                        onChange={(e) => setFormData({ ...formData, application_end_date: e.target.value })}
-                        style={inputStyle(!!formData.application_end_date)}
-                      />
-                    </div>
-                  </div>
+                <div style={rangeContainerStyle}>
+                  <input
+                    type="date"
+                    value={formData.application_start_date}
+                    onChange={(e) => setFormData({ ...formData, application_start_date: e.target.value })}
+                    style={{ ...inputStyle(!!formData.application_start_date), flex: 1 }}
+                  />
                   <span style={rangeSeparatorStyle}>〜</span>
+                  <input
+                    type="date"
+                    value={formData.application_end_date}
+                    onChange={(e) => setFormData({ ...formData, application_end_date: e.target.value })}
+                    style={{ ...inputStyle(!!formData.application_end_date), flex: 1 }}
+                  />
                 </div>
               </div>
 
