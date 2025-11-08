@@ -11,6 +11,7 @@ interface ImageUploadProps {
   onUploadComplete: (url: string) => void
   onUploadError: (error: string) => void
   currentImageUrl?: string
+  showFormatNote?: boolean
 }
 
 export default function ImageUpload({
@@ -20,7 +21,8 @@ export default function ImageUpload({
   imageIndex,
   onUploadComplete,
   onUploadError,
-  currentImageUrl
+  currentImageUrl,
+  showFormatNote = true
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentImageUrl || null)
@@ -121,9 +123,11 @@ export default function ImageUpload({
         </label>
       </div>
       
-      <p className="text-xs text-gray-500">
-        対応形式: JPG, PNG, GIF, WebP（最大10MB）
-      </p>
+      {showFormatNote && (
+        <p className="text-xs text-gray-500">
+          対応形式: JPG, PNG, GIF, WebP（最大10MB）
+        </p>
+      )}
     </div>
   )
 }

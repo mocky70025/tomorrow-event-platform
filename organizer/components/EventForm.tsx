@@ -442,7 +442,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.event_name}
                     onChange={(e) => setFormData({ ...formData, event_name: e.target.value })}
                     style={inputStyle(!!formData.event_name)}
-                    placeholder="例: ○○フェスティバル"
+                    placeholder="イベント名称を入力"
                   />
                 </div>
               </div>
@@ -458,7 +458,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.event_name_furigana}
                     onChange={(e) => setFormData({ ...formData, event_name_furigana: e.target.value })}
                     style={inputStyle(!!formData.event_name_furigana)}
-                    placeholder="例: ○○フェスティバル"
+                    placeholder="イベント名称フリガナを入力"
                   />
                 </div>
               </div>
@@ -594,7 +594,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.event_display_period}
                     onChange={(e) => setFormData({ ...formData, event_display_period: e.target.value })}
                     style={inputStyle(!!formData.event_display_period)}
-                    placeholder="例: 2025年9月20日(土)"
+                    placeholder="2025年9月20日(土) のように入力"
                   />
                 </div>
               </div>
@@ -619,7 +619,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.event_time}
                     onChange={(e) => setFormData({ ...formData, event_time: e.target.value })}
                     style={inputStyle(!!formData.event_time)}
-                    placeholder="例: 14:00〜17:00"
+                    placeholder="14:00〜17:00 など"
                   />
                 </div>
               </div>
@@ -663,7 +663,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.application_display_period}
                     onChange={(e) => setFormData({ ...formData, application_display_period: e.target.value })}
                     style={inputStyle(!!formData.application_display_period)}
-                    placeholder="例: 2025年8月1日〜8月31日"
+                    placeholder="2025年8月1日〜8月31日 など"
                   />
                 </div>
               </div>
@@ -770,6 +770,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, main: url }))}
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.main}
+                showFormatNote={false}
               />
               <ImageUpload
                 label="追加画像1（任意）"
@@ -779,6 +780,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional1: url }))}
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional1}
+                showFormatNote={false}
               />
               <ImageUpload
                 label="追加画像2（任意）"
@@ -788,6 +790,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional2: url }))}
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional2}
+                showFormatNote={false}
               />
               <ImageUpload
                 label="追加画像3（任意）"
@@ -797,6 +800,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional3: url }))}
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional3}
+                showFormatNote={false}
               />
               <ImageUpload
                 label="追加画像4（任意）"
@@ -806,8 +810,19 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadComplete={(url) => setImageUrls(prev => ({ ...prev, additional4: url }))}
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional4}
+                showFormatNote={false}
               />
             </div>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '12px',
+              lineHeight: '150%',
+              color: '#6B6B6B',
+              marginTop: '16px',
+              textAlign: 'center'
+            }}>
+              対応形式: JPG, PNG, GIF, WebP（最大10MB）
+            </p>
           </div>
 
           {/* 会場情報 */}
@@ -909,7 +924,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.venue_latitude}
                     onChange={(e) => setFormData({ ...formData, venue_latitude: e.target.value })}
                     style={inputStyle(!!formData.venue_latitude)}
-                    placeholder="例: 34.975"
+                    placeholder="34.975 など"
                   />
                 </div>
               </div>
@@ -922,7 +937,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.venue_longitude}
                     onChange={(e) => setFormData({ ...formData, venue_longitude: e.target.value })}
                     style={inputStyle(!!formData.venue_longitude)}
-                    placeholder="例: 138.390"
+                    placeholder="138.390 など"
                   />
                 </div>
               </div>
