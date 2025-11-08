@@ -753,6 +753,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.main}
                 showFormatNote={false}
+                onImageDelete={() => setImageUrls(prev => ({ ...prev, main: '' }))}
               />
               <ImageUpload
                 label="追加画像1（任意）"
@@ -763,6 +764,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional1}
                 showFormatNote={false}
+                onImageDelete={() => setImageUrls(prev => ({ ...prev, additional1: '' }))}
               />
               <ImageUpload
                 label="追加画像2（任意）"
@@ -773,6 +775,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional2}
                 showFormatNote={false}
+                onImageDelete={() => setImageUrls(prev => ({ ...prev, additional2: '' }))}
               />
               <ImageUpload
                 label="追加画像3（任意）"
@@ -783,6 +786,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional3}
                 showFormatNote={false}
+                onImageDelete={() => setImageUrls(prev => ({ ...prev, additional3: '' }))}
               />
               <ImageUpload
                 label="追加画像4（任意）"
@@ -793,6 +797,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 onUploadError={(error) => alert(error)}
                 currentImageUrl={imageUrls.additional4}
                 showFormatNote={false}
+                onImageDelete={() => setImageUrls(prev => ({ ...prev, additional4: '' }))}
               />
             </div>
             <p style={{
