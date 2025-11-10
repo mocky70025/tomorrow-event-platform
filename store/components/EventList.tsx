@@ -16,10 +16,13 @@ interface Event {
   event_description: string
   venue_name: string
   venue_city?: string
+  venue_town?: string
+  venue_address?: string
   main_image_url?: string
   main_image_caption?: string
   homepage_url?: string
   created_at: string
+  application_end_date?: string | null
 }
 
 interface EventListProps {
@@ -27,25 +30,87 @@ interface EventListProps {
   onBack: () => void
 }
 
+type SearchFilters = {
+  keyword: string
+  periodStart: string
+  periodEnd: string
+  venue: string
+  onlyRecruiting: boolean
+}
+
 export default function EventList({ userProfile, onBack }: EventListProps) {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+  const [showFilters, setShowFilters] = useState(false)
+  const [keyword, setKeyword] = useState('')
+  const [periodStart, setPeriodStart] = useState('')
+  const [periodEnd, setPeriodEnd] = useState('')
+  const [venue, setVenue] = useState('')
+  const [onlyRecruiting, setOnlyRecruiting] = useState(true)
+  const [hasSearched, setHasSearched] = useState(false)
 
   useEffect(() => {
     fetchEvents()
   }, [])
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (overrideFilters?: Partial<SearchFilters>) => {
+    setLoading(true)
     try {
-      const { data, error } = await supabase
+      const effectiveFilters: SearchFilters = {
+        keyword,
+        periodStart,
+        periodEnd,
+        venue,
+        onlyRecruiting,
+        ...overrideFilters
+      }
+
+      let query = supabase
         .from('events')
         .select('*')
         .eq('approval_status', 'approved')
-        .order('event_start_date', { ascending: true })
+
+      if (effectiveFilters.periodStart) {
+        query = query.gte('event_end_date', effectiveFilters.periodStart)
+      }
+
+      if (effectiveFilters.periodEnd) {
+        query = query.lte('event_start_date', effectiveFilters.periodEnd)
+      }
+
+      if (effectiveFilters.onlyRecruiting) {
+        const today = new Date().toISOString().split('T')[0]
+        query = query.or(`application_end_date.is.null,application_end_date.gte.${today}`)
+      }
+
+      query = query.order('event_start_date', { ascending: true })
+
+      const { data, error } = await query
 
       if (error) throw error
-      setEvents(data || [])
+
+      let filteredEvents = (data || []) as Event[]
+
+      if (effectiveFilters.keyword.trim()) {
+        const kw = effectiveFilters.keyword.trim().toLowerCase()
+        filteredEvents = filteredEvents.filter(event =>
+          [event.event_name, event.event_description, event.lead_text]
+            .filter(Boolean)
+            .some(field => field?.toLowerCase().includes(kw))
+        )
+      }
+
+      if (effectiveFilters.venue.trim()) {
+        const venueKeyword = effectiveFilters.venue.trim().toLowerCase()
+        filteredEvents = filteredEvents.filter(event =>
+          [event.venue_name, event.venue_city, event.venue_town, event.venue_address]
+            .filter(Boolean)
+            .some(field => String(field).toLowerCase().includes(venueKeyword))
+        )
+      }
+
+      setEvents(filteredEvents)
     } catch (error) {
       console.error('Failed to fetch events:', error)
       alert('イベント一覧の取得に失敗しました')
@@ -53,6 +118,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
       setLoading(false)
     }
   }
+*** End Patch
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -60,6 +126,28 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
+    })
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setHasSearched(true)
+    fetchEvents()
+  }
+
+  const handleResetFilters = () => {
+    setKeyword('')
+    setPeriodStart('')
+    setPeriodEnd('')
+    setVenue('')
+    setOnlyRecruiting(true)
+    setHasSearched(false)
+    fetchEvents({
+      keyword: '',
+      periodStart: '',
+      periodEnd: '',
+      venue: '',
+      onlyRecruiting: true
     })
   }
 
@@ -416,6 +504,229 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
           }}>イベント一覧</h1>
         </div>
 
+        <div style={{ marginBottom: '24px' }}>
+          <button
+            type="button"
+            onClick={() => setShowFilters(prev => !prev)}
+            style={{
+              width: '100%',
+              height: '48px',
+              borderRadius: '8px',
+              border: '1px solid #E5E5E5',
+              background: '#FFFFFF',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '19px',
+              color: '#000000',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+          >
+            条件でさがす {showFilters ? '▲' : '▼'}
+          </button>
+        </div>
+
+        {showFilters && (
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
+            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '10px',
+                  display: 'block'
+                }}>
+                  キーワード
+                </label>
+                <input
+                  type="text"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  placeholder="イベント名や説明文で検索"
+                  style={{
+                    boxSizing: 'border-box',
+                    padding: '12px 16px',
+                    width: '100%',
+                    minHeight: '48px',
+                    border: '1px solid #E5E5E5',
+                    borderRadius: '8px',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000',
+                    background: '#FFFFFF'
+                  }}
+                />
+              </div>
+
+              <div>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '10px',
+                  display: 'block'
+                }}>
+                  開催期間
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
+                  <input
+                    type="date"
+                    value={periodStart}
+                    onChange={(e) => setPeriodStart(e.target.value)}
+                    style={{
+                      boxSizing: 'border-box',
+                      padding: '12px 16px',
+                      minHeight: '48px',
+                      border: '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '16px',
+                      lineHeight: '150%',
+                      color: '#000000',
+                      background: '#FFFFFF',
+                      flex: 1
+                    }}
+                  />
+                  <span style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    color: '#666666'
+                  }}>〜</span>
+                  <input
+                    type="date"
+                    value={periodEnd}
+                    onChange={(e) => setPeriodEnd(e.target.value)}
+                    style={{
+                      boxSizing: 'border-box',
+                      padding: '12px 16px',
+                      minHeight: '48px',
+                      border: '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '16px',
+                      lineHeight: '150%',
+                      color: '#000000',
+                      background: '#FFFFFF',
+                      flex: 1
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  lineHeight: '120%',
+                  color: '#000000',
+                  marginBottom: '10px',
+                  display: 'block'
+                }}>
+                  会場
+                </label>
+                <input
+                  type="text"
+                  value={venue}
+                  onChange={(e) => setVenue(e.target.value)}
+                  placeholder="会場名や地域名で検索"
+                  style={{
+                    boxSizing: 'border-box',
+                    padding: '12px 16px',
+                    width: '100%',
+                    minHeight: '48px',
+                    border: '1px solid #E5E5E5',
+                    borderRadius: '8px',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000',
+                    background: '#FFFFFF'
+                  }}
+                />
+              </div>
+
+              <label style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                lineHeight: '150%',
+                color: '#000000'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={onlyRecruiting}
+                  onChange={(e) => setOnlyRecruiting(e.target.checked)}
+                  style={{
+                    width: '20px',
+                    height: '20px'
+                  }}
+                />
+                募集中のイベントのみ表示
+              </label>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                <button
+                  type="submit"
+                  style={{
+                    flex: 1,
+                    height: '48px',
+                    background: '#06C755',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    lineHeight: '19px',
+                    color: '#FFFFFF',
+                    cursor: 'pointer'
+                  }}
+                >
+                  この条件で検索
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetFilters}
+                  style={{
+                    width: '120px',
+                    height: '48px',
+                    background: '#FFFFFF',
+                    border: '1px solid #E5E5E5',
+                    borderRadius: '8px',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    lineHeight: '19px',
+                    color: '#000000',
+                    cursor: 'pointer'
+                  }}
+                >
+                  条件をクリア
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
         {events.length === 0 ? (
           <div style={{
             background: '#FFFFFF',
@@ -429,7 +740,9 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
               fontSize: '16px',
               lineHeight: '150%',
               color: '#666666'
-            }}>開催予定のイベントがありません</p>
+            }}>
+              {hasSearched ? '該当するイベントが見つかりませんでした' : '開催予定のイベントがありません'}
+            </p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
