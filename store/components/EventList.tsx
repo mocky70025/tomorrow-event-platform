@@ -118,8 +118,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
       setLoading(false)
     }
   }
-*** End Patch
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('ja-JP', {
