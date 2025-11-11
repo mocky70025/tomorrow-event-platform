@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, CSSProperties } from 'react'
 import { supabase } from '@/lib/supabase'
 
 interface Event {
@@ -41,16 +41,27 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilterSheet, setShowFilterSheet] = useState(false)
   const [keyword, setKeyword] = useState('')
   const [periodStart, setPeriodStart] = useState('')
   const [periodEnd, setPeriodEnd] = useState('')
   const [venue, setVenue] = useState('')
+  const [draftPeriodStart, setDraftPeriodStart] = useState('')
+  const [draftPeriodEnd, setDraftPeriodEnd] = useState('')
+  const [draftVenue, setDraftVenue] = useState('')
   const [hasSearched, setHasSearched] = useState(false)
 
   useEffect(() => {
     fetchEvents()
   }, [])
+
+  useEffect(() => {
+    if (showFilterSheet) {
+      setDraftPeriodStart(periodStart)
+      setDraftPeriodEnd(periodEnd)
+      setDraftVenue(venue)
+    }
+  }, [showFilterSheet, periodStart, periodEnd, venue])
 
   const fetchEvents = async (overrideFilters?: Partial<SearchFilters>) => {
     setLoading(true)
@@ -128,22 +139,56 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     fetchEvents()
   }
 
-  const handleResetFilters = () => {
+  const handleEventClick = (event: Event) => {
+    setSelectedEvent(event)
+  }
+
+  const handleKeywordClear = () => {
     setKeyword('')
+    setHasSearched(false)
+    fetchEvents({
+      keyword: '',
+      periodStart,
+      periodEnd,
+      venue
+    })
+  }
+
+  const handleOpenFilterSheet = () => {
+    setShowFilterSheet(true)
+  }
+
+  const handleCloseFilterSheet = () => {
+    setShowFilterSheet(false)
+  }
+
+  const handleApplyFilters = () => {
+    setPeriodStart(draftPeriodStart)
+    setPeriodEnd(draftPeriodEnd)
+    setVenue(draftVenue)
+    setHasSearched(true)
+    setShowFilterSheet(false)
+    fetchEvents({
+      periodStart: draftPeriodStart,
+      periodEnd: draftPeriodEnd,
+      venue: draftVenue
+    })
+  }
+
+  const handleClearFilters = () => {
+    setDraftPeriodStart('')
+    setDraftPeriodEnd('')
+    setDraftVenue('')
     setPeriodStart('')
     setPeriodEnd('')
     setVenue('')
     setHasSearched(false)
+    setShowFilterSheet(false)
     fetchEvents({
-      keyword: '',
       periodStart: '',
       periodEnd: '',
       venue: ''
     })
-  }
-
-  const handleEventClick = (event: Event) => {
-    setSelectedEvent(event)
   }
 
   const handleApply = async (eventId: string) => {
@@ -190,6 +235,182 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
       console.error('Application failed:', error)
       alert('申し込みに失敗しました。')
     }
+  }
+
+  const searchBarWrapperStyle = {
+    display: 'flex',
+    gap: '12px',
+    alignItems: 'center',
+    marginBottom: '24px'
+  }
+
+  const searchFieldStyle = {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px 16px',
+    borderRadius: '28px',
+    background: '#FFFFFF',
+    boxShadow: '0px 1px 3px rgba(0,0,0,0.12)',
+    border: '1px solid #E5E5E5'
+  }
+
+  const searchInputStyle: CSSProperties = {
+    flex: 1,
+    border: 'none',
+    outline: 'none',
+    background: 'transparent',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: '#000000'
+  }
+
+  const iconStyle = {
+    width: '20px',
+    height: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#6B6B6B'
+  }
+
+  const clearButtonStyle = {
+    border: 'none',
+    background: 'none',
+    color: '#6B6B6B',
+    cursor: 'pointer',
+    fontSize: '18px',
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center'
+  }
+
+  const filterButtonStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '8px',
+    padding: '12px 20px',
+    borderRadius: '24px',
+    border: '1px solid #06C755',
+    background: '#E6F8EC',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 600,
+    lineHeight: '19px',
+    color: '#066B34',
+    cursor: 'pointer'
+  }
+
+  const sheetBackdropStyle = {
+    position: 'fixed' as const,
+    inset: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.45)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    zIndex: 1000
+  }
+
+  const sheetStyle = {
+    width: '100%',
+    maxWidth: '480px',
+    background: '#FFFFFF',
+    borderTopLeftRadius: '24px',
+    borderTopRightRadius: '24px',
+    padding: '24px 24px 32px',
+    boxShadow: '0px -4px 12px rgba(0,0,0,0.15)'
+  }
+
+  const sheetHandleStyle = {
+    width: '48px',
+    height: '4px',
+    borderRadius: '2px',
+    background: '#D9D9D9',
+    alignSelf: 'center' as const,
+    marginBottom: '16px'
+  }
+
+  const sheetHeaderStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px'
+  }
+
+  const sheetTitleStyle = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '18px',
+    fontWeight: 700,
+    lineHeight: '120%',
+    color: '#000000'
+  }
+
+  const sheetCloseButtonStyle = {
+    border: 'none',
+    background: 'none',
+    color: '#6B6B6B',
+    fontSize: '16px',
+    cursor: 'pointer'
+  }
+
+  const sheetLabelStyle = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '14px',
+    fontWeight: 500,
+    lineHeight: '120%',
+    color: '#000000',
+    marginBottom: '10px'
+  }
+
+  const sheetInputStyle = {
+    boxSizing: 'border-box' as const,
+    padding: '12px 16px',
+    width: '100%',
+    minHeight: '48px',
+    border: '1px solid #E5E5E5',
+    borderRadius: '8px',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: '#000000',
+    background: '#FFFFFF'
+  }
+
+  const sheetButtonRowStyle = {
+    display: 'flex',
+    gap: '12px',
+    marginTop: '24px'
+  }
+
+  const sheetSecondaryButtonStyle = {
+    flex: 1,
+    height: '48px',
+    borderRadius: '8px',
+    border: '1px solid #E5E5E5',
+    background: '#FFFFFF',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 600,
+    lineHeight: '19px',
+    color: '#000000',
+    cursor: 'pointer'
+  }
+
+  const sheetPrimaryButtonStyle = {
+    flex: 1,
+    height: '48px',
+    borderRadius: '8px',
+    border: 'none',
+    background: '#06C755',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 700,
+    lineHeight: '19px',
+    color: '#FFFFFF',
+    cursor: 'pointer'
   }
 
   if (loading) {
@@ -482,8 +703,9 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
   }
 
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+    <>
+      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
         <div style={{ marginBottom: '24px', paddingTop: '24px' }}>
           <h1 style={{
             fontFamily: 'Inter, sans-serif',
@@ -495,207 +717,45 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
           }}>イベント一覧</h1>
         </div>
 
-        <div style={{ marginBottom: '24px' }}>
+        <form onSubmit={handleSearchSubmit} style={searchBarWrapperStyle}>
+          <div style={searchFieldStyle}>
+            <span style={iconStyle} aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
+              </svg>
+            </span>
+            <input
+              type="search"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              placeholder="イベント名や説明文で検索"
+              style={searchInputStyle}
+              aria-label="キーワードで検索"
+            />
+            {keyword && (
+              <button
+                type="button"
+                onClick={handleKeywordClear}
+                style={clearButtonStyle}
+                aria-label="検索キーワードをクリア"
+              >
+                ×
+              </button>
+            )}
+          </div>
           <button
             type="button"
-            onClick={() => setShowFilters(prev => !prev)}
-            style={{
-              width: '100%',
-              height: '48px',
-              borderRadius: '8px',
-              border: '1px solid #E5E5E5',
-              background: '#FFFFFF',
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '16px',
-              fontWeight: 700,
-              lineHeight: '19px',
-              color: '#000000',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
-            }}
+            onClick={handleOpenFilterSheet}
+            style={filterButtonStyle}
+            aria-haspopup="dialog"
+            aria-expanded={showFilterSheet}
           >
-            条件でさがす {showFilters ? '▲' : '▼'}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 .78 1.625l-6.28 7.35V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 8 21v-7.025L1.22 6.625A1 1 0 0 1 2 5h1z" fill="#066B34"/>
+            </svg>
+            フィルター
           </button>
-        </div>
-
-        {showFilters && (
-          <div style={{
-            background: '#FFFFFF',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px'
-          }}>
-            <form onSubmit={handleSearchSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '10px',
-                  display: 'block'
-                }}>
-                  キーワード
-                </label>
-                <input
-                  type="text"
-                  value={keyword}
-                  onChange={(e) => setKeyword(e.target.value)}
-                  placeholder="イベント名や説明文で検索"
-                  style={{
-                    boxSizing: 'border-box',
-                    padding: '12px 16px',
-                    width: '100%',
-                    minHeight: '48px',
-                    border: '1px solid #E5E5E5',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    lineHeight: '150%',
-                    color: '#000000',
-                    background: '#FFFFFF'
-                  }}
-                />
-              </div>
-
-              <div>
-                <label style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '10px',
-                  display: 'block'
-                }}>
-                  開催期間
-                </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', width: '100%' }}>
-                  <input
-                    type="date"
-                    value={periodStart}
-                    onChange={(e) => setPeriodStart(e.target.value)}
-                    style={{
-                      boxSizing: 'border-box',
-                      padding: '12px 16px',
-                      minHeight: '48px',
-                      border: '1px solid #E5E5E5',
-                      borderRadius: '8px',
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: '16px',
-                      lineHeight: '150%',
-                      color: '#000000',
-                      background: '#FFFFFF',
-                      flex: 1
-                    }}
-                  />
-                  <span style={{
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    color: '#666666'
-                  }}>〜</span>
-                  <input
-                    type="date"
-                    value={periodEnd}
-                    onChange={(e) => setPeriodEnd(e.target.value)}
-                    style={{
-                      boxSizing: 'border-box',
-                      padding: '12px 16px',
-                      minHeight: '48px',
-                      border: '1px solid #E5E5E5',
-                      borderRadius: '8px',
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: '16px',
-                      lineHeight: '150%',
-                      color: '#000000',
-                      background: '#FFFFFF',
-                      flex: 1
-                    }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '10px',
-                  display: 'block'
-                }}>
-                  会場
-                </label>
-                <input
-                  type="text"
-                  value={venue}
-                  onChange={(e) => setVenue(e.target.value)}
-                  placeholder="会場名や地域名で検索"
-                  style={{
-                    boxSizing: 'border-box',
-                    padding: '12px 16px',
-                    width: '100%',
-                    minHeight: '48px',
-                    border: '1px solid #E5E5E5',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    lineHeight: '150%',
-                    color: '#000000',
-                    background: '#FFFFFF'
-                  }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                <button
-                  type="submit"
-                  style={{
-                    flex: 1,
-                    height: '48px',
-                    background: '#06C755',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    lineHeight: '19px',
-                    color: '#FFFFFF',
-                    cursor: 'pointer'
-                  }}
-                >
-                  この条件で検索
-                </button>
-                <button
-                  type="button"
-                  onClick={handleResetFilters}
-                  style={{
-                    width: '120px',
-                    height: '48px',
-                    background: '#FFFFFF',
-                    border: '1px solid #E5E5E5',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    lineHeight: '19px',
-                    color: '#000000',
-                    cursor: 'pointer'
-                  }}
-                >
-                  条件をクリア
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
+        </form>
 
         {events.length === 0 ? (
           <div style={{
@@ -788,7 +848,73 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
             ))}
           </div>
         )}
+        </div>
       </div>
-    </div>
+
+      {showFilterSheet && (
+        <div style={sheetBackdropStyle} role="dialog" aria-modal="true" aria-label="詳細フィルター">
+          <div style={sheetStyle}>
+            <div style={sheetHandleStyle}></div>
+            <div style={sheetHeaderStyle}>
+              <h2 style={sheetTitleStyle}>詳細検索</h2>
+              <button type="button" onClick={handleCloseFilterSheet} style={sheetCloseButtonStyle}>
+                閉じる
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={sheetLabelStyle}>開催期間</label>
+                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                  <input
+                    type="date"
+                    value={draftPeriodStart}
+                    onChange={(e) => setDraftPeriodStart(e.target.value)}
+                    style={{ ...sheetInputStyle, flex: 1 }}
+                  />
+                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 700, color: '#666666' }}>〜</span>
+                  <input
+                    type="date"
+                    value={draftPeriodEnd}
+                    onChange={(e) => setDraftPeriodEnd(e.target.value)}
+                    style={{ ...sheetInputStyle, flex: 1 }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={sheetLabelStyle}>会場</label>
+                <input
+                  type="text"
+                  value={draftVenue}
+                  onChange={(e) => setDraftVenue(e.target.value)}
+                  placeholder="会場名や地域名で検索"
+                  style={sheetInputStyle}
+                />
+              </div>
+
+              <p style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '12px',
+                lineHeight: '150%',
+                color: '#666666',
+                marginTop: '4px'
+              }}>
+                現在募集中のイベントのみ表示しています。
+              </p>
+            </div>
+
+            <div style={sheetButtonRowStyle}>
+              <button type="button" onClick={handleClearFilters} style={sheetSecondaryButtonStyle}>
+                条件をクリア
+              </button>
+              <button type="button" onClick={handleApplyFilters} style={sheetPrimaryButtonStyle}>
+                この条件で検索
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
