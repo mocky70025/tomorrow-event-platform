@@ -35,7 +35,6 @@ type SearchFilters = {
   periodStart: string
   periodEnd: string
   venue: string
-  onlyRecruiting: boolean
 }
 
 export default function EventList({ userProfile, onBack }: EventListProps) {
@@ -47,7 +46,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
   const [periodStart, setPeriodStart] = useState('')
   const [periodEnd, setPeriodEnd] = useState('')
   const [venue, setVenue] = useState('')
-  const [onlyRecruiting, setOnlyRecruiting] = useState(true)
   const [hasSearched, setHasSearched] = useState(false)
 
   useEffect(() => {
@@ -62,7 +60,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
         periodStart,
         periodEnd,
         venue,
-        onlyRecruiting,
         ...overrideFilters
       }
 
@@ -79,10 +76,8 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
         query = query.lte('event_start_date', effectiveFilters.periodEnd)
       }
 
-      if (effectiveFilters.onlyRecruiting) {
-        const today = new Date().toISOString().split('T')[0]
-        query = query.or(`application_end_date.is.null,application_end_date.gte.${today}`)
-      }
+      const today = new Date().toISOString().split('T')[0]
+      query = query.or(`application_end_date.is.null,application_end_date.gte.${today}`)
 
       query = query.order('event_start_date', { ascending: true })
 
@@ -138,14 +133,12 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     setPeriodStart('')
     setPeriodEnd('')
     setVenue('')
-    setOnlyRecruiting(true)
     setHasSearched(false)
     fetchEvents({
       keyword: '',
       periodStart: '',
       periodEnd: '',
-      venue: '',
-      onlyRecruiting: true
+      venue: ''
     })
   }
 
@@ -660,27 +653,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                   }}
                 />
               </div>
-
-              <label style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '12px',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                lineHeight: '150%',
-                color: '#000000'
-              }}>
-                <input
-                  type="checkbox"
-                  checked={onlyRecruiting}
-                  onChange={(e) => setOnlyRecruiting(e.target.checked)}
-                  style={{
-                    width: '20px',
-                    height: '20px'
-                  }}
-                />
-                募集中のイベントのみ表示
-              </label>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button
