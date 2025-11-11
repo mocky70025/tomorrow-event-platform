@@ -237,46 +237,70 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     }
   }
 
-  const searchBarWrapperStyle = {
-    display: 'flex',
-    gap: '12px',
-    alignItems: 'center',
-    marginBottom: '24px'
-  }
-
-  const searchFieldStyle = {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    padding: '12px 16px',
-    borderRadius: '28px',
+  const searchCardStyle = {
     background: '#FFFFFF',
-    boxShadow: '0px 1px 3px rgba(0,0,0,0.12)',
-    border: '1px solid #E5E5E5'
+    borderRadius: '12px',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    padding: '24px',
+    marginBottom: '24px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '16px'
   }
 
-  const searchInputStyle: CSSProperties = {
-    flex: 1,
-    border: 'none',
-    outline: 'none',
-    background: 'transparent',
+  const searchLabelStyle = {
     fontFamily: 'Inter, sans-serif',
-    fontSize: '16px',
-    lineHeight: '150%',
+    fontSize: '14px',
+    fontWeight: 500,
+    lineHeight: '120%',
     color: '#000000'
   }
 
-  const iconStyle = {
+  const searchRowStyle = {
+    display: 'flex',
+    gap: '12px',
+    alignItems: 'center'
+  }
+
+  const searchFieldContainerStyle = {
+    position: 'relative' as const,
+    flex: 1
+  }
+
+  const searchInputStyle: CSSProperties = {
+    width: '100%',
+    boxSizing: 'border-box',
+    padding: '12px 44px 12px 44px',
+    minHeight: '48px',
+    border: '1px solid #E5E5E5',
+    borderRadius: '8px',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: '#000000',
+    background: '#FFFFFF',
+    outline: 'none'
+  }
+
+  const searchIconStyle = {
+    position: 'absolute' as const,
+    left: '16px',
+    top: '50%',
+    transform: 'translateY(-50%)',
     width: '20px',
     height: '20px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: '#6B6B6B'
+    color: '#6B6B6B',
+    pointerEvents: 'none' as const
   }
 
   const clearButtonStyle = {
+    position: 'absolute' as const,
+    right: '16px',
+    top: '50%',
+    transform: 'translateY(-50%)',
     border: 'none',
     background: 'none',
     color: '#6B6B6B',
@@ -287,13 +311,14 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     alignItems: 'center'
   }
 
-  const filterButtonStyle = {
+  const conditionButtonStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
     padding: '12px 20px',
-    borderRadius: '24px',
+    minHeight: '48px',
+    borderRadius: '8px',
     border: '1px solid #06C755',
     background: '#E6F8EC',
     fontFamily: 'Inter, sans-serif',
@@ -301,7 +326,8 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     fontWeight: 600,
     lineHeight: '19px',
     color: '#066B34',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    whiteSpace: 'nowrap' as const
   }
 
   const sheetBackdropStyle = {
@@ -717,44 +743,49 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
           }}>イベント一覧</h1>
         </div>
 
-        <form onSubmit={handleSearchSubmit} style={searchBarWrapperStyle}>
-          <div style={searchFieldStyle}>
-            <span style={iconStyle} aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
-              </svg>
-            </span>
-            <input
-              type="search"
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              placeholder="イベント名や説明文で検索"
-              style={searchInputStyle}
-              aria-label="キーワードで検索"
-            />
-            {keyword && (
-              <button
-                type="button"
-                onClick={handleKeywordClear}
-                style={clearButtonStyle}
-                aria-label="検索キーワードをクリア"
-              >
-                ×
-              </button>
-            )}
+        <form onSubmit={handleSearchSubmit} style={searchCardStyle}>
+          <div>
+            <span style={searchLabelStyle}>キーワード</span>
           </div>
-          <button
-            type="button"
-            onClick={handleOpenFilterSheet}
-            style={filterButtonStyle}
-            aria-haspopup="dialog"
-            aria-expanded={showFilterSheet}
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-              <path d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 .78 1.625l-6.28 7.35V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 8 21v-7.025L1.22 6.625A1 1 0 0 1 2 5h1z" fill="#066B34"/>
-            </svg>
-            フィルター
-          </button>
+          <div style={searchRowStyle}>
+            <div style={searchFieldContainerStyle}>
+              <span style={searchIconStyle} aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
+                </svg>
+              </span>
+              <input
+                type="search"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                placeholder="イベント名や説明文で検索"
+                style={searchInputStyle}
+                aria-label="キーワードで検索"
+              />
+              {keyword && (
+                <button
+                  type="button"
+                  onClick={handleKeywordClear}
+                  style={clearButtonStyle}
+                  aria-label="検索キーワードをクリア"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handleOpenFilterSheet}
+              style={conditionButtonStyle}
+              aria-haspopup="dialog"
+              aria-expanded={showFilterSheet}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 .78 1.625l-6.28 7.35V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 8 21v-7.025L1.22 6.625A1 1 0 0 1 2 5h1z" fill="#066B34"/>
+              </svg>
+              条件設定
+            </button>
+          </div>
         </form>
 
         {events.length === 0 ? (
