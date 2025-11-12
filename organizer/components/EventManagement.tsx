@@ -259,9 +259,32 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     }
   }
 
-  const tabItems: Array<{ key: typeof currentView; label: string; icon: string }> = [
-    { key: 'events', label: 'イベント', icon: '📅' },
-    { key: 'profile', label: '登録情報', icon: '👤' }
+  const CalendarIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M7 2a1 1 0 0 0-1 1v1H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3h-1V3a1 1 0 1 0-2 0v1H8V3a1 1 0 0 0-1-1Zm12 6v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8h14Z"
+        fill="currentColor"
+      />
+      <path d="M7 11h4v4H7v-4Zm6 0h4v4h-4v-4Z" fill="currentColor" />
+    </svg>
+  )
+
+  const ProfileIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 2a5 5 0 1 1 0 10 5 5 0 0 1 0-10Z"
+        fill="currentColor"
+      />
+      <path
+        d="M4 19.5C4 16.462 7.582 14 12 14s8 2.462 8 5.5V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-.5Z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+
+  const tabItems: Array<{ key: typeof currentView; label: string; icon: JSX.Element }> = [
+    { key: 'events', label: 'イベント', icon: <CalendarIcon /> },
+    { key: 'profile', label: '登録情報', icon: <ProfileIcon /> }
   ]
 
   return (
@@ -313,7 +336,9 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                   fontFamily: 'Inter, sans-serif'
                 }}
               >
-                <span style={{ fontSize: '20px', color: isActive ? activeColor : inactiveColor }}>{item.icon}</span>
+                <span style={{ color: isActive ? activeColor : inactiveColor }}>
+                  {item.icon}
+                </span>
                 <span style={{ fontSize: '12px', color: isActive ? activeColor : inactiveColor }}>{item.label}</span>
               </button>
             )
