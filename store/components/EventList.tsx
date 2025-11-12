@@ -34,34 +34,50 @@ type SearchFilters = {
   keyword: string
   periodStart: string
   periodEnd: string
-  venue: string
+  prefecture: string
+  city: string
 }
 
 export default function EventList({ userProfile, onBack }: EventListProps) {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
-  const [showFilterSheet, setShowFilterSheet] = useState(false)
+  const [showSearchPage, setShowSearchPage] = useState(false)
   const [keyword, setKeyword] = useState('')
   const [periodStart, setPeriodStart] = useState('')
   const [periodEnd, setPeriodEnd] = useState('')
-  const [venue, setVenue] = useState('')
-  const [draftPeriodStart, setDraftPeriodStart] = useState('')
-  const [draftPeriodEnd, setDraftPeriodEnd] = useState('')
-  const [draftVenue, setDraftVenue] = useState('')
+  const [prefecture, setPrefecture] = useState('')
+  const [city, setCity] = useState('')
+  const [formKeyword, setFormKeyword] = useState('')
+  const [formPeriodStart, setFormPeriodStart] = useState('')
+  const [formPeriodEnd, setFormPeriodEnd] = useState('')
+  const [formPrefecture, setFormPrefecture] = useState('')
+  const [formCity, setFormCity] = useState('')
   const [hasSearched, setHasSearched] = useState(false)
+
+  const prefectures = [
+    '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
+    '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
+    '新潟県', '富山県', '石川県', '福井県', '山梨県', '長野県',
+    '岐阜県', '静岡県', '愛知県', '三重県',
+    '滋賀県', '京都府', '大阪府', '兵庫県', '奈良県', '和歌山県',
+    '鳥取県', '島根県', '岡山県', '広島県', '山口県',
+    '徳島県', '香川県', '愛媛県', '高知県',
+    '福岡県', '佐賀県', '長崎県', '熊本県', '大分県', '宮崎県', '鹿児島県', '沖縄県'
+  ]
+
+  const normalizeForSearch = (value: string) => {
+    if (!value) return ''
+    let normalized = value.normalize('NFKC')
+    normalized = normalized.replace(/[\u30A1-\u30F6]/g, char =>
+      String.fromCharCode(char.charCodeAt(0) - 0x60)
+    )
+    return normalized.toLowerCase()
+  }
 
   useEffect(() => {
     fetchEvents()
   }, [])
-
-  useEffect(() => {
-    if (showFilterSheet) {
-      setDraftPeriodStart(periodStart)
-      setDraftPeriodEnd(periodEnd)
-      setDraftVenue(venue)
-    }
-  }, [showFilterSheet, periodStart, periodEnd, venue])
 
   const fetchEvents = async (overrideFilters?: Partial<SearchFilters>) => {
     setLoading(true)
@@ -70,7 +86,8 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
         keyword,
         periodStart,
         periodEnd,
-        venue,
+        prefecture,
+        city,
         ...overrideFilters
       }
 
@@ -98,22 +115,34 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
       let filteredEvents = (data || []) as Event[]
 
-      if (effectiveFilters.keyword.trim()) {
-        const kw = effectiveFilters.keyword.trim().toLowerCase()
-        filteredEvents = filteredEvents.filter(event =>
-          [event.event_name, event.event_description, event.lead_text]
+      const normalizedKeyword = normalizeForSearch(effectiveFilters.keyword)
+      if (normalizedKeyword) {
+        filteredEvents = filteredEvents.filter(event => {
+          const fields = [event.event_name, event.event_description, event.lead_text]
             .filter(Boolean)
-            .some(field => field?.toLowerCase().includes(kw))
-        )
+            .map(field => normalizeForSearch(field as string))
+          return fields.some(field => field.includes(normalizedKeyword))
+        })
       }
 
-      if (effectiveFilters.venue.trim()) {
-        const venueKeyword = effectiveFilters.venue.trim().toLowerCase()
-        filteredEvents = filteredEvents.filter(event =>
-          [event.venue_name, event.venue_city, event.venue_town, event.venue_address]
+      const normalizedPrefecture = normalizeForSearch(effectiveFilters.prefecture)
+      if (normalizedPrefecture) {
+        filteredEvents = filteredEvents.filter(event => {
+          const candidates = [event.venue_city, event.venue_address]
             .filter(Boolean)
-            .some(field => String(field).toLowerCase().includes(venueKeyword))
-        )
+            .map(field => normalizeForSearch(String(field)))
+          return candidates.some(field => field.includes(normalizedPrefecture))
+        })
+      }
+
+      const normalizedCity = normalizeForSearch(effectiveFilters.city)
+      if (normalizedPrefecture && normalizedCity) {
+        filteredEvents = filteredEvents.filter(event => {
+          const candidates = [event.venue_city, event.venue_town, event.venue_address]
+            .filter(Boolean)
+            .map(field => normalizeForSearch(String(field)))
+          return candidates.some(field => field.includes(normalizedCity))
+        })
       }
 
       setEvents(filteredEvents)
@@ -133,61 +162,74 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     })
   }
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setHasSearched(true)
-    fetchEvents()
-  }
-
   const handleEventClick = (event: Event) => {
     setSelectedEvent(event)
   }
 
-  const handleKeywordClear = () => {
-    setKeyword('')
-    setHasSearched(false)
-    fetchEvents({
-      keyword: '',
-      periodStart,
-      periodEnd,
-      venue
-    })
+  const handleOpenSearchPage = () => {
+    setFormKeyword(keyword)
+    setFormPeriodStart(periodStart)
+    setFormPeriodEnd(periodEnd)
+    setFormPrefecture(prefecture)
+    setFormCity(city)
+    setShowSearchPage(true)
   }
 
-  const handleOpenFilterSheet = () => {
-    setShowFilterSheet(true)
+  const handleCloseSearchPage = () => {
+    setShowSearchPage(false)
   }
 
-  const handleCloseFilterSheet = () => {
-    setShowFilterSheet(false)
+  const handlePrefectureChange = (value: string) => {
+    setFormPrefecture(value)
+    if (!value) {
+      setFormCity('')
+    }
   }
 
-  const handleApplyFilters = () => {
-    setPeriodStart(draftPeriodStart)
-    setPeriodEnd(draftPeriodEnd)
-    setVenue(draftVenue)
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const nextKeyword = formKeyword.trim()
+    const nextPeriodStart = formPeriodStart
+    const nextPeriodEnd = formPeriodEnd
+    const nextPrefecture = formPrefecture
+    const nextCity = formPrefecture ? formCity.trim() : ''
+
+    setKeyword(nextKeyword)
+    setPeriodStart(nextPeriodStart)
+    setPeriodEnd(nextPeriodEnd)
+    setPrefecture(nextPrefecture)
+    setCity(nextCity)
     setHasSearched(true)
-    setShowFilterSheet(false)
+    setShowSearchPage(false)
+
     fetchEvents({
-      periodStart: draftPeriodStart,
-      periodEnd: draftPeriodEnd,
-      venue: draftVenue
+      keyword: nextKeyword,
+      periodStart: nextPeriodStart,
+      periodEnd: nextPeriodEnd,
+      prefecture: nextPrefecture,
+      city: nextCity
     })
   }
 
-  const handleClearFilters = () => {
-    setDraftPeriodStart('')
-    setDraftPeriodEnd('')
-    setDraftVenue('')
+  const handleClearSearch = () => {
+    setFormKeyword('')
+    setFormPeriodStart('')
+    setFormPeriodEnd('')
+    setFormPrefecture('')
+    setFormCity('')
+    setKeyword('')
     setPeriodStart('')
     setPeriodEnd('')
-    setVenue('')
+    setPrefecture('')
+    setCity('')
     setHasSearched(false)
-    setShowFilterSheet(false)
+    setShowSearchPage(false)
     fetchEvents({
+      keyword: '',
       periodStart: '',
       periodEnd: '',
-      venue: ''
+      prefecture: '',
+      city: ''
     })
   }
 
@@ -237,35 +279,53 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     }
   }
 
+  const searchEntryWrapperStyle = {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    paddingTop: '24px',
+    marginBottom: '16px'
+  }
+
+  const searchEntryButtonStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: '12px 20px',
+    minHeight: '48px',
+    borderRadius: '8px',
+    border: '1px solid #E5E5E5',
+    background: '#FFFFFF',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    fontWeight: 700,
+    lineHeight: '120%',
+    color: '#000000',
+    cursor: 'pointer'
+  }
+
+  const searchEntryIconStyle = {
+    width: '20px',
+    height: '20px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#06C755'
+  }
+
+  const searchEntryLabelStyle = {
+    lineHeight: '20px',
+    whiteSpace: 'nowrap' as const
+  }
+
   const searchCardStyle = {
     background: '#FFFFFF',
     borderRadius: '12px',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
     padding: '24px',
-    marginBottom: '24px',
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '16px'
-  }
-
-  const searchCardHeaderStyle = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '18px',
-    fontWeight: 700,
-    lineHeight: '140%',
-    color: '#000000'
-  }
-
-  const searchCardHeaderIconStyle = {
-    width: '24px',
-    height: '24px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '20px'
+    gap: '20px'
   }
 
   const searchLabelStyle = {
@@ -274,12 +334,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     fontWeight: 500,
     lineHeight: '120%',
     color: '#000000'
-  }
-
-  const searchRowStyle = {
-    display: 'flex',
-    gap: '12px',
-    alignItems: 'center'
   }
 
   const searchFieldContainerStyle = {
@@ -331,87 +385,20 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     alignItems: 'center'
   }
 
-  const conditionButtonStyle = {
+  const rangeRowStyle = {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '8px',
-    padding: '12px 20px',
-    minHeight: '48px',
-    borderRadius: '8px',
-    border: '1px solid #06C755',
-    background: '#E6F8EC',
+    gap: '12px',
+    alignItems: 'center'
+  }
+
+  const rangeSeparatorStyle = {
     fontFamily: 'Inter, sans-serif',
     fontSize: '16px',
-    fontWeight: 600,
-    lineHeight: '19px',
-    color: '#066B34',
-    cursor: 'pointer',
-    whiteSpace: 'nowrap' as const
-  }
-
-  const sheetBackdropStyle = {
-    position: 'fixed' as const,
-    inset: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.45)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    zIndex: 1000
-  }
-
-  const sheetStyle = {
-    width: '100%',
-    maxWidth: '480px',
-    background: '#FFFFFF',
-    borderTopLeftRadius: '24px',
-    borderTopRightRadius: '24px',
-    padding: '24px 24px 32px',
-    boxShadow: '0px -4px 12px rgba(0,0,0,0.15)'
-  }
-
-  const sheetHandleStyle = {
-    width: '48px',
-    height: '4px',
-    borderRadius: '2px',
-    background: '#D9D9D9',
-    alignSelf: 'center' as const,
-    marginBottom: '16px'
-  }
-
-  const sheetHeaderStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '16px'
-  }
-
-  const sheetTitleStyle = {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '18px',
     fontWeight: 700,
-    lineHeight: '120%',
-    color: '#000000'
+    color: '#666666'
   }
 
-  const sheetCloseButtonStyle = {
-    border: 'none',
-    background: 'none',
-    color: '#6B6B6B',
-    fontSize: '16px',
-    cursor: 'pointer'
-  }
-
-  const sheetLabelStyle = {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '14px',
-    fontWeight: 500,
-    lineHeight: '120%',
-    color: '#000000',
-    marginBottom: '10px'
-  }
-
-  const sheetInputStyle = {
+  const selectStyle = {
     boxSizing: 'border-box' as const,
     padding: '12px 16px',
     width: '100%',
@@ -425,13 +412,20 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     background: '#FFFFFF'
   }
 
-  const sheetButtonRowStyle = {
+  const helperTextStyle = {
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '12px',
+    lineHeight: '150%',
+    color: '#666666'
+  }
+
+  const actionRowStyle = {
     display: 'flex',
     gap: '12px',
     marginTop: '24px'
   }
 
-  const sheetSecondaryButtonStyle = {
+  const secondaryButtonStyle = {
     flex: 1,
     height: '48px',
     borderRadius: '8px',
@@ -445,7 +439,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     cursor: 'pointer'
   }
 
-  const sheetPrimaryButtonStyle = {
+  const primaryButtonStyle = {
     flex: 1,
     height: '48px',
     borderRadius: '8px',
@@ -748,11 +742,162 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     )
   }
 
+  if (showSearchPage) {
+    const backButtonStyle = {
+      background: 'transparent',
+      border: 'none',
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '16px',
+      lineHeight: '150%',
+      color: '#06C755',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '4px'
+    }
+
+    return (
+      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
+            <button
+              type="button"
+              onClick={handleCloseSearchPage}
+              style={backButtonStyle}
+            >
+              ← 戻る
+            </button>
+            <h1 style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '20px',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#000000'
+            }}>検索</h1>
+            <div style={{ width: '60px' }}></div>
+          </div>
+
+          <form onSubmit={handleSearchSubmit}>
+            <div style={searchCardStyle}>
+              <div>
+                <span style={searchLabelStyle}>キーワード（任意）</span>
+                <div style={searchFieldContainerStyle}>
+                  <span style={searchIconStyle} aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
+                    </svg>
+                  </span>
+                  <input
+                    type="search"
+                    value={formKeyword}
+                    onChange={(e) => setFormKeyword(e.target.value)}
+                    placeholder="イベント名や説明文で検索"
+                    style={searchInputStyle}
+                    aria-label="キーワードで検索"
+                  />
+                  {formKeyword && (
+                    <button
+                      type="button"
+                      onClick={() => setFormKeyword('')}
+                      style={clearButtonStyle}
+                      aria-label="キーワードをクリア"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+                <p style={{ ...helperTextStyle, marginTop: '8px' }}>
+                  入力した語句を含むイベントを表示します。カタカナ・ひらがな、半角・全角の差は吸収されます。
+                </p>
+              </div>
+
+              <div>
+                <span style={searchLabelStyle}>開催期間（任意）</span>
+                <div style={rangeRowStyle}>
+                  <input
+                    type="date"
+                    value={formPeriodStart}
+                    onChange={(e) => setFormPeriodStart(e.target.value)}
+                    style={{ ...selectStyle, flex: 1 }}
+                  />
+                  <span style={rangeSeparatorStyle}>〜</span>
+                  <input
+                    type="date"
+                    value={formPeriodEnd}
+                    onChange={(e) => setFormPeriodEnd(e.target.value)}
+                    style={{ ...selectStyle, flex: 1 }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <span style={searchLabelStyle}>都道府県（任意）</span>
+                <select
+                  value={formPrefecture}
+                  onChange={(e) => handlePrefectureChange(e.target.value)}
+                  style={selectStyle}
+                >
+                  <option value="">選択してください</option>
+                  {prefectures.map((pref) => (
+                    <option key={pref} value={pref}>{pref}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <span style={searchLabelStyle}>市区町村（任意）</span>
+                <input
+                  type="text"
+                  value={formCity}
+                  onChange={(e) => setFormCity(e.target.value)}
+                  placeholder="市区町村名を入力"
+                  style={{
+                    ...selectStyle,
+                    color: formCity ? '#000000' : '#6B6B6B',
+                    background: formPrefecture ? '#FFFFFF' : '#F5F5F5'
+                  }}
+                  disabled={!formPrefecture}
+                />
+                <p style={{ ...helperTextStyle, marginTop: '8px' }}>
+                  都道府県を選択すると市区町村を入力できます。
+                </p>
+              </div>
+            </div>
+
+            <div style={actionRowStyle}>
+              <button type="button" onClick={handleClearSearch} style={secondaryButtonStyle}>
+                条件をクリア
+              </button>
+              <button type="submit" style={primaryButtonStyle}>
+                この条件で検索
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <>
       <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
         <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
-        <div style={{ marginBottom: '24px', paddingTop: '24px' }}>
+        <div style={searchEntryWrapperStyle}>
+          <button
+            type="button"
+            onClick={handleOpenSearchPage}
+            style={searchEntryButtonStyle}
+          >
+            <span style={searchEntryIconStyle} aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
+              </svg>
+            </span>
+            <span style={searchEntryLabelStyle}>検索</span>
+          </button>
+        </div>
+
+        <div style={{ marginBottom: '24px' }}>
           <h1 style={{
             fontFamily: 'Inter, sans-serif',
             fontSize: '20px',
@@ -762,55 +907,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
             textAlign: 'center'
           }}>イベント一覧</h1>
         </div>
-
-        <form onSubmit={handleSearchSubmit} style={searchCardStyle}>
-          <div style={searchCardHeaderStyle}>
-            <span style={searchCardHeaderIconStyle} aria-hidden="true">🔍</span>
-            <span>検索</span>
-          </div>
-          <div>
-            <span style={searchLabelStyle}>キーワード</span>
-          </div>
-          <div style={searchRowStyle}>
-            <div style={searchFieldContainerStyle}>
-              <span style={searchIconStyle} aria-hidden="true">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
-                </svg>
-              </span>
-              <input
-                type="search"
-                value={keyword}
-                onChange={(e) => setKeyword(e.target.value)}
-                placeholder="イベント名や説明文で検索"
-                style={searchInputStyle}
-                aria-label="キーワードで検索"
-              />
-              {keyword && (
-                <button
-                  type="button"
-                  onClick={handleKeywordClear}
-                  style={clearButtonStyle}
-                  aria-label="検索キーワードをクリア"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={handleOpenFilterSheet}
-              style={conditionButtonStyle}
-              aria-haspopup="dialog"
-              aria-expanded={showFilterSheet}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                <path d="M3 5a1 1 0 0 1 1-1h16a1 1 0 0 1 .78 1.625l-6.28 7.35V19a1 1 0 0 1-.553.894l-4 2A1 1 0 0 1 8 21v-7.025L1.22 6.625A1 1 0 0 1 2 5h1z" fill="#066B34"/>
-              </svg>
-              条件設定
-            </button>
-          </div>
-        </form>
 
         {events.length === 0 ? (
           <div style={{
@@ -905,71 +1001,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
         )}
         </div>
       </div>
-
-      {showFilterSheet && (
-        <div style={sheetBackdropStyle} role="dialog" aria-modal="true" aria-label="詳細フィルター">
-          <div style={sheetStyle}>
-            <div style={sheetHandleStyle}></div>
-            <div style={sheetHeaderStyle}>
-              <h2 style={sheetTitleStyle}>詳細検索</h2>
-              <button type="button" onClick={handleCloseFilterSheet} style={sheetCloseButtonStyle}>
-                閉じる
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={sheetLabelStyle}>開催期間</label>
-                <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                  <input
-                    type="date"
-                    value={draftPeriodStart}
-                    onChange={(e) => setDraftPeriodStart(e.target.value)}
-                    style={{ ...sheetInputStyle, flex: 1 }}
-                  />
-                  <span style={{ fontFamily: 'Inter, sans-serif', fontSize: '16px', fontWeight: 700, color: '#666666' }}>〜</span>
-                  <input
-                    type="date"
-                    value={draftPeriodEnd}
-                    onChange={(e) => setDraftPeriodEnd(e.target.value)}
-                    style={{ ...sheetInputStyle, flex: 1 }}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label style={sheetLabelStyle}>会場</label>
-                <input
-                  type="text"
-                  value={draftVenue}
-                  onChange={(e) => setDraftVenue(e.target.value)}
-                  placeholder="会場名や地域名で検索"
-                  style={sheetInputStyle}
-                />
-              </div>
-
-              <p style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '12px',
-                lineHeight: '150%',
-                color: '#666666',
-                marginTop: '4px'
-              }}>
-                現在募集中のイベントのみ表示しています。
-              </p>
-            </div>
-
-            <div style={sheetButtonRowStyle}>
-              <button type="button" onClick={handleClearFilters} style={sheetSecondaryButtonStyle}>
-                条件をクリア
-              </button>
-              <button type="button" onClick={handleApplyFilters} style={sheetPrimaryButtonStyle}>
-                この条件で検索
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   )
 }
