@@ -384,17 +384,40 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     alignItems: 'center'
   }
 
-  const rangeRowStyle = {
+  const rangeContainerStyle = {
+    boxSizing: 'border-box' as const,
     display: 'flex',
+    alignItems: 'center',
     gap: '12px',
-    alignItems: 'center'
+    width: '100%',
+    padding: '12px 16px',
+    minHeight: 56,
+    background: '#FFFFFF',
+    border: '1px solid #E5E5E5',
+    borderRadius: '8px'
   }
 
   const rangeSeparatorStyle = {
     fontFamily: 'Inter, sans-serif',
     fontSize: '16px',
     fontWeight: 700,
-    color: '#666666'
+    color: '#666666',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '0 4px',
+    flexShrink: 0
+  }
+
+  const dateInputStyle: CSSProperties = {
+    flex: 1,
+    border: 'none',
+    outline: 'none',
+    background: 'transparent',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: '#000000'
   }
 
   const selectStyle = {
@@ -803,19 +826,19 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
               <div>
                 <span style={searchLabelStyle}>開催期間（任意）</span>
-                <div style={rangeRowStyle}>
+                <div style={rangeContainerStyle}>
                   <input
                     type="date"
                     value={formPeriodStart}
                     onChange={(e) => setFormPeriodStart(e.target.value)}
-                    style={{ ...selectStyle, flex: 1 }}
+                    style={dateInputStyle}
                   />
                   <span style={rangeSeparatorStyle}>〜</span>
                   <input
                     type="date"
                     value={formPeriodEnd}
                     onChange={(e) => setFormPeriodEnd(e.target.value)}
-                    style={{ ...selectStyle, flex: 1 }}
+                    style={dateInputStyle}
                   />
                 </div>
               </div>
