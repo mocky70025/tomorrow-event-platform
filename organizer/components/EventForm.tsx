@@ -197,25 +197,28 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    width: '100%',
-    padding: '12px 16px',
-    minHeight: 56,
-    background: '#FFFFFF',
-    border: '1px solid #E5E5E5',
-    borderRadius: '8px',
-    boxSizing: 'border-box' as const,
-    minWidth: 0
+    width: '100%'
   }
 
   const rangeSeparatorStyle = {
     fontFamily: 'Inter, sans-serif',
     fontSize: '16px',
     fontWeight: 700,
-    color: '#666666',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '0 4px'
+    color: '#666666'
+  }
+
+  const dateInputStyle = {
+    boxSizing: 'border-box' as const,
+    padding: '12px 16px',
+    width: '100%',
+    minHeight: '48px',
+    border: '1px solid #E5E5E5',
+    borderRadius: '8px',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '16px',
+    lineHeight: '150%',
+    color: '#000000',
+    background: '#FFFFFF'
   }
 
   // 必須項目のバリデーション（最初の未入力へスクロール＆フォーカス）
@@ -569,7 +572,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     required
                     value={formData.event_start_date}
                     onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
-                    style={{ ...inputStyle(!!formData.event_start_date), flex: 1 }}
+                    style={{ ...dateInputStyle, flex: 1 }}
                   />
                   <span style={rangeSeparatorStyle}>〜</span>
                   <input
@@ -578,7 +581,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     required
                     value={formData.event_end_date}
                     onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
-                    style={{ ...inputStyle(!!formData.event_end_date), flex: 1 }}
+                    style={{ ...dateInputStyle, flex: 1 }}
                   />
                 </div>
               </div>
@@ -637,14 +640,14 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     type="date"
                     value={formData.application_start_date}
                     onChange={(e) => setFormData({ ...formData, application_start_date: e.target.value })}
-                    style={{ ...inputStyle(!!formData.application_start_date), flex: 1 }}
+                    style={{ ...dateInputStyle, flex: 1 }}
                   />
                   <span style={rangeSeparatorStyle}>〜</span>
                   <input
                     type="date"
                     value={formData.application_end_date}
                     onChange={(e) => setFormData({ ...formData, application_end_date: e.target.value })}
-                    style={{ ...inputStyle(!!formData.application_end_date), flex: 1 }}
+                    style={{ ...dateInputStyle, flex: 1 }}
                   />
                 </div>
               </div>
