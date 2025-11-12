@@ -248,6 +248,26 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     gap: '16px'
   }
 
+  const searchCardHeaderStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '18px',
+    fontWeight: 700,
+    lineHeight: '140%',
+    color: '#000000'
+  }
+
+  const searchCardHeaderIconStyle = {
+    width: '24px',
+    height: '24px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '20px'
+  }
+
   const searchLabelStyle = {
     fontFamily: 'Inter, sans-serif',
     fontSize: '14px',
@@ -744,6 +764,10 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
         </div>
 
         <form onSubmit={handleSearchSubmit} style={searchCardStyle}>
+          <div style={searchCardHeaderStyle}>
+            <span style={searchCardHeaderIconStyle} aria-hidden="true">🔍</span>
+            <span>検索</span>
+          </div>
           <div>
             <span style={searchLabelStyle}>キーワード</span>
           </div>
