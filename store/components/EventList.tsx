@@ -399,9 +399,10 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   const selectStyle = {
     boxSizing: 'border-box' as const,
-    padding: '12px 16px',
+    padding: '0 16px',
     width: '100%',
-    minHeight: '48px',
+    minHeight: '56px',
+    height: '56px',
     border: '1px solid #E5E5E5',
     borderRadius: '8px',
     fontFamily: 'Inter, sans-serif',
@@ -409,13 +410,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     lineHeight: '150%',
     color: '#000000',
     background: '#FFFFFF'
-  }
-
-  const helperTextStyle = {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '12px',
-    lineHeight: '150%',
-    color: '#666666'
   }
 
   const actionRowStyle = {
@@ -805,9 +799,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     </button>
                   )}
                 </div>
-                <p style={{ ...helperTextStyle, marginTop: '8px' }}>
-                  入力した語句を含むイベントを表示します。カタカナ・ひらがな、半角・全角の差は吸収されます。
-                </p>
               </div>
 
               <div>
@@ -857,9 +848,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                   }}
                   disabled={!formPrefecture}
                 />
-                <p style={{ ...helperTextStyle, marginTop: '8px' }}>
-                  都道府県を選択すると市区町村を入力できます。
-                </p>
               </div>
             </div>
 
