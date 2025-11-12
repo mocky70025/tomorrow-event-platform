@@ -223,7 +223,6 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     setPrefecture('')
     setCity('')
     setHasSearched(false)
-    setShowSearchPage(false)
     fetchEvents({
       keyword: '',
       periodStart: '',
