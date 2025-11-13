@@ -404,7 +404,25 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     } catch (error) {
       console.error('Registration failed:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
-      const errorMessage = error instanceof Error ? error.message : '不明なエラー'
+      let errorMessage = '不明なエラー'
+      if (error instanceof Error && error.message) {
+        errorMessage = error.message
+      } else if (typeof error === 'object' && error !== null) {
+        const errObj = error as Record<string, unknown>
+        if (typeof errObj.message === 'string' && errObj.message) {
+          errorMessage = errObj.message
+        } else if (typeof errObj.details === 'string' && errObj.details) {
+          errorMessage = errObj.details
+        } else if (typeof errObj.hint === 'string' && errObj.hint) {
+          errorMessage = errObj.hint
+        } else {
+          try {
+            errorMessage = JSON.stringify(errObj)
+          } catch (_) {
+            errorMessage = String(errObj)
+          }
+        }
+      }
       alert(`登録に失敗しました。エラー: ${errorMessage}`)
     } finally {
       setLoading(false)
