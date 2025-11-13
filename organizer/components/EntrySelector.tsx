@@ -8,72 +8,48 @@ interface EntrySelectorProps {
 export default function EntrySelector({ onSelectNew, onSelectInvite }: EntrySelectorProps) {
   return (
     <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '32px 16px', maxWidth: '394px' }}>
-        <h1
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '22px',
-            fontWeight: 700,
-            lineHeight: '130%',
-            color: '#000000',
-            textAlign: 'center',
-            marginBottom: '24px'
-          }}
-        >
-          主催者アカウントにアクセス
-        </h1>
+      <div className="container mx-auto" style={{ padding: '56px 16px', maxWidth: '394px' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '64px' }}>
+          <div
+            style={{
+              width: '220px',
+              height: '220px',
+              borderRadius: '32px',
+              background: '#A7FF6B',
+              boxShadow: '0px 12px 32px rgba(0, 0, 0, 0.12)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '20px',
+              fontWeight: 700,
+              color: '#0F2A1A',
+            }}
+          >
+            アイコン作る
+          </div>
+        </div>
 
-        <p
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '16px',
-            lineHeight: '150%',
-            color: '#666666',
-            textAlign: 'center',
-            marginBottom: '32px'
-          }}
-        >
-          はじめて利用する場合は「新規登録」を、既存アカウントから招待された場合は「招待コードから登録」を選択してください。
-        </p>
-
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
           <button
             type="button"
             onClick={onSelectNew}
             style={{
               width: '100%',
-              borderRadius: '12px',
-              border: '1px solid #E5E5E5',
+              borderRadius: '999px',
+              border: '2px solid #06C755',
               background: '#FFFFFF',
-              padding: '20px',
-              textAlign: 'left',
-              boxShadow: '0px 2px 8px rgba(0,0,0,0.06)',
+              padding: '18px',
+              textAlign: 'center',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '17px',
+              fontWeight: 700,
+              color: '#06C755',
               cursor: 'pointer',
+              boxShadow: '0px 8px 18px rgba(6, 199, 85, 0.18)',
             }}
           >
-            <span
-              style={{
-                display: 'block',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#000000',
-                marginBottom: '8px'
-              }}
-            >
-              新規登録
-            </span>
-            <span
-              style={{
-                display: 'block',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '14px',
-                lineHeight: '150%',
-                color: '#666666'
-              }}
-            >
-              初めて主催者として利用する場合はこちらから登録を開始してください。
-            </span>
+            新規登録
           </button>
 
           <button
@@ -81,38 +57,20 @@ export default function EntrySelector({ onSelectNew, onSelectInvite }: EntrySele
             onClick={onSelectInvite}
             style={{
               width: '100%',
-              borderRadius: '12px',
-              border: '1px solid #06C755',
-              background: '#E6F8EC',
-              padding: '20px',
-              textAlign: 'left',
-              boxShadow: '0px 2px 8px rgba(0,0,0,0.06)',
+              borderRadius: '999px',
+              border: 'none',
+              background: '#06C755',
+              padding: '18px',
+              textAlign: 'center',
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '17px',
+              fontWeight: 700,
+              color: '#FFFFFF',
               cursor: 'pointer',
+              boxShadow: '0px 16px 28px rgba(6, 199, 85, 0.35)',
             }}
           >
-            <span
-              style={{
-                display: 'block',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#066B34',
-                marginBottom: '8px'
-              }}
-            >
-              招待コードから登録
-            </span>
-            <span
-              style={{
-                display: 'block',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '14px',
-                lineHeight: '150%',
-                color: '#066B34'
-              }}
-            >
-              既に登録済みの主催者から招待コードを受け取っている場合はこちらを選択してください。
-            </span>
+            招待コードで登録
           </button>
         </div>
       </div>
