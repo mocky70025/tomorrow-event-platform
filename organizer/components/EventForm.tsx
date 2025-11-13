@@ -266,7 +266,8 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     if (isDraftEnabled) {
       scheduleDraftDeletion()
     }
-  }, [initialFormState, initialImageState, isDraftEnabled, scheduleDraftDeletion])
+    onCancel()
+  }, [initialFormState, initialImageState, isDraftEnabled, scheduleDraftDeletion, onCancel])
 
 
   useEffect(() => {
