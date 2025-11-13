@@ -1394,7 +1394,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 cursor: loading ? 'not-allowed' : 'pointer'
               }}
             >
-              {loading ? (eventId ? '更新中...' : '作成中...') : (eventId ? 'イベントを更新' : 'イベントを掲載')}
+              {loading ? (eventId ? '更新中...' : '作成中...') : (eventId ? 'イベント更新' : 'イベント掲載')}
             </button>
           </div>
         </form>
