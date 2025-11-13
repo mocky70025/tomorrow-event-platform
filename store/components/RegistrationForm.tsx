@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase, type Exhibitor } from '@/lib/supabase'
 import ImageUpload from './ImageUpload'
 
@@ -11,31 +11,265 @@ interface RegistrationFormProps {
 
 type Step = 1 | 2 | 3
 
-export default function RegistrationForm({ userProfile, onRegistrationComplete }: RegistrationFormProps) {
-  const [currentStep, setCurrentStep] = useState<Step>(1)
-  const [formData, setFormData] = useState({
-    name: '',
-    gender: '' as '' | '男' | '女' | 'それ以外',
-    age: 0,
-    phone_number: '',
-    email: '',
-    genre_category: '',
-    genre_free_text: '',
+interface ExhibitorFormState {
+  name: string
+  gender: '' | '男' | '女' | 'それ以外'
+  age: number
+  phone_number: string
+  email: string
+  genre_category: string
+  genre_free_text: string
+}
+
+interface ExhibitorDocumentState {
+  business_license: string
+  vehicle_inspection: string
+  automobile_inspection: string
+  pl_insurance: string
+  fire_equipment_layout: string
+}
+
+interface ExhibitorDraftPayload {
+  currentStep: Step
+  formData: ExhibitorFormState
+  documentUrls: ExhibitorDocumentState
+  termsAccepted: boolean
+  hasViewedTerms: boolean
+}
+
+const SAVE_DEBOUNCE_MS = 800
+const EXHIBITOR_DRAFT_TYPE = 'exhibitor_registration'
+
+const EXHIBITOR_FORM_INITIAL: ExhibitorFormState = {
+  name: '',
+  gender: '',
+  age: 0,
+  phone_number: '',
+  email: '',
+  genre_category: '',
+  genre_free_text: '',
+}
+
+const EXHIBITOR_DOCUMENT_INITIAL: ExhibitorDocumentState = {
+  business_license: '',
+  vehicle_inspection: '',
+  automobile_inspection: '',
+  pl_insurance: '',
+  fire_equipment_layout: '',
+}
+
+const hasExhibitorDraftContent = (payload: ExhibitorDraftPayload): boolean => {
+  const hasFormValue = Object.values(payload.formData).some((value) => {
+    if (typeof value === 'string') return value.trim() !== ''
+    if (typeof value === 'number') return value > 0
+    return false
   })
 
-  const [documentUrls, setDocumentUrls] = useState({
-    business_license: '',
-    vehicle_inspection: '',
-    automobile_inspection: '',
-    pl_insurance: '',
-    fire_equipment_layout: '',
-  })
+  if (hasFormValue) return true
+
+  const hasDocument = Object.values(payload.documentUrls).some((value) => value.trim() !== '')
+  return hasDocument
+}
+
+const coerceStep = (value: number): Step => {
+  if (value === 2) return 2
+  if (value === 3) return 3
+  return 1
+}
+
+export default function RegistrationForm({ userProfile, onRegistrationComplete }: RegistrationFormProps) {
+  const [currentStep, setCurrentStep] = useState<Step>(1)
+  const [formData, setFormData] = useState<ExhibitorFormState>({ ...EXHIBITOR_FORM_INITIAL })
+  const [documentUrls, setDocumentUrls] = useState<ExhibitorDocumentState>({ ...EXHIBITOR_DOCUMENT_INITIAL })
 
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
   const [showTermsPage, setShowTermsPage] = useState(false)
   const [hasViewedTerms, setHasViewedTerms] = useState(false)
+  const [draftLoaded, setDraftLoaded] = useState(false)
+
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const lastPayloadRef = useRef<string>('')
+  const draftExistsRef = useRef(false)
+
+  const upsertDraft = useCallback(
+    async (payload: ExhibitorDraftPayload) => {
+      if (!userProfile?.userId) return
+      const { error } = await supabase
+        .from('form_drafts')
+        .upsert(
+          {
+            user_id: userProfile.userId,
+            form_type: EXHIBITOR_DRAFT_TYPE,
+            payload,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id, form_type' }
+        )
+
+      if (error) throw error
+      draftExistsRef.current = true
+    },
+    [userProfile?.userId]
+  )
+
+  const removeDraft = useCallback(async () => {
+    if (!userProfile?.userId || !draftExistsRef.current) return
+    const { error } = await supabase
+      .from('form_drafts')
+      .delete()
+      .eq('user_id', userProfile.userId)
+      .eq('form_type', EXHIBITOR_DRAFT_TYPE)
+
+    if (error) throw error
+    draftExistsRef.current = false
+  }, [userProfile?.userId])
+
+  const scheduleDraftUpsert = useCallback(
+    (payload: ExhibitorDraftPayload) => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+
+      saveTimeoutRef.current = setTimeout(async () => {
+        saveTimeoutRef.current = null
+        try {
+          await upsertDraft(payload)
+        } catch (error) {
+          console.error('Failed to save registration draft:', error)
+        }
+      }, SAVE_DEBOUNCE_MS)
+    },
+    [upsertDraft]
+  )
+
+  const scheduleDraftDeletion = useCallback(() => {
+    if (!draftExistsRef.current) return
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      saveTimeoutRef.current = null
+      try {
+        await removeDraft()
+      } catch (error) {
+        console.error('Failed to delete registration draft:', error)
+      }
+    }, SAVE_DEBOUNCE_MS)
+  }, [removeDraft])
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    let isCancelled = false
+
+    const loadDraft = async () => {
+      if (!userProfile?.userId) {
+        if (!isCancelled) setDraftLoaded(true)
+        return
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('form_drafts')
+          .select('payload')
+          .eq('user_id', userProfile.userId)
+          .eq('form_type', EXHIBITOR_DRAFT_TYPE)
+          .limit(1)
+
+        if (error) {
+          throw error
+        }
+
+        const record = data?.[0]
+
+        if (record?.payload && !isCancelled) {
+          const payload = record.payload as Partial<ExhibitorDraftPayload>
+
+          const restoredFormData: ExhibitorFormState = {
+            ...EXHIBITOR_FORM_INITIAL,
+            ...(payload.formData ?? {}),
+          }
+          const restoredDocuments: ExhibitorDocumentState = {
+            ...EXHIBITOR_DOCUMENT_INITIAL,
+            ...(payload.documentUrls ?? {}),
+          }
+          const restoredStep = payload.currentStep ? coerceStep(Number(payload.currentStep)) : 1
+          const restoredTermsAccepted = Boolean(payload.termsAccepted)
+          const restoredHasViewedTerms = Boolean(payload.hasViewedTerms)
+
+          setFormData(restoredFormData)
+          setDocumentUrls(restoredDocuments)
+          setCurrentStep(restoredStep)
+          setTermsAccepted(restoredTermsAccepted)
+          setHasViewedTerms(restoredHasViewedTerms)
+
+          draftExistsRef.current = true
+          lastPayloadRef.current = JSON.stringify({
+            currentStep: restoredStep,
+            formData: restoredFormData,
+            documentUrls: restoredDocuments,
+            termsAccepted: restoredTermsAccepted,
+            hasViewedTerms: restoredHasViewedTerms,
+          })
+        }
+      } catch (error) {
+        console.error('Failed to load registration draft:', error)
+      } finally {
+        if (!isCancelled) {
+          setDraftLoaded(true)
+        }
+      }
+    }
+
+    loadDraft()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [userProfile?.userId])
+
+  useEffect(() => {
+    if (!draftLoaded) return
+
+    const payload: ExhibitorDraftPayload = {
+      currentStep,
+      formData,
+      documentUrls,
+      termsAccepted,
+      hasViewedTerms,
+    }
+
+    if (!hasExhibitorDraftContent(payload)) {
+      lastPayloadRef.current = ''
+      scheduleDraftDeletion()
+      return
+    }
+
+    const serializedPayload = JSON.stringify(payload)
+    if (lastPayloadRef.current === serializedPayload) return
+
+    lastPayloadRef.current = serializedPayload
+    scheduleDraftUpsert(payload)
+  }, [
+    formData,
+    documentUrls,
+    currentStep,
+    termsAccepted,
+    hasViewedTerms,
+    draftLoaded,
+    scheduleDraftUpsert,
+    scheduleDraftDeletion,
+  ])
 
   // 全角数字を半角に変換
   const convertToHalfWidth = (str: string): string => {
@@ -217,6 +451,14 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       if (error) {
         console.error('Supabase error:', error)
         throw error
+      }
+
+      try {
+        await removeDraft()
+        lastPayloadRef.current = ''
+        setDraftLoaded(false)
+      } catch (draftError) {
+        console.error('Failed to clear registration draft after submit:', draftError)
       }
 
       setCurrentStep(3)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase, type Event, type Organizer } from '@/lib/supabase'
 import ImageUpload from './ImageUpload'
 
@@ -11,8 +11,124 @@ interface EventFormProps {
   initialEvent?: Partial<Event> // 編集時に事前入力
 }
 
+interface EventFormState {
+  event_name: string
+  event_name_furigana: string
+  genre: string
+  is_shizuoka_vocational_assoc_related: boolean
+  opt_out_newspaper_publication: boolean
+  event_start_date: string
+  event_end_date: string
+  event_display_period: string
+  event_period_notes: string
+  event_time: string
+  application_start_date: string
+  application_end_date: string
+  application_display_period: string
+  application_notes: string
+  ticket_release_start_date: string
+  ticket_sales_location: string
+  lead_text: string
+  event_description: string
+  event_introduction_text: string
+  venue_name: string
+  venue_postal_code: string
+  venue_city: string
+  venue_town: string
+  venue_address: string
+  venue_latitude: string
+  venue_longitude: string
+  homepage_url: string
+  related_page_url: string
+  contact_name: string
+  contact_phone: string
+  contact_email: string
+  parking_info: string
+  fee_info: string
+  organizer_info: string
+}
+
+interface EventImageState {
+  main: string
+  additional1: string
+  additional2: string
+  additional3: string
+  additional4: string
+}
+
+interface EventFormDraftPayload {
+  formData: EventFormState
+  imageUrls: EventImageState
+}
+
+const SAVE_DEBOUNCE_MS = 800
+const EVENT_FORM_DRAFT_TYPE = 'organizer_event_form'
+
+const EVENT_FORM_EMPTY_STATE: EventFormState = {
+  event_name: '',
+  event_name_furigana: '',
+  genre: '',
+  is_shizuoka_vocational_assoc_related: false,
+  opt_out_newspaper_publication: false,
+  event_start_date: '',
+  event_end_date: '',
+  event_display_period: '',
+  event_period_notes: '',
+  event_time: '',
+  application_start_date: '',
+  application_end_date: '',
+  application_display_period: '',
+  application_notes: '',
+  ticket_release_start_date: '',
+  ticket_sales_location: '',
+  lead_text: '',
+  event_description: '',
+  event_introduction_text: '',
+  venue_name: '',
+  venue_postal_code: '',
+  venue_city: '',
+  venue_town: '',
+  venue_address: '',
+  venue_latitude: '',
+  venue_longitude: '',
+  homepage_url: '',
+  related_page_url: '',
+  contact_name: '',
+  contact_phone: '',
+  contact_email: '',
+  parking_info: '',
+  fee_info: '',
+  organizer_info: '',
+}
+
+const EVENT_IMAGE_INITIAL: EventImageState = {
+  main: '',
+  additional1: '',
+  additional2: '',
+  additional3: '',
+  additional4: '',
+}
+
+const hasEventDraftContent = (payload: EventFormDraftPayload): boolean => {
+  const hasFormValue = Object.values(payload.formData).some((value) => {
+    if (typeof value === 'string') return value.trim() !== ''
+    if (typeof value === 'boolean') return value
+    if (typeof value === 'number') return value !== 0
+    return false
+  })
+
+  if (hasFormValue) return true
+
+  const hasImage = Object.values(payload.imageUrls).some((value) => value.trim() !== '')
+  return hasImage
+}
+
 export default function EventForm({ organizer, onEventCreated, onCancel, initialEvent }: EventFormProps) {
-  const [formData, setFormData] = useState({
+  const isDraftEnabled = !initialEvent
+  const draftUserKey = organizer?.line_user_id || organizer.id
+
+  const [formData, setFormData] = useState<EventFormState>(() => ({
+    ...EVENT_FORM_EMPTY_STATE,
     event_name: initialEvent?.event_name || '',
     event_name_furigana: (initialEvent as any)?.event_name_furigana || '',
     genre: initialEvent?.genre || '',
@@ -47,18 +163,179 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     parking_info: (initialEvent as any)?.parking_info || '',
     fee_info: (initialEvent as any)?.fee_info || '',
     organizer_info: (initialEvent as any)?.organizer_info || '',
-  })
+  }))
 
   const [loading, setLoading] = useState(false)
   const [addressLoading, setAddressLoading] = useState(false)
   const [eventId, setEventId] = useState<string>((initialEvent?.id as string) || '')
-  const [imageUrls, setImageUrls] = useState({
+  const [imageUrls, setImageUrls] = useState<EventImageState>(() => ({
+    ...EVENT_IMAGE_INITIAL,
     main: initialEvent?.main_image_url || '',
     additional1: (initialEvent as any)?.additional_image1_url || '',
     additional2: (initialEvent as any)?.additional_image2_url || '',
     additional3: (initialEvent as any)?.additional_image3_url || '',
     additional4: (initialEvent as any)?.additional_image4_url || '',
-  })
+  }))
+  const [draftLoaded, setDraftLoaded] = useState(() => !isDraftEnabled)
+
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const lastPayloadRef = useRef<string>('')
+  const draftExistsRef = useRef(false)
+
+  const upsertDraft = useCallback(
+    async (payload: EventFormDraftPayload) => {
+      if (!isDraftEnabled || !draftUserKey) return
+      const { error } = await supabase
+        .from('form_drafts')
+        .upsert(
+          {
+            user_id: draftUserKey,
+            form_type: EVENT_FORM_DRAFT_TYPE,
+            payload,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id, form_type' }
+        )
+
+      if (error) throw error
+      draftExistsRef.current = true
+    },
+    [draftUserKey, isDraftEnabled]
+  )
+
+  const removeDraft = useCallback(async () => {
+    if (!isDraftEnabled || !draftUserKey || !draftExistsRef.current) return
+    const { error } = await supabase
+      .from('form_drafts')
+      .delete()
+      .eq('user_id', draftUserKey)
+      .eq('form_type', EVENT_FORM_DRAFT_TYPE)
+
+    if (error) throw error
+    draftExistsRef.current = false
+  }, [draftUserKey, isDraftEnabled])
+
+  const scheduleDraftUpsert = useCallback(
+    (payload: EventFormDraftPayload) => {
+      if (!isDraftEnabled) return
+
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+
+      saveTimeoutRef.current = setTimeout(async () => {
+        saveTimeoutRef.current = null
+        try {
+          await upsertDraft(payload)
+        } catch (error) {
+          console.error('Failed to save event form draft:', error)
+        }
+      }, SAVE_DEBOUNCE_MS)
+    },
+    [isDraftEnabled, upsertDraft]
+  )
+
+  const scheduleDraftDeletion = useCallback(() => {
+    if (!isDraftEnabled || !draftExistsRef.current) return
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      saveTimeoutRef.current = null
+      try {
+        await removeDraft()
+      } catch (error) {
+        console.error('Failed to delete event form draft:', error)
+      }
+    }, SAVE_DEBOUNCE_MS)
+  }, [isDraftEnabled, removeDraft])
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isDraftEnabled) return
+    let isCancelled = false
+
+    const loadDraft = async () => {
+      if (!draftUserKey) {
+        if (!isCancelled) setDraftLoaded(true)
+        return
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('form_drafts')
+          .select('payload')
+          .eq('user_id', draftUserKey)
+          .eq('form_type', EVENT_FORM_DRAFT_TYPE)
+          .limit(1)
+
+        if (error) throw error
+
+        const record = data?.[0]
+
+        if (record?.payload && !isCancelled) {
+          const payload = record.payload as Partial<EventFormDraftPayload>
+          const restoredFormData: EventFormState = {
+            ...EVENT_FORM_EMPTY_STATE,
+            ...(payload.formData ?? {}),
+          }
+          const restoredImages: EventImageState = {
+            ...EVENT_IMAGE_INITIAL,
+            ...(payload.imageUrls ?? {}),
+          }
+
+          setFormData(restoredFormData)
+          setImageUrls(restoredImages)
+
+          draftExistsRef.current = true
+          lastPayloadRef.current = JSON.stringify({
+            formData: restoredFormData,
+            imageUrls: restoredImages,
+          })
+        }
+      } catch (error) {
+        console.error('Failed to load event form draft:', error)
+      } finally {
+        if (!isCancelled) setDraftLoaded(true)
+      }
+    }
+
+    loadDraft()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [draftUserKey, isDraftEnabled])
+
+  useEffect(() => {
+    if (!isDraftEnabled || !draftLoaded) return
+
+    const payload: EventFormDraftPayload = {
+      formData,
+      imageUrls,
+    }
+
+    if (!hasEventDraftContent(payload)) {
+      lastPayloadRef.current = ''
+      scheduleDraftDeletion()
+      return
+    }
+
+    const serializedPayload = JSON.stringify(payload)
+    if (lastPayloadRef.current === serializedPayload) return
+
+    lastPayloadRef.current = serializedPayload
+    scheduleDraftUpsert(payload)
+  }, [formData, imageUrls, isDraftEnabled, draftLoaded, scheduleDraftUpsert, scheduleDraftDeletion])
 
   const prefectures = [
     '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
@@ -368,6 +645,16 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
         if (updateError) throw updateError
         finalEvent = updatedData
+      }
+
+      if (!isUpdateMode) {
+        try {
+          await removeDraft()
+          lastPayloadRef.current = ''
+          setDraftLoaded(false)
+        } catch (draftError) {
+          console.error('Failed to clear event form draft after submit:', draftError)
+        }
       }
 
       onEventCreated(finalEvent)

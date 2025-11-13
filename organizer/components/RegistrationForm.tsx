@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase, type Organizer } from '@/lib/supabase'
 
 interface RegistrationFormProps {
@@ -8,15 +8,48 @@ interface RegistrationFormProps {
   onRegistrationComplete: () => void
 }
 
-export default function RegistrationForm({ userProfile, onRegistrationComplete }: RegistrationFormProps) {
-  const [formData, setFormData] = useState({
-    company_name: '',
-    name: '',
-    gender: '' as '' | '男' | '女' | 'それ以外',
-    age: 0,
-    phone_number: '',
-    email: '',
+interface OrganizerFormState {
+  company_name: string
+  name: string
+  gender: '' | '男' | '女' | 'それ以外'
+  age: number
+  phone_number: string
+  email: string
+}
+
+interface OrganizerDraftPayload {
+  formData: OrganizerFormState
+  termsAccepted: boolean
+  hasViewedTerms: boolean
+}
+
+const SAVE_DEBOUNCE_MS = 800
+const ORGANIZER_DRAFT_TYPE = 'organizer_registration'
+
+const ORGANIZER_FORM_INITIAL: OrganizerFormState = {
+  company_name: '',
+  name: '',
+  gender: '',
+  age: 0,
+  phone_number: '',
+  email: '',
+}
+
+const hasOrganizerDraftContent = (payload: OrganizerDraftPayload): boolean => {
+  const hasFormValue = Object.values(payload.formData).some((value) => {
+    if (typeof value === 'string') return value.trim() !== ''
+    if (typeof value === 'number') return value > 0
+    return false
   })
+
+  if (hasFormValue) return true
+  if (payload.termsAccepted || payload.hasViewedTerms) return true
+
+  return false
+}
+
+export default function RegistrationForm({ userProfile, onRegistrationComplete }: RegistrationFormProps) {
+  const [formData, setFormData] = useState<OrganizerFormState>({ ...ORGANIZER_FORM_INITIAL })
 
   const [loading, setLoading] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
@@ -24,6 +57,171 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [hasViewedTerms, setHasViewedTerms] = useState(false)
   const [currentStep] = useState<1 | 2 | 3>(1) // 主催者は常にステップ1
+  const [draftLoaded, setDraftLoaded] = useState(false)
+
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const lastPayloadRef = useRef<string>('')
+  const draftExistsRef = useRef(false)
+
+  const upsertDraft = useCallback(
+    async (payload: OrganizerDraftPayload) => {
+      if (!userProfile?.userId) return
+      const { error } = await supabase
+        .from('form_drafts')
+        .upsert(
+          {
+            user_id: userProfile.userId,
+            form_type: ORGANIZER_DRAFT_TYPE,
+            payload,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id, form_type' }
+        )
+
+      if (error) throw error
+      draftExistsRef.current = true
+    },
+    [userProfile?.userId]
+  )
+
+  const removeDraft = useCallback(async () => {
+    if (!userProfile?.userId || !draftExistsRef.current) return
+    const { error } = await supabase
+      .from('form_drafts')
+      .delete()
+      .eq('user_id', userProfile.userId)
+      .eq('form_type', ORGANIZER_DRAFT_TYPE)
+
+    if (error) throw error
+    draftExistsRef.current = false
+  }, [userProfile?.userId])
+
+  const scheduleDraftUpsert = useCallback(
+    (payload: OrganizerDraftPayload) => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+
+      saveTimeoutRef.current = setTimeout(async () => {
+        saveTimeoutRef.current = null
+        try {
+          await upsertDraft(payload)
+        } catch (error) {
+          console.error('Failed to save organizer registration draft:', error)
+        }
+      }, SAVE_DEBOUNCE_MS)
+    },
+    [upsertDraft]
+  )
+
+  const scheduleDraftDeletion = useCallback(() => {
+    if (!draftExistsRef.current) return
+
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current)
+    }
+
+    saveTimeoutRef.current = setTimeout(async () => {
+      saveTimeoutRef.current = null
+      try {
+        await removeDraft()
+      } catch (error) {
+        console.error('Failed to delete organizer registration draft:', error)
+      }
+    }, SAVE_DEBOUNCE_MS)
+  }, [removeDraft])
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    let isCancelled = false
+
+    const loadDraft = async () => {
+      if (!userProfile?.userId) {
+        if (!isCancelled) setDraftLoaded(true)
+        return
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from('form_drafts')
+          .select('payload')
+          .eq('user_id', userProfile.userId)
+          .eq('form_type', ORGANIZER_DRAFT_TYPE)
+          .limit(1)
+
+        if (error) throw error
+
+        const record = data?.[0]
+
+        if (record?.payload && !isCancelled) {
+          const payload = record.payload as Partial<OrganizerDraftPayload>
+          const restoredFormData: OrganizerFormState = {
+            ...ORGANIZER_FORM_INITIAL,
+            ...(payload.formData ?? {}),
+          }
+          const restoredTermsAccepted = Boolean(payload.termsAccepted)
+          const restoredHasViewedTerms = Boolean(payload.hasViewedTerms)
+
+          setFormData(restoredFormData)
+          setTermsAccepted(restoredTermsAccepted)
+          setHasViewedTerms(restoredHasViewedTerms)
+
+          draftExistsRef.current = true
+          lastPayloadRef.current = JSON.stringify({
+            formData: restoredFormData,
+            termsAccepted: restoredTermsAccepted,
+            hasViewedTerms: restoredHasViewedTerms,
+          })
+        }
+      } catch (error) {
+        console.error('Failed to load organizer registration draft:', error)
+      } finally {
+        if (!isCancelled) setDraftLoaded(true)
+      }
+    }
+
+    loadDraft()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [userProfile?.userId])
+
+  useEffect(() => {
+    if (!draftLoaded) return
+
+    const payload: OrganizerDraftPayload = {
+      formData,
+      termsAccepted,
+      hasViewedTerms,
+    }
+
+    if (!hasOrganizerDraftContent(payload)) {
+      lastPayloadRef.current = ''
+      scheduleDraftDeletion()
+      return
+    }
+
+    const serializedPayload = JSON.stringify(payload)
+    if (lastPayloadRef.current === serializedPayload) return
+
+    lastPayloadRef.current = serializedPayload
+    scheduleDraftUpsert(payload)
+  }, [
+    formData,
+    termsAccepted,
+    hasViewedTerms,
+    draftLoaded,
+    scheduleDraftUpsert,
+    scheduleDraftDeletion,
+  ])
 
   // 全角数字を半角に変換
   const convertToHalfWidth = (str: string): string => {
@@ -166,6 +364,14 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       if (error) {
         console.error('Supabase error:', error)
         throw error
+      }
+
+      try {
+        await removeDraft()
+        lastPayloadRef.current = ''
+        setDraftLoaded(false)
+      } catch (draftError) {
+        console.error('Failed to clear organizer registration draft after submit:', draftError)
       }
 
       alert('登録が完了しました。運営側の承認をお待ちください。')
