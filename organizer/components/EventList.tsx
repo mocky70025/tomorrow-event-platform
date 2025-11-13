@@ -8,10 +8,9 @@ interface EventListProps {
   onEventUpdated: () => void
   onEdit?: (event: Event) => void
   onViewApplications?: (event: Event) => void
-  loading?: boolean
 }
 
-export default function EventList({ events, onEventUpdated, onEdit, onViewApplications, loading }: EventListProps) {
+export default function EventList({ events, onEventUpdated, onEdit, onViewApplications }: EventListProps) {
   const [deleting, setDeleting] = useState<string | null>(null)
 
   const handleDelete = async (eventId: string) => {
@@ -33,31 +32,6 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
     } finally {
       setDeleting(null)
     }
-  }
-
-  if (loading) {
-    return (
-      <div
-        style={{
-          background: '#FFFFFF',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px',
-          padding: '48px 24px',
-          textAlign: 'center',
-        }}
-      >
-        <p
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '16px',
-            lineHeight: '150%',
-            color: '#666666',
-          }}
-        >
-          イベントを読み込み中です…
-        </p>
-      </div>
-    )
   }
 
   if (events.length === 0) {

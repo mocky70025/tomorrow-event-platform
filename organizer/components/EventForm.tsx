@@ -1,12 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { supabase, type Event, type OrganizerProfile, type OrganizerMember } from '@/lib/supabase'
+import { supabase, type Event, type Organizer } from '@/lib/supabase'
 import ImageUpload from './ImageUpload'
 
 interface EventFormProps {
-  profile: OrganizerProfile
-  currentMember: OrganizerMember
+  organizer: Organizer
   onEventCreated: (event: Event) => void
   onCancel: () => void
   initialEvent?: Partial<Event> // 編集時に事前入力
@@ -124,9 +123,9 @@ const hasEventDraftContent = (payload: EventFormDraftPayload): boolean => {
   return hasImage
 }
 
-export default function EventForm({ profile, currentMember, onEventCreated, onCancel, initialEvent }: EventFormProps) {
+export default function EventForm({ organizer, onEventCreated, onCancel, initialEvent }: EventFormProps) {
   const isDraftEnabled = !initialEvent
-  const draftUserKey = currentMember?.line_user_id || profile.id
+  const draftUserKey = organizer?.line_user_id || organizer.id
 
   const initialFormState = useMemo<EventFormState>(() => ({
     ...EVENT_FORM_EMPTY_STATE,
@@ -594,7 +593,7 @@ export default function EventForm({ profile, currentMember, onEventCreated, onCa
       // 送信データの最終チェック
       const submitData: any = {
         ...formData,
-        organizer_profile_id: profile.id,
+        organizer_id: organizer.id,
         venue_latitude: formData.venue_latitude ? parseFloat(formData.venue_latitude) : null,
         venue_longitude: formData.venue_longitude ? parseFloat(formData.venue_longitude) : null,
       }

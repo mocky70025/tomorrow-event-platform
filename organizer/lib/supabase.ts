@@ -5,52 +5,18 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
-export type OrganizerProfile = {
+export type Organizer = {
   id: string
   company_name: string
-  lead_text?: string | null
-  contact_phone?: string | null
-  contact_email?: string | null
-  postal_code?: string | null
-  address_prefecture?: string | null
-  address_city?: string | null
-  address_line?: string | null
-  website_url?: string | null
-  is_approved: boolean
-  approval_notes?: string | null
-  created_at: string
-  updated_at: string
-}
-
-export type OrganizerMemberRole = 'owner' | 'editor' | 'viewer'
-
-export type OrganizerMember = {
-  id: string
-  organizer_profile_id: string
-  line_user_id: string
   name: string
-  email?: string | null
-  phone_number?: string | null
-  gender?: '男' | '女' | 'それ以外' | null
-  age?: number | null
-  role: OrganizerMemberRole
-  is_primary: boolean
+  gender: '男' | '女' | 'それ以外'
+  age: number
+  phone_number: string
+  email: string
+  line_user_id: string
+  is_approved: boolean
   created_at: string
   updated_at: string
-}
-
-export type OrganizerInvitationStatus = 'active' | 'used' | 'revoked' | 'expired'
-
-export type OrganizerInvitation = {
-  id: string
-  organizer_profile_id: string
-  code: string
-  role: OrganizerMemberRole
-  expires_at?: string | null
-  used_at?: string | null
-  status: OrganizerInvitationStatus
-  created_by_member_id?: string | null
-  created_at: string
 }
 
 export type Event = {
@@ -99,7 +65,7 @@ export type Event = {
   parking_info?: string
   fee_info?: string
   organizer_info?: string
-  organizer_profile_id: string
+  organizer_id: string
   created_at: string
   updated_at: string
 }

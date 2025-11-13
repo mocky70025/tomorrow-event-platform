@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { supabase, type OrganizerProfile, type OrganizerMember } from '@/lib/supabase'
+import { supabase, type Organizer } from '@/lib/supabase'
 
 interface RegistrationFormProps {
   userProfile: any
-  onRegistrationComplete: (profile: OrganizerProfile, member: OrganizerMember) => void
+  onRegistrationComplete: () => void
 }
 
 interface OrganizerFormState {
@@ -338,17 +338,13 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
     try {
       // 重複登録チェック
-      const { data: existingMember, error: existingError } = await supabase
-        .from('organizer_members')
+      const { data: existingUser } = await supabase
+        .from('organizers')
         .select('id')
         .eq('line_user_id', userProfile.userId)
-        .maybeSingle()
+        .single()
 
-      if (existingError) {
-        throw existingError
-      }
-
-      if (existingMember) {
+      if (existingUser) {
         alert('既に登録済みです。')
         return
       }
@@ -356,39 +352,18 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       // 電話番号を半角に変換（ハイフン削除）
       const normalizedPhone = convertToHalfWidth(formData.phone_number.replace(/-/g, ''))
 
-      const { data: profileData, error: profileError } = await supabase
-        .from('organizer_profiles')
+      const { error } = await supabase
+        .from('organizers')
         .insert({
-          company_name: formData.company_name,
-          is_approved: false,
-          contact_phone: normalizedPhone,
-          contact_email: formData.email,
-        })
-        .select()
-        .single()
-
-      if (profileError || !profileData) {
-        throw profileError
-      }
-
-      const { data: memberData, error: memberError } = await supabase
-        .from('organizer_members')
-        .insert({
-          organizer_profile_id: profileData.id,
-          line_user_id: userProfile.userId,
-          name: formData.name,
-          gender: formData.gender || null,
-          age: formData.age || null,
+          ...formData,
           phone_number: normalizedPhone,
-          email: formData.email,
-          role: 'owner',
-          is_primary: true,
+          line_user_id: userProfile.userId,
+          is_approved: false,
         })
-        .select()
-        .single()
 
-      if (memberError || !memberData) {
-        throw memberError
+      if (error) {
+        console.error('Supabase error:', error)
+        throw error
       }
 
       try {
@@ -400,7 +375,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       }
 
       alert('登録が完了しました。運営側の承認をお待ちください。')
-      onRegistrationComplete(profileData, memberData)
+      onRegistrationComplete()
     } catch (error) {
       console.error('Registration failed:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
