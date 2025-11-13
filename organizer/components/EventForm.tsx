@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { supabase, type Event, type Organizer } from '@/lib/supabase'
 import ImageUpload from './ImageUpload'
 
@@ -127,7 +127,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   const isDraftEnabled = !initialEvent
   const draftUserKey = organizer?.line_user_id || organizer.id
 
-  const [formData, setFormData] = useState<EventFormState>(() => ({
+  const initialFormState = useMemo<EventFormState>(() => ({
     ...EVENT_FORM_EMPTY_STATE,
     event_name: initialEvent?.event_name || '',
     event_name_furigana: (initialEvent as any)?.event_name_furigana || '',
@@ -163,24 +163,32 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     parking_info: (initialEvent as any)?.parking_info || '',
     fee_info: (initialEvent as any)?.fee_info || '',
     organizer_info: (initialEvent as any)?.organizer_info || '',
-  }))
+  }), [initialEvent])
 
-  const [loading, setLoading] = useState(false)
-  const [addressLoading, setAddressLoading] = useState(false)
-  const [eventId, setEventId] = useState<string>((initialEvent?.id as string) || '')
-  const [imageUrls, setImageUrls] = useState<EventImageState>(() => ({
+  const initialImageState = useMemo<EventImageState>(() => ({
     ...EVENT_IMAGE_INITIAL,
     main: initialEvent?.main_image_url || '',
     additional1: (initialEvent as any)?.additional_image1_url || '',
     additional2: (initialEvent as any)?.additional_image2_url || '',
     additional3: (initialEvent as any)?.additional_image3_url || '',
     additional4: (initialEvent as any)?.additional_image4_url || '',
-  }))
+  }), [initialEvent])
+
+  const [loading, setLoading] = useState(false)
+  const [addressLoading, setAddressLoading] = useState(false)
+  const [eventId, setEventId] = useState<string>((initialEvent?.id as string) || '')
+  const [formData, setFormData] = useState<EventFormState>(initialFormState)
+  const [imageUrls, setImageUrls] = useState<EventImageState>(initialImageState)
   const [draftLoaded, setDraftLoaded] = useState(() => !isDraftEnabled)
 
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastPayloadRef = useRef<string>('')
   const draftExistsRef = useRef(false)
+  useEffect(() => {
+    setFormData(initialFormState)
+    setImageUrls(initialImageState)
+  }, [initialFormState, initialImageState])
+
 
   const upsertDraft = useCallback(
     async (payload: EventFormDraftPayload) => {
@@ -251,6 +259,15 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
       }
     }, SAVE_DEBOUNCE_MS)
   }, [isDraftEnabled, removeDraft])
+  const handleClearForm = useCallback(() => {
+    setFormData(initialFormState)
+    setImageUrls(initialImageState)
+    lastPayloadRef.current = ''
+    if (isDraftEnabled) {
+      scheduleDraftDeletion()
+    }
+  }, [initialFormState, initialImageState, isDraftEnabled, scheduleDraftDeletion])
+
 
   useEffect(() => {
     return () => {
@@ -1362,7 +1379,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
             <button
               type="button"
-              onClick={onCancel}
+              onClick={handleClearForm}
               style={buttonSecondaryStyle}
             >
               キャンセル
